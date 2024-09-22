@@ -2,6 +2,14 @@
 import Link from "next/link";
 import styles from "./navbar.module.css";
 
+import {
+    ClerkProvider,
+    SignInButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+} from "@clerk/nextjs";
+
 const Navbar = () => {
     return (
         <header>
@@ -28,6 +36,13 @@ const Navbar = () => {
                     <Link href='/profile'>
                         <li>Profile 🐶</li>
                     </Link>
+
+                    <SignedOut>
+                        <SignInButton />
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton />
+                    </SignedIn>
                 </ul>
             </nav>
         </header>
