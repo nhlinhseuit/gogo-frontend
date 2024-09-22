@@ -50,12 +50,12 @@ export default function RootLayout({
           {/* NAVBAR */}
           <Navbar />
 
-          <SignedOut>
+          {/* <SignedOut>
             <SignInButton />
           </SignedOut>
           <SignedIn>
             <UserButton />
-          </SignedIn>
+          </SignedIn> */}
           {children}
         </body>
       </html>
