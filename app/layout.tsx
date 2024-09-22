@@ -7,6 +7,7 @@ import {
 } from "@clerk/nextjs";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 import { Metadata } from "next";
 
 const inter = Inter({
@@ -46,6 +47,9 @@ export default function RootLayout({
     >
       <html lang="en">
         <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+          {/* NAVBAR */}
+          <Navbar />
+
           <SignedOut>
             <SignInButton />
           </SignedOut>
