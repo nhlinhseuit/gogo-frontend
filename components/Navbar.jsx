@@ -6,12 +6,10 @@ const Navbar = () => {
     return (
         <header>
             <nav className={styles.nav}>
-                <div className={styles.logo}>
+                <Link href='/' className={styles.logo}>
                     <img className={styles.img} src="/assets/images/gogo.png" alt="Gogo" />
-                    <Link href='/'>
-                        GoGo Travel
-                    </Link>
-                </div>
+                    GoGo Travel
+                </Link>
 
                 <ul className={styles.links}>
                     <Link href='/find-flights'>
