@@ -106,9 +106,9 @@ const Navbar = () => {
       </Link>
       <div className="flex-between gap-5">
         <Link href="/favourites">
-        <div className="flex flex-col">
+        <div className="flex flex-col ">
           {/* FAVOURITES */}
-          <div className="flex flex-row items-center ml-6">
+          <div className="flex flex-row items-center ml-6 border-r-[1.5px] pr-3 border-black border-opacity-70 h-3">
             <Image
               src={"/assets/icons/favourite.svg"}
               width={20}
