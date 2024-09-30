@@ -14,8 +14,8 @@ const Navbar = () => {
     <nav
       className="
     flex-between
-    shadow-sm
-    fixed z-50 w-full gap-5 px-6 py-2 
+    shadow-md
+    fixed z-50 w-full gap-5 px-6 py-4 
     dark:shadow-none
     sm:px-12
      "
@@ -148,7 +148,7 @@ const Navbar = () => {
           <UserButton
             appearance={{
               elements: {
-                avatarBox: "h-10  w-10",
+                avatarBox: "h-9  w-9",
               },
               variables: {
                 colorPrimary: "#ff7000",
