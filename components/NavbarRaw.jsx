@@ -10,7 +10,7 @@ import {
     UserButton,
 } from "@clerk/nextjs";
 
-const Navbar = () => {
+const NavbarRaw = () => {
     return (
         <header>
             <nav className={styles.nav}>
@@ -49,4 +49,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default NavbarRaw;
