@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer utilities {
+  .title-semibold {
+    @apply text-[38px] font-medium leading-[38px];
+  }
+  .subtitle-semibold {
+    @apply text-[18px] font-medium leading-[22px];
+  }
+  .main-title-semibold {
+    @apply text-[64px] font-medium leading-[64px] tracking-widest;
+  }
+
   .background-light850_dark100 {
     @apply bg-light-850 dark:bg-dark-100;
   }
@@ -154,6 +164,8 @@
   .body-semibold {
     @apply text-[14px] font-semibold leading-[18.2px];
   }
+
+  
 
   .small-regular {
     @apply text-[12px] font-normal leading-[15.6px];

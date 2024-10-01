@@ -5,10 +5,9 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk,  } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
-import NavbarRaw from "@/components/NavbarRaw";
 import Navbar from "@/components/shared/navbar/Navbar";
 
 const inter = Inter({
