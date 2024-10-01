@@ -37,6 +37,7 @@ module.exports = {
           400: "#858EAD",
         },
         "accent-blue": "#1DA1F2",
+        "accent-orange": "#FF8682",
       },
       fontFamily: {
         inter: ["var(--font-inter)"],
@@ -74,5 +75,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
-}
-
+};
