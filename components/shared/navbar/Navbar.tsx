@@ -20,7 +20,14 @@ const Navbar = () => {
 
   return (
     // 60vh của background đè navbar, 144px phần dư ra của  searchtab
-    <div className="relative pb-[calc(60vh+144px)]">
+    <div
+      className={`relative ${
+        (pathName === "/" ||
+          pathName === "/find-flights" ||
+          pathName === "/find-stays") &&
+        "pb-[calc(60vh+144px)]"
+      }`}
+    >
       <nav
         className={`
           flex-between
