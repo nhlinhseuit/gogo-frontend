@@ -1,7 +1,10 @@
 import Image from "next/image";
-import React from "react";
+import React, { use, useState } from "react";
 
 const SearchTab = () => {
+  const [searchFilter, setSearchFilter] = useState("flights");
+
+  const indicatorClass = "!border-primary-100";
   return (
     <div
       className="
@@ -13,9 +16,14 @@ const SearchTab = () => {
               left-0 right-0 mx-24
               flex-col justify-start items-start p-5"
     >
-      <div className="flex flex-row">
+      <div className="flex flex-row items-center">
         {/* Flights */}
-        <div className="flex flex-row items-center">
+        <div
+          className={`flex flex-row items-center h-full border-b-4 border-transparent p-2 cursor-pointer ${
+            searchFilter === "flights" && indicatorClass
+          }`}
+          onClick={() => setSearchFilter("flights")}
+        >
           <Image
             src="/assets/icons/plane.svg"
             width={20}
@@ -25,19 +33,25 @@ const SearchTab = () => {
           <p
             className={`
                 font-inter 
-                ml-2
                 body-semibold 
                 text-dark-100
                 dark:text-light-900 
-                border-r-[1.5px] pr-3 border-black
                 max-sm:hidden`}
           >
             Flights
           </p>
         </div>
 
+        {/* Vertical Separator */}
+        <div className="border-l-2 border-gray-300 h-6 mx-4"></div>
+
         {/* Stays */}
-        <div className="flex flex-row items-center ml-5">
+        <div
+          className={`flex flex-row items-center h-full border-b-4 border-transparent p-2 cursor-pointer ${
+            searchFilter === "stays" && indicatorClass
+          }`}
+          onClick={() => setSearchFilter("stays")}
+        >
           <Image
             src="/assets/icons/hotel.svg"
             width={20}
@@ -47,7 +61,6 @@ const SearchTab = () => {
           <p
             className={`
                 font-inter 
-                ml-2
                 body-semibold 
                 text-dark-100
                 dark:text-light-900 
@@ -63,7 +76,7 @@ const SearchTab = () => {
           <input
             id="input-field"
             type="text"
-            placeholder="Lahore - Karachi"   
+            placeholder="Lahore - Karachi"
             className="border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
           />
 
@@ -77,10 +90,10 @@ const SearchTab = () => {
         </div>
 
         <div className="relative">
-        <input
+          <input
             id="input-field"
             type="text"
-            placeholder="Return"   
+            placeholder="Return"
             className="border border-gray-300 rounded-md py-2 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
           />
 
@@ -92,7 +105,6 @@ const SearchTab = () => {
             />
           </span>
         </div>
-        
       </div>
     </div>
   );
