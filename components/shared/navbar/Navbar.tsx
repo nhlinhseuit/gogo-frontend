@@ -9,8 +9,9 @@ import React from "react";
 
 const Navbar = () => {
   const pathName = usePathname();
-  const indicatorClass =
-    "mt-6 bg-primary-100 h-1 absolute z-100 w-20 bottom-0 mt-6 h-1 absolute z-100 w-20 bottom-0";
+  // const indicatorClass =
+  //   "mt-6 bg-primary-100 h-1 absolute z-100 w-20 bottom-0 mt-6 h-1 absolute z-100 w-20 bottom-0";
+  const indicatorClass = "!border-primary-100";
 
   console.log(pathName === "/");
 
@@ -20,7 +21,7 @@ const Navbar = () => {
         className={`
           flex-between
           shadow-md
-          fixed z-50 w-full gap-5 px-6 py-6
+          fixed z-50 w-full gap-5 px-6 h-20
           ${pathName === "/" ? "bg-transparent" : "bg-white"}
           dark:shadow-none sm:px-12
         `}
@@ -37,7 +38,7 @@ const Navbar = () => {
               style={{ width: "100%", height: "60vh", borderRadius: "18px" }}
             />
             <div
-              className="absolute inset-0  left-0 right-0 justify-center items-center flex flex-col" // Thêm lớp này để căn giữa
+              className="absolute inset-0 left-0 right-0 justify-center items-center flex flex-col" // Thêm lớp này để căn giữa
             >
               <p
                 className="
@@ -79,10 +80,15 @@ const Navbar = () => {
         ) : (
           <></>
         )}
-        <div className="flex flex-row items-center">
-          <Link href="/find-flights">
-            {/* FIND FLIGHT */}
-            <div className="flex flex-col">
+        <div className={"flex flex-row items-center gap-6 h-full"}>
+          <div
+            className={`h-full flex items-center justify-center box-border border-b-4 border-transparent ${
+              pathName.includes("/find-flights") || pathName === "/find-flights"
+                ? `${indicatorClass} border-b-4 border-transparent`
+                : ""
+            }`}
+          >
+            <Link href="/find-flights" className="flex items-center p-2">
               <div className="flex flex-row items-center">
                 <Image
                   src={`${
@@ -96,68 +102,56 @@ const Navbar = () => {
                 />
                 <p
                   className={`
-            font-inter 
-            ml-1
-            body-semibold 
-             ${pathName === "/" ? "text-white" : "text-dark-100"}
-            
-            dark:text-light-900 
-            max-sm:hidden`}
+          font-inter 
+          ml-1
+          body-semibold 
+          ${pathName === "/" ? "text-white" : "text-dark-100"}
+          dark:text-light-900 
+          max-sm:hidden
+        `}
                 >
                   Find Flights
                 </p>
               </div>
-
-              <div
-                className={`${
-                  (pathName.includes("/find-flights") &&
-                    "/find-flights".length > 1) ||
-                  pathName === "/find-flights"
-                    ? indicatorClass
-                    : ""
-                } `}
-              ></div>
-            </div>
-          </Link>
-
-          <Link href="/find-stays">
-            {/* FIND STAYS */}
-            <div className="flex flex-col">
-              <div className="flex flex-row items-center ml-6">
-                <Image
-                  src={`${
-                    pathName === "/"
-                      ? "/assets/icons/hotel-light.svg"
-                      : "/assets/icons/hotel.svg"
-                  }`}
-                  width={20}
-                  height={20}
-                  alt="Find stays"
-                />
-                <p
-                  className={`
+            </Link>
+          </div>
+          <div
+            className={`h-full flex items-center justify-center box-border border-b-4 border-transparent ${
+              (pathName.includes("/find-stays") && "/find-stays".length > 1) ||
+              pathName === "/find-stays"
+                ? indicatorClass
+                : ""
+            }`}
+          >
+            <Link href="/find-stays">
+              {/* FIND STAYS */}
+              <div className="flex flex-col h-full">
+                <div className="flex flex-row items-center">
+                  <Image
+                    src={`${
+                      pathName === "/"
+                        ? "/assets/icons/hotel-light.svg"
+                        : "/assets/icons/hotel.svg"
+                    }`}
+                    width={20}
+                    height={20}
+                    alt="Find stays"
+                  />
+                  <p
+                    className={`
             font-inter 
             ml-1
             body-semibold 
             ${pathName === "/" ? "text-white" : "text-dark-100"}
             dark:text-light-900 
             max-sm:hidden`}
-                >
-                  Find Stays
-                </p>
+                  >
+                    Find Stays
+                  </p>
+                </div>
               </div>
-
-              <div
-                className={`${
-                  (pathName.includes("/find-stays") &&
-                    "/find-stays".length > 1) ||
-                  pathName === "/find-stays"
-                    ? indicatorClass
-                    : ""
-                } `}
-              ></div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         </div>
         {/* LOGO */}
         <Link
@@ -175,13 +169,13 @@ const Navbar = () => {
             alt="DevFlow"
           />
         </Link>
-        <div className="flex-between gap-5">
+        <div className="flex-between gap-5 h-full">
           <Link href="/favourites">
             <div className="flex flex-col ">
               {/* FAVOURITES */}
               <div
                 className={`
-              flex flex-row items-center ml-6 border-r-[1.5px] pr-3 
+              flex flex-row items-center border-r-[1.5px] pr-3 
               
               ${pathName === "/" ? "border-white " : "border-black "}
               border-opacity-70 h-3`}
@@ -209,7 +203,7 @@ const Navbar = () => {
                 </p>
               </div>
 
-              <div
+              {/* <div
                 className={`${
                   (pathName.includes("/favourites") &&
                     "/favourites".length > 1) ||
@@ -217,7 +211,7 @@ const Navbar = () => {
                     ? indicatorClass
                     : ""
                 } `}
-              ></div>
+              ></div> */}
             </div>
           </Link>
 
