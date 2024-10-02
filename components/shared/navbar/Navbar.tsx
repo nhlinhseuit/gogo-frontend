@@ -153,6 +153,7 @@ const Navbar = () => {
             </Link>
           </div>
         </div>
+        
         {/* LOGO */}
         <Link
           href="/"
