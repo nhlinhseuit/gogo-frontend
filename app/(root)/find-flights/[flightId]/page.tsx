@@ -7,6 +7,7 @@ import FlightInformation from "@/components/shared/details/flights/FlightInforma
 interface FlightDetailProps {
   params: {
     flightId: string;
+    flightTitle: string;
   };
 }
 
@@ -93,6 +94,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
                          arrivalAirportName={mockFlightData.arrivalAirportName}
                          arrivalAirport={mockFlightData.arrivalAirport}
                          className="my-4"/>
+
     </main>
   );
 }
