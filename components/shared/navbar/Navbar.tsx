@@ -1,11 +1,14 @@
 "use client";
 
-import SearchTab from "@/components/SearchTab";
+import SearchTab from "@/components/shared/navbar/background-searchtab/HomeSearchTab";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import HomeBackground from "./background-searchtab/HomeBackground";
+import FlightsBackground from "./background-searchtab/FlightsBackground";
+import StaysBackground from "./background-searchtab/StaysBackground";
 
 const Navbar = () => {
   const pathName = usePathname();
@@ -16,70 +19,29 @@ const Navbar = () => {
   console.log(pathName === "/");
 
   return (
-    <div className="relative">
+    // 60vh của background đè navbar, 144px phần dư ra của  searchtab
+    <div className="relative pb-[calc(60vh+144px)]">
       <nav
         className={`
           flex-between
           shadow-md
-          fixed z-50 w-full gap-5 px-6 h-20
+          sticky z-500 w-full gap-5 px-6 h-20
           ${pathName === "/" ? "bg-transparent" : "bg-white"}
           dark:shadow-none sm:px-12
         `}
       >
+        {/* HOME BACKGROUND + HOME SEARCHTAB */}
         {pathName === "/" ? (
-          <div className="absolute top-0 left-0 right-0 -z-10 p-2">
-            <Image
-              src={"/assets/images/background.svg"}
-              alt="DevFlow"
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="object-cover" // Image nằm phía sau
-              style={{ width: "100%", height: "60vh", borderRadius: "18px" }}
-            />
-            <div
-              className="absolute inset-0 left-0 right-0 justify-center items-center flex flex-col" // Thêm lớp này để căn giữa
-            >
-              <p
-                className="
-            font-inter 
-            title-semibold 
-            text-white
-            dark:text-light-900 
-            max-sm:hidden"
-              >
-                Helping Others
-              </p>
-              <p
-                className="
-            font-inter 
-            main-title-semibold 
-            text-white
-            m-4
-            dark:text-light-900 
-            max-sm:hidden"
-              >
-                LIVE & TRAVEL
-              </p>
-              <p
-                className="
-            font-inter 
-            subtitle-semibold 
-            text-white
-            m-0
-            dark:text-light-900 
-            max-sm:hidden"
-              >
-                Special offers to suit your plan
-              </p>
-
-              {/* SEARCH TAB */}
-              <SearchTab />
-            </div>
-          </div>
+          <HomeBackground />
+        ) : pathName === "/find-flights" ? (
+          <FlightsBackground />
+        ) : pathName === "/find-stays" ? (
+          <StaysBackground />
         ) : (
           <></>
         )}
+
+        {/* NAVBAR */}
         <div className={"flex flex-row items-center gap-6 h-full"}>
           <div
             className={`h-full flex items-center justify-center box-border border-b-4 border-transparent ${
@@ -153,7 +115,7 @@ const Navbar = () => {
             </Link>
           </div>
         </div>
-        
+
         {/* LOGO */}
         <Link
           href="/"
