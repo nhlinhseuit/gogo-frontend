@@ -24,8 +24,8 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
         <span className="h2-bold">{props.direction} Flight</span>
         <span className="text-xl font-light">{durationHours}h {durationMinutes}m</span>
       </div>
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-        <div className="flex flex-row items-center gap-4 rounded-md border-[1px] py-4 px-8 border-primary-100">
+      <div className="flex flex-col md:flex-row md:justify-between items-center gap-4">
+        <div className="flex flex-row items-center gap-8 rounded-md border-[1px] py-4 px-8 border-primary-100">
           <img src="/assets/icons/emirates-logo.svg" alt="Emirates Logo"/>
           <div className="flex flex-col gap-1 justify-between">
             <span className="h3-semibold">Emirates</span>
@@ -45,7 +45,7 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
         </div>
 
       </div>
-      <div className="flex flex-row items-center gap-16 self-center">
+      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16 self-center">
         <div className="flex flex-row items-center justify-between gap-4">
           <span
             className="h2-semibold">{departureTime.getUTCHours().toString().padStart(2, '0')}:{departureTime.getUTCMinutes().toString().padStart(2, '0')}</span>
