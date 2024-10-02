@@ -53,6 +53,18 @@ export default function FlightDetail({params}: FlightDetailProps) {
           <Checkbox label={"Business Class"}/>
         </div>
       </div>
+      {/*TODO: Replace with carousel*/}
+      <div className="flex flex-row items-center justify-between gap-4 overflow-x-auto">
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+        <img src="/assets/images/flight-mock-image00001.jpg"/>
+      </div>
 
       <div className="flex flex-col rounded p-4 bg-primary-100">
         <span className="h2-bold">Emirates Airline Policies</span>
