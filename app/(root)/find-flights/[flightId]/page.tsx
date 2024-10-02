@@ -26,8 +26,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
   };
 
   return (
-    <main className="flex flex-col gap-8 p-4">
-      <h1 className="h1">{params.flightId}</h1>
+    <main className="flex flex-col gap-4 p-4">
       <div className="flex flex-row justify-between">
         <span className="h2-bold">{mockFlightData.planeModel}</span>
         <span className="h2-bold text-accent-orange">
@@ -35,7 +34,16 @@ export default function FlightDetail({params}: FlightDetailProps) {
         </span>
       </div>
       <Location location={mockFlightData.departureAirportName}/>
-      <Ratings rating={4.5} numberOfReviews={100}/>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <Ratings rating={4.5} numberOfReviews={100}/>
+        <div className="flex flex-row gap-4">
+          <button><img className="rounded-md p-4 border-primary-100 border-[1px]"
+                       src="/assets/icons/favorite-outlined.svg" alt="Favorite"/></button>
+          <button><img className="rounded-md p-4 border-primary-100 border-[1px]" src="/assets/icons/share.svg"
+                       alt="Favorite"/></button>
+          <button className="rounded-md px-9 py-4 bg-primary-100">Book Now</button>
+        </div>
+      </div>
       <img src={mockFlightData.imageUrl} alt="Flight"/>
       <div className="flex flex-row justify-between">
         <span className="h2-bold">Basic Economy Features</span>
@@ -64,7 +72,15 @@ export default function FlightDetail({params}: FlightDetailProps) {
                          arrivalTime={mockFlightData.arrival} departureAirportName={mockFlightData.departureAirportName}
                          departureAirport={mockFlightData.departureAirport}
                          arrivalAirportName={mockFlightData.arrivalAirportName}
-                         arrivalAirport={mockFlightData.arrivalAirport}/>
+                         arrivalAirport={mockFlightData.arrivalAirport}
+                         className="my-4"/>
+
+      <FlightInformation direction={"Return"} departureTime={mockFlightData.departure}
+                         arrivalTime={mockFlightData.arrival} departureAirportName={mockFlightData.departureAirportName}
+                         departureAirport={mockFlightData.departureAirport}
+                         arrivalAirportName={mockFlightData.arrivalAirportName}
+                         arrivalAirport={mockFlightData.arrivalAirport}
+                         className="my-4"/>
     </main>
   );
 }
