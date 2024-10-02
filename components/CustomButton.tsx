@@ -1,30 +1,29 @@
-import Image from 'next/image'
-import React from 'react'
+import Image from "next/image";
+import React from "react";
 
-const CustomButton = () => {
+interface CustomButtonType {
+  srcUrl: string;
+  text: string;
+}
+
+const CustomButton = ({ srcUrl, text }: CustomButtonType) => {
   return (
-    <div className='flex-between h-10 bg-primary-100 px-4 rounded-[4px] cursor-pointer'>
-          
-          <Image
-            src="/assets/icons/show_flights.svg"
-            width={20}
-            height={20}
-            alt="show-flights"
-          />
+    <div className="flex-between h-10 bg-primary-100 px-4 rounded-[4px] cursor-pointer">
+      <Image src={srcUrl} width={20} height={20} alt="show-flights" />
 
-        <p
-            className={`
+      <p
+        className={`
                  ml-1
                 font-inter 
                 body-medium 
                 text-dark-100
                 dark:text-light-900 
                 max-sm:hidden`}
-          >
-            Show Flights
-          </p>
+      >
+        {text}
+      </p>
     </div>
-  )
-}
+  );
+};
 
-export default CustomButton
+export default CustomButton;
