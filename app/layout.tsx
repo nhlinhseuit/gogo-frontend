@@ -55,7 +55,7 @@ export default function RootLayout({
             <UserButton />
           </SignedIn> */}
           {children}
-        <FooterComponent className="px-24 bg-primary-100" />
+        <FooterComponent />
         </body>
       </html>
     </ClerkProvider>

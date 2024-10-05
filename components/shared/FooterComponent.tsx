@@ -1,12 +1,9 @@
 import "@/app/globals.css";
 import React from "react";
 
-interface FooterComponentProps {
-  className: String;
-};
-const FooterComponent: React.FC<FooterComponentProps> = (props) => {
+const FooterComponent = (props) => {
   return (
-    <footer className={`${props.className} pb-16`}>
+    <footer className="px-24 bg-primary-100 mt-48 pb-16">
       <div className="relative -top-20 h-auto w-full p-6 pb-0 bg-primary-500 rounded-[20px] -mt-24">
         <div className="flex flex-col gap-8 md:flex-row md:justify-between">
           <div className="flex flex-col justify-around">
@@ -63,7 +60,7 @@ const FooterComponent: React.FC<FooterComponentProps> = (props) => {
             <a href="" className="opacity-70">Singapore Travel Guide</a>
           </div>
           <div className="flex flex-col gap-4 min-w-24">
-            <a  className="mb-4 font-semibold">About Us</a>
+            <a href="" className="mb-4 font-semibold">About Us</a>
             <a href="" className="opacity-70">Our Story</a>
             <a href="" className="opacity-70">Work with us</a>
           </div>
