@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import React, { use, useState } from "react";
 import CustomButton from "../../../CustomButton";

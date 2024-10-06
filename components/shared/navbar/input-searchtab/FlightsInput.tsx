@@ -2,11 +2,11 @@ import CustomButton from "@/components/CustomButton";
 import Image from "next/image";
 import React from "react";
 
-const FlightsInput = () => {
+const FlightsInput = ({isSearchFlight, otherClass} : {isSearchFlight:boolean, otherClass: string}) => {
   return (
     <>
       {/* INPUT */}
-      <div className="flex flex-row gap-2 mt-6 mb-4 ">
+      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClass}`} >
         <div className="relative  w-[28.57%] font-normal">
           <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
             <label className="small-medium">From - To</label>
@@ -78,20 +78,37 @@ const FlightsInput = () => {
             className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
           />
         </div>
-      </div>
 
-      {/* ACTION */}
-      <div className="flex flex-row justify-end mt-4 mb-2">
-        <div className="flex flex-row justify-center items-center mr-4 cursor-pointer">
-          <Image            src="/assets/icons/add.svg"
-            width={20}
-            height={20}
-            alt="add-code"
-          />
+        {isSearchFlight ? (
+          <div className="ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
+            <Image 
+              src='/assets/icons/searchFlight.svg'
+              alt="Search"
+              width={20}
+              height={20}
+            />
+          </div>
+        ):(
+          <>
+          </>
+        )}
+      </div>
+      { isSearchFlight ? (
+        <>
+        </>
+        ): (
+          <div className="flex flex-row justify-end mt-4 mb-2">
+          <div className="flex flex-row justify-center items-center mr-4 cursor-pointer">
+            <Image            
+              src="/assets/icons/add.svg"
+              width={20}
+              height={20}
+              alt="add-code"
+            />
 
           <p
             className={`
-                 ml-1 
+                ml-1 
                 font-inter 
                 body-medium
                 text-dark-100
@@ -107,6 +124,7 @@ const FlightsInput = () => {
           text="Show Flights"
         />
       </div>
+      )}
     </>
   );
 };
