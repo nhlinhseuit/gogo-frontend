@@ -5,6 +5,7 @@ import Checkbox from "@/components/shared/Checkbox";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
 import ReviewsSection from "@/components/shared/details/ReviewsSection";
 import HotelStars from "@/components/shared/details/stays/HotelStars";
+import AvailableRooms from "@/components/shared/details/stays/AvailableRooms";
 
 interface StayDetailProp {
   params: {
@@ -37,12 +38,13 @@ export default function StayDetail({params}: StayDetailProp) {
     numberOfReviews: 100,
     price: 100,
     imageUrl: "/assets/images/flight.png",
+    overview: "Located in Taksim Gmsuyu, the heart of Istanbul, the CVK Park Bosphorus Hotel Istanbul has risen from the ashes of the historic Park Hotel, which also served as Foreign Affairs Palace 120 years ago and is hosting its guests by assuming this hospitality mission. With its 452 luxurious rooms and suites, 8500 m2 SPA and fitness area, 18 meeting rooms including 4 dividable ones and 3 terraces with Bosphorus view, Istanbuls largest terrace with Bosphorus view (4500 m2) and latest technology infrastructure, CVK Park Bosphorus Hotel Istanbul is destined to be the popular attraction point of the city. Room and suite categories at various sizes with city and Bosphorus view, as well as 68 separate luxury suites, are offered to its special guests as a wide variety of selection.",
   };
 
   return (
     <main className="flex w-full flex-col gap-4 py-4">
       <div className="flex flex-row justify-between">
-        <div className="flex flex-col items-start md:flex-row md:items-center gap-4">
+        <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
           <span className="h2-bold">{mockStaysData.name}</span>
           <HotelStars stars={mockStaysData.stars} />
         </div>
@@ -75,6 +77,20 @@ export default function StayDetail({params}: StayDetailProp) {
         <img src="/assets/images/flight-mock-image00001.jpg"/>
       </div>
 
+      <div className="my-12 flex flex-col gap-4 border-y-2 py-16">
+        <span className="h2-bold">Overview</span>
+        <span className="font-light">{mockStaysData.overview}</span>
+      </div>
+
+      <AvailableRooms stayId={mockStaysData.id} />
+
+      <div>
+        Location
+      </div>
+
+      <div>
+        Amenities
+      </div>
 
       <ReviewsSection type={"flight"} id={1} />
     </main>
