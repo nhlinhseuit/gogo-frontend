@@ -28,7 +28,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
   };
 
   return (
-    <main className="flex flex-col w-full gap-4">
+    <main className="flex flex-col w-full gap-4 py-4">
       <div className="flex flex-row justify-between">
         <span className="h2-bold">{mockFlightData.planeModel}</span>
         <span className="h2-bold text-accent-orange">
