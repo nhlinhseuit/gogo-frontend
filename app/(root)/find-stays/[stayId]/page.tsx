@@ -6,6 +6,7 @@ import FlightInformation from "@/components/shared/details/flights/FlightInforma
 import ReviewsSection from "@/components/shared/details/ReviewsSection";
 import HotelStars from "@/components/shared/details/stays/HotelStars";
 import AvailableRooms from "@/components/shared/details/stays/AvailableRooms";
+import Amenities from "@/components/shared/details/stays/Amentities";
 
 interface StayDetailProp {
   params: {
@@ -85,13 +86,10 @@ export default function StayDetail({params}: StayDetailProp) {
       <AvailableRooms stayId={mockStaysData.id} />
 
       <div>
-        Location
+        Location/Map
       </div>
 
-      <div>
-        Amenities
-      </div>
-
+      <Amenities/>
       <ReviewsSection type={"flight"} id={1} />
     </main>
   );
