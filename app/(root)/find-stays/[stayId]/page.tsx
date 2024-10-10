@@ -1,12 +1,11 @@
 import "@/app/globals.css";
 import Location from "@/components/shared/details/Location";
 import Ratings from "@/components/shared/details/Ratings";
-import Checkbox from "@/components/shared/Checkbox";
-import FlightInformation from "@/components/shared/details/flights/FlightInformation";
 import ReviewsSection from "@/components/shared/details/ReviewsSection";
 import HotelStars from "@/components/shared/details/stays/HotelStars";
 import AvailableRooms from "@/components/shared/details/stays/AvailableRooms";
 import Amenities from "@/components/shared/details/stays/Amentities";
+import Advantage from "@/components/shared/details/stays/Advantage";
 
 interface StayDetailProp {
   params: {
@@ -17,19 +16,6 @@ interface StayDetailProp {
 }
 
 export default function StayDetail({params}: StayDetailProp) {
-  const mockFlightData = {
-    id: params.flightId,
-    departure: "2022-01-01T00:00:00Z",
-    arrival: "2022-01-01T01:00:00Z",
-    departureAirportName: "John F. Kennedy International Airport",
-    arrivalAirportName: "Los Angeles International Airport",
-    departureAirport: "JFK",
-    arrivalAirport: "LAX",
-    planeModel: "Boeing 737",
-    baseFare: 100,
-    imageUrl: "/assets/images/flight.png",
-  };
-
   const mockStaysData = {
     id: params.stayId,
     name: "Hotel California",
@@ -47,7 +33,7 @@ export default function StayDetail({params}: StayDetailProp) {
       <div className="flex flex-row justify-between">
         <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
           <span className="h2-bold">{mockStaysData.name}</span>
-          <HotelStars stars={mockStaysData.stars} />
+          <HotelStars stars={mockStaysData.stars}/>
         </div>
         <span className="h2-bold text-accent-orange">
           ${mockStaysData.price}<span className="text-sm">/night</span>
@@ -78,19 +64,33 @@ export default function StayDetail({params}: StayDetailProp) {
         <img src="/assets/images/flight-mock-image00001.jpg"/>
       </div>
 
-      <div className="my-12 flex flex-col gap-4 border-y-2 py-16">
+      <div className="my-12 flex flex-col gap-6 border-y-2 py-16">
         <span className="h2-bold">Overview</span>
         <span className="font-light">{mockStaysData.overview}</span>
+        <div className="flex flex-col md:flex-row overflow-x-auto gap-4">
+          <div className="flex flex-col bg-primary-100 h-36 rounded-xl p-4 min-w-40 md:flex-row">
+            <div className="flex flex-col">
+              <span className="h1-bold mb-auto">{mockStaysData.rating}</span>
+
+              <span className="font-semibold">Excellent</span>
+              <span>{mockStaysData.numberOfReviews} reviews</span>
+            </div>
+          </div>
+          <Advantage name={"Free Wi-Fi"} />
+          <Advantage name={"Free Wi-Fi"} />
+          <Advantage name={"Free Wi-Fi"} />
+        </div>
+
       </div>
 
-      <AvailableRooms stayId={mockStaysData.id} />
+      <AvailableRooms stayId={mockStaysData.id}/>
 
       <div>
         Location/Map
       </div>
 
       <Amenities/>
-      <ReviewsSection type={"flight"} id={1} />
+      <ReviewsSection type={"stay"} id={1}/>
     </main>
   );
 }

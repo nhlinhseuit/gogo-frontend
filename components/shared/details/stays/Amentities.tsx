@@ -8,7 +8,7 @@ interface AmenitiesProps {
 }
 
 const Amenities: React.FC<AmenitiesProps> = () => {
-  const [visibleAmenities, setVisibleAmenities] = React.useState(3);
+  const [visibleAmenities, setVisibleAmenities] = React.useState(9);
 
   const mockAmenities = [
     {
@@ -55,6 +55,38 @@ const Amenities: React.FC<AmenitiesProps> = () => {
       id: 9,
       title: "Restaurant",
       icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
+    }, {
+      id: 9,
+      title: "Restaurant",
+      icon: "/assets/icons/wifi.svg"
     },
   ];
   return (
@@ -70,7 +102,7 @@ const Amenities: React.FC<AmenitiesProps> = () => {
           );
         })}
         {visibleAmenities < mockAmenities.length && (
-          <button onClick={() => setVisibleAmenities(visibleAmenities + 3)}
+          <button onClick={() => setVisibleAmenities(visibleAmenities + 4)}
                   className="w-auto text-accent-orange text-left">
             +{mockAmenities.length - visibleAmenities} more
           </button>
