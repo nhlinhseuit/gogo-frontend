@@ -1,3 +1,5 @@
+"use client";
+
 import "@/app/globals.css";
 import React from "react";
 import Review from "@/components/shared/Review";
@@ -33,11 +35,11 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({type, id}) => {
   const averageRating = 4.2;
   const reviewCount = mockReviews.length;
 
-  // const [paginationModel, setPaginationModel] = React.useState({
-  //   currentPage: 1,
-  //   reviewsPerPage: 5,
-  //   pageCount: Math.ceil(mockReviews.length / 5),
-  // });
+  const [paginationModel, setPaginationModel] = React.useState({
+    currentPage: 1,
+    reviewsPerPage: 5,
+    pageCount: Math.ceil(mockReviews.length / 5),
+  });
 
 
   return (
@@ -61,7 +63,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({type, id}) => {
 
       <div className="flex flex-row gap-6 self-center">
         <button><img src="/assets/icons/backward.svg" alt="Backward"/></button>
-        <span>1 of 40</span>
+        <span>{paginationModel.currentPage} of 40</span>
         <button><img src="/assets/icons/forward.svg" alt="Forward"/></button>
       </div>
     </div>
