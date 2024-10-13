@@ -193,3 +193,6 @@ code {
     -moz-appearance: none;
     pointer-events: auto;
 }
+.custom-shadow {
+  box-shadow: 24px 24px #CDEAE1;
+}
