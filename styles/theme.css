@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 @layer utilities {
+  .title-bold {
+    @apply text-[45px] font-medium leading-[45px];
+  }
   .title-semibold {
     @apply text-[38px] font-medium leading-[38px];
+  }
+  .header-semibold {
+    @apply text-[24px] font-medium leading-[38px];
   }
   .subtitle-semibold {
     @apply text-[18px] font-medium leading-[22px];
