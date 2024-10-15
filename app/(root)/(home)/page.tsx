@@ -1,4 +1,4 @@
-import PlacesComponent from "@/components/shared/home/PlacesComponent";
+import PlacesComponent from "@/components/shared/home/PlaceComponent";
 import "../../globals.css";
 import OrderComponent from "@/components/shared/home/OrderComponent";
 import ReviewsComponent from "@/components/shared/home/ReviewsComponent";
@@ -104,7 +104,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-x-6 mt-8">
+        <div className="flex flex-wrap justify-between mt-8">
           { MockPlacesData.map((item) => (
             <PlacesComponent
               key = {item.id}

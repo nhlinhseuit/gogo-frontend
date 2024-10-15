@@ -1,12 +1,14 @@
 import React from "react";
 import Image from "next/image";
 
-const BookFlightComponent = ({
+const BookComponent = ({
+  type,
   imgUrl,
   country,
   description,
   price,
 }: {
+  type: string,
   imgUrl: string;
   country: string;
   description: string;
@@ -39,7 +41,7 @@ const BookFlightComponent = ({
           </div>
 
           <button className="w-full bg-primary-100 py-3 px-12 rounded-md">
-            <p className="body-regular ">Book Flight</p>
+            <p className="body-regular ">Book {type}</p>
           </button>
           </div>
         </div>
@@ -48,4 +50,4 @@ const BookFlightComponent = ({
   );
 };
 
-export default BookFlightComponent;
+export default BookComponent;
