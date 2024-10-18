@@ -2,13 +2,24 @@
 
 import "@/app/globals.css";
 import { useState } from 'react';
+import flightInformation from "@/components/shared/details/flights/FlightInformation";
+import AddCardModal from "@/components/shared/details/AddCardModal";
 
 const PaymentCardSelection = () => {
   const [selectedCard, setSelectedCard] = useState('card');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCardSelection = (value) => {
     setSelectedCard(value);
   };
+
+  const handleAddCardClick = () => {
+    setIsModalOpen(true);
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+  }
 
   return (
     <div className="w-full shadow rounded-lg p-4">
@@ -21,7 +32,7 @@ const PaymentCardSelection = () => {
         <div className="flex justify-between items-center">
           <div className="flex flex-row gap-4 items-center">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+              src="/assets/icons/visa.svg"
               alt="Visa Logo"
               className="w-8 h-5 mr-3"
             />
@@ -67,13 +78,14 @@ const PaymentCardSelection = () => {
           onChange={() => handleCardSelection('new-card')}
           className="sr-only"
         />
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center" onClick={handleAddCardClick}>
           <div className="w-8 h-8 mb-2 rounded-full border-2 border-primary-100 flex items-center justify-center">
             <span className="text-primary-100 text-lg font-bold">+</span>
           </div>
           <p className="font-medium">Add a new card</p>
         </div>
       </label>
+      {isModalOpen && <AddCardModal closeModal={closeModal}/>}
     </div>
   );
 };
