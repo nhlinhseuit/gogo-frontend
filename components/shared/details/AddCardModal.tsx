@@ -6,10 +6,10 @@ import React from 'react';
 const AddCardModal = ({ closeModal }) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-8 w-full max-w-lg relative">
+      <div className="bg-white rounded-lg p-16 w-full max-w-lg relative">
         <button
           onClick={closeModal}
-          className="absolute top-3 right-3"
+          className="absolute text-2xl top-10 right-16"
         >
           &times;
         </button>
@@ -70,7 +70,7 @@ const AddCardModal = ({ closeModal }) => {
             <label htmlFor="country" className="block text-sm font-medium">
               Country or Region
             </label>
-            <select id="country" className="w-full border p-2 rounded mt-1">
+            <select id="country" className="w-full bg-transparent border p-2 rounded mt-1">
               <option>United States</option>
               <option>Canada</option>
               <option>United Kingdom</option>
