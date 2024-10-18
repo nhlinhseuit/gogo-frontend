@@ -24,7 +24,6 @@ export default function FlightDetail({params}: FlightDetailProps) {
     planeModel: "Boeing 737",
     baseFare: 100,
     imageUrl: "/assets/images/flight.png",
-
   };
 
   return (
@@ -82,18 +81,10 @@ export default function FlightDetail({params}: FlightDetailProps) {
         </div>
       </div>
 
-      <FlightInformation direction={"Away"} departureTime={mockFlightData.departure}
-                         arrivalTime={mockFlightData.arrival} departureAirportName={mockFlightData.departureAirportName}
-                         departureAirport={mockFlightData.departureAirport}
-                         arrivalAirportName={mockFlightData.arrivalAirportName}
-                         arrivalAirport={mockFlightData.arrivalAirport}
+      <FlightInformation flightId={1}
                          className="my-4"/>
 
-      <FlightInformation direction={"Return"} departureTime={mockFlightData.departure}
-                         arrivalTime={mockFlightData.arrival} departureAirportName={mockFlightData.departureAirportName}
-                         departureAirport={mockFlightData.departureAirport}
-                         arrivalAirportName={mockFlightData.arrivalAirportName}
-                         arrivalAirport={mockFlightData.arrivalAirport}
+      <FlightInformation flightId={1}
                          className="my-4"/>
 
       <ReviewsSection type={"flight"} id={1} />

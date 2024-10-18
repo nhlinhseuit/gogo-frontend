@@ -4,7 +4,7 @@ import React from 'react';
 interface RatingsProps {
   rating: number;
   className?: string;
-  numberOfReviews?: number;
+  numberOfReviews: number;
 }
 
 const Ratings: React.FC<RatingsProps> = (props) => {
