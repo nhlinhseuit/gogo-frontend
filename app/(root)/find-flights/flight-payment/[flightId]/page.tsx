@@ -11,16 +11,18 @@ interface FlightPaymentProps {
 
 const FlightPayment: React.FC<FlightPaymentProps> = ({flightId}) => {
   return (
-    <div className="w-full grid grid-cols-5 gap-8">
-      <div className="flex flex-col gap-8 col-span-3">
-        <FlightInformation flightId={1} showPrice={true}/>
-        <PaymentOptions />
-        <PaymentCardSelection />
+    <main className="flex flex-col w-full gap-4 py-4">
+      <div className="w-full mt- grid grid-cols-5 gap-8">
+        <div className="flex flex-col gap-8 col-span-3">
+          <FlightInformation flightId={1} showPrice={true}/>
+          <PaymentOptions/>
+          <PaymentCardSelection/>
+        </div>
+        <div className="col-span-2">
+          <PriceDetails flightId={1} stayId={1}/>
+        </div>
       </div>
-      <div className="col-span-2">
-        <PriceDetails flightId={1} stayId={1}/>
-      </div>
-    </div>
+    </main>
   );
 }
 
