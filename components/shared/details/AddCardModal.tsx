@@ -3,12 +3,16 @@
 import "@/app/globals.css";
 import React from 'react';
 
-const AddCardModal = ({ closeModal }) => {
+interface AddCardModalProps {
+  closeModal: () => void;
+}
+
+const AddCardModal: React.FC<AddCardModalProps> = (props) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg p-16 w-full max-w-lg relative">
         <button
-          onClick={closeModal}
+          onClick={props.closeModal}
           className="absolute text-2xl top-10 right-16"
         >
           &times;

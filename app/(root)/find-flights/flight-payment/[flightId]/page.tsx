@@ -2,7 +2,7 @@ import "@/app/globals.css";
 import React from "react";
 import PriceDetails from "@/components/shared/details/PriceDetails";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
-import PaymentOptions from "@/components/shared/details/PaymentOptons";
+import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 
 interface FlightPaymentProps {

@@ -5,7 +5,7 @@ import {useState} from 'react';
 const PaymentOptions = () => {
   const [selectedOption, setSelectedOption] = useState('full');
 
-  const handleOptionChange = (value) => {
+  const handleOptionChange = (value: string) => {
     setSelectedOption(value);
   };
 
