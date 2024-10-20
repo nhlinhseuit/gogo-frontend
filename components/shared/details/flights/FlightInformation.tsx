@@ -43,22 +43,22 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
         <span className="text-xl font-light">{durationHours}h {durationMinutes}m</span>
       </div>
       <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-        <div className="flex flex-row items-center gap-8 rounded-md px-8 py-4 border-[1px] border-primary-100">
+        <div className="flex flex-col items-center gap-8 rounded-md px-8 py-4 border-[1px] border-primary-100 md:flex-row">
           <img src="/assets/icons/emirates-logo.svg" alt="Emirates Logo"/>
           <div className="flex flex-col justify-between gap-1">
             <span className="h3-semibold">Emirates</span>
             <span className="text-sm font-light">Airbus A320</span>
           </div>
         </div>
-        <div className="flex flex-row items-center gap-4">
+        <div className="flex md:flex-row flex-col items-center gap-4">
           <img className="size-6" src="/assets/icons/airplane.svg" alt="Airplane" />
-          <div className="h-6 border-l border-gray-300"></div>
+          <div className="h-6 hidden md:block border-l border-gray-300"></div>
           <img className="size-6" src="/assets/icons/wifi.svg" alt="wifi" />
-          <div className="h-6 border-l border-gray-300"></div>
+          <div className="h-6 hidden md:block border-l border-gray-300"></div>
           <img className="size-6" src="/assets/icons/stopwatch.svg" alt="time" />
-          <div className="h-6 border-l border-gray-300"></div>
+          <div className="h-6 hidden md:block border-l border-gray-300"></div>
           <img className="size-6" src="/assets/icons/food.svg" alt="food" />
-          <div className="h-6 border-l border-gray-300"></div>
+          <div className="h-6 hidden md:block border-l border-gray-300"></div>
           <img className="size-6" src="/assets/icons/seat.svg" alt="seat" />
         </div>
 

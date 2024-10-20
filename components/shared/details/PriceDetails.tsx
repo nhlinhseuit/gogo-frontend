@@ -21,7 +21,7 @@ const PriceDetails: React.FC<PaymentDetailsProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-4 p-6 rounded-lg shadow-xl">
-      <div className="flex flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-6">
         <img className="rounded size-[120px]" src="/assets/images/flight-mock-image00001.jpg" alt="Stay"/>
         <div className="flex flex-grow flex-col gap-1">
           <span>{mockData.tier}</span>

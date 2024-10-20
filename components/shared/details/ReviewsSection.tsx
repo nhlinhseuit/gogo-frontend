@@ -58,7 +58,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({type, id}) => {
       </div>
       <div className="flex flex-col">
         {mockReviews.map((review) => (
-          <Review review={review} key={id} />
+          <Review review={review} key={review.id} />
         ))}
       </div>
 
