@@ -51,7 +51,8 @@ export default function StayDetail({params}: StayDetailProp) {
         </div>
       </div>
       <img src={mockStaysData.imageUrl} alt="Hotel"/>
-      {/*TODO: Replace with carousel*/}
+
+      {/*TODO: Replace with modal on showing more images*/}
       <div className="flex flex-row items-center justify-between gap-4 overflow-x-auto">
         <img src="/assets/images/flight-mock-image00001.jpg"/>
         <img src="/assets/images/flight-mock-image00001.jpg"/>
@@ -83,7 +84,7 @@ export default function StayDetail({params}: StayDetailProp) {
 
       </div>
 
-      <AvailableRooms stayId={mockStaysData.id}/>
+      <AvailableRooms stayId={Number(mockStaysData.id)}/>
 
       <div>
         Location/Map

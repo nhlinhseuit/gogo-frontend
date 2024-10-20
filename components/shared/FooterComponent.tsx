@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import React from "react";
 
-const FooterComponent = (props) => {
+const FooterComponent = () => {
   return (
     <footer className="px-24 bg-primary-100 mt-48 pb-16">
       <div className="relative -top-20 h-auto w-full p-6 pb-0 bg-primary-500 rounded-[20px] -mt-24">
