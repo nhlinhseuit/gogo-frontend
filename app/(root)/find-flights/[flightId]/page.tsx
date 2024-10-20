@@ -3,6 +3,7 @@ import Location from "@/components/shared/details/Location";
 import Ratings from "@/components/shared/details/Ratings";
 import Checkbox from "@/components/shared/Checkbox";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
+import ReviewsSection from "@/components/shared/details/ReviewsSection";
 
 interface FlightDetailProps {
   params: {
@@ -27,7 +28,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
   };
 
   return (
-    <main className="flex flex-col w-full gap-4">
+    <main className="flex flex-col w-full gap-4 py-4">
       <div className="flex flex-row justify-between">
         <span className="h2-bold">{mockFlightData.planeModel}</span>
         <span className="h2-bold text-accent-orange">
@@ -95,6 +96,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
                          arrivalAirport={mockFlightData.arrivalAirport}
                          className="my-4"/>
 
+      <ReviewsSection type={"flight"} id={1} />
     </main>
   );
 }
