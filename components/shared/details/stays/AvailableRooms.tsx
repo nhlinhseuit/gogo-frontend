@@ -1,5 +1,6 @@
 import "@/app/globals.css"
 import Room from "@/components/shared/details/stays/Room";
+import {id} from "postcss-selector-parser";
 
 interface AvailableRoomsProps {
   stayId: number;
@@ -32,7 +33,7 @@ const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
       <div>
         {mockRooms.map((room) => {
           return (
-            <Room imageUrl={room.imageUrl} roomType={room.roomType} price={room.price}/>
+            <Room imageUrl={room.imageUrl} roomType={room.roomType} price={room.price} key={room.id}/>
           )
         })}
       </div>
