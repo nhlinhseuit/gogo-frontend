@@ -2,14 +2,13 @@
 
 import "@/app/globals.css";
 import { useState } from 'react';
-import flightInformation from "@/components/shared/details/flights/FlightInformation";
 import AddCardModal from "@/components/shared/details/AddCardModal";
 
 const PaymentCardSelection = () => {
   const [selectedCard, setSelectedCard] = useState('card');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleCardSelection = (value) => {
+  const handleCardSelection = (value: string) => {
     setSelectedCard(value);
   };
 
