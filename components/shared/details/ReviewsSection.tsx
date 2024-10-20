@@ -35,6 +35,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({type, id}) => {
   const averageRating = 4.2;
   const reviewCount = mockReviews.length;
 
+  // TODO: Implement pagination
   const [paginationModel, setPaginationModel] = React.useState({
     currentPage: 1,
     reviewsPerPage: 5,
@@ -57,7 +58,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({type, id}) => {
       </div>
       <div className="flex flex-col">
         {mockReviews.map((review) => (
-          <Review review={review} />
+          <Review review={review} key={id} />
         ))}
       </div>
 

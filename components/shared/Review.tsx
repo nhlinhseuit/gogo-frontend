@@ -2,7 +2,11 @@ import "@/app/globals.css";
 import React from "react";
 
 interface Review {
-  review: object;
+  review: {
+    userId: number;
+    rating: number;
+    review: string;
+  }
 }
 
 const Review: React.FC<Review> = ({review}) => {
