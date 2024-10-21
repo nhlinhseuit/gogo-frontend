@@ -34,7 +34,7 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
     <div className={`bg-light-900 flex flex-col gap-4 px-6 py-8 rounded shadow ${props.className}`}>
       {props.showPrice && (
         <div className="flex flex-row justify-between h1-bold">
-          <span>{mockFlightData.planeModel}</span>
+          <span className="w-2/3">{mockFlightData.planeModel}</span>
           <span className="text-accent-orange">${mockFlightData.baseFare}</span>
         </div>
       )}
