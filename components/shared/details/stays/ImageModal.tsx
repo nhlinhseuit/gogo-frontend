@@ -16,16 +16,18 @@ const ImageModal: React.FC<ImageModalProps> = (props) => {
 
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-600 bg-opacity-50 p-8">
-      <div className="flex h-auto w-auto flex-col gap-16 rounded-lg bg-white p-8">
+    <div className="fixed inset-0 z-50 flex flex-col items-center overflow-auto justify-center bg-gray-600 bg-opacity-50 p-8">
+      <div className="flex w-3/4 items-center flex-col gap-16 rounded-lg bg-white p-8">
         <img
-          className="w-full rounded-lg"
+          className="object-contain h-[60vh] rounded-lg"
           src={mainImageSrc}
           alt="Stay"
         />
 
+
+
         {/* TODO: Replace with images fetched */}
-        <div className="flex flex-row gap-4 overflow-auto">
+        <div className="flex h-fit flex-row gap-4 overflow-x-auto">
           {[
             "/assets/images/flight.png",
             "/assets/images/flight-mock-image00001.jpg",
@@ -35,7 +37,8 @@ const ImageModal: React.FC<ImageModalProps> = (props) => {
             "/assets/images/mock-stay-image.png",
             "/assets/images/mock-stay-image.png",
             "/assets/images/mock-stay-image.png",
-            "/assets/images/mock-stay-image.png"
+            "/assets/images/mock-stay-image.png","/assets/images/mock-stay-image.png","/assets/images/mock-stay-image.png","/assets/images/mock-stay-image.png",
+            "/assets/images/mock-stay-image.png","/assets/images/mock-stay-image.png","/assets/images/mock-stay-image.png","/assets/images/mock-stay-image.png",
           ].map((src, index) => (
             <img
               key={index}
