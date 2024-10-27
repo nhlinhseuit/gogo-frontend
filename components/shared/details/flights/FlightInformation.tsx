@@ -13,11 +13,11 @@ interface FlightInformationProps {
 }
 
 const FlightInformation: React.FC<FlightInformationProps> = (props) => {
-  const departureTime = new Date(props.departureTime)
-  const arrivalTime = new Date(props.arrivalTime)
-  const duration = new Date(props.arrivalTime) - new Date(props.departureTime);
-  const durationHours = Math.floor(duration / 1000 / 60 / 60);
-  const durationMinutes = Math.floor(duration / 1000 / 60) % 60;
+  const departureTime = new Date("")
+  const arrivalTime = new Date("")
+  const duration = new Date("");
+  const durationHours = Math.floor(0 / 1000 / 60 / 60);
+  const durationMinutes = Math.floor(0 / 1000 / 60) % 60;
   return (
     <div className={`bg-light-900 flex flex-col gap-4 px-6 py-8 rounded shadow ${props.className}`}>
       <div className="flex flex-row justify-between">

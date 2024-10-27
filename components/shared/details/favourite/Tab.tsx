@@ -23,12 +23,14 @@ const Tab = ({
 
       <div
         onClick={onClick}
-        className={`flex-1 py-4 mx-8 cursor-pointer ${
+        className={`flex-1 py-4 mx-4 cursor-pointer ${
           isSelected === title ? "border-b-4 border-primary-100" : ""
         }`}
       >
-        <h6 className="font-semibold">{title}</h6>
-        <p className="text-gray-400 font-thin">{count} marked</p>
+        <div className="pl-2">
+          <h6 className="font-semibold">{title}</h6>
+          <p className="text-gray-400 font-thin">{count} marked</p>
+        </div>
       </div>
     </>
   );

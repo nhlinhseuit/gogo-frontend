@@ -12,8 +12,12 @@ import DepartureTimeComponent from "@/components/shared/searchFlight/filters/Dep
 import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
 import { useState } from "react";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
+import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
+import { log } from "console";
 const MockCheapestData = [
   {
+    id: 1,
+    isFavourited: false,
     rating: 4.2,
     reviews: "Very Good",
     price: 104,
@@ -21,6 +25,8 @@ const MockCheapestData = [
     countReview: 54,
   },
   {
+    id: 2,
+    isFavourited: false,
     rating: 4.2,
     reviews: "Very Good",
     price: 104,
@@ -28,6 +34,8 @@ const MockCheapestData = [
     countReview: 54,
   },
   {
+    id: 3,
+    isFavourited: false,
     rating: 4.2,
     reviews: "Very Good",
     price: 104,
@@ -38,6 +46,8 @@ const MockCheapestData = [
 
 const MockBestData = [
   {
+    id: 1,
+    isFavourited: false,
     rating: 4.2,
     reviews: "Very Good",
     price: 104,
@@ -45,6 +55,8 @@ const MockBestData = [
     countReview: 54,
   },
   {
+    id: 2,
+    isFavourited: false,
     rating: 4.2,
     reviews: "Very Good",
     price: 104,
@@ -55,9 +67,11 @@ const MockBestData = [
 
 const MockQuickedData = [
   {
+    id: 1,
+    isFavourited: false,
     rating: 4.2,
     reviews: "Very Good",
-    price: 104,
+    price: 1040,
     img: "/assets/images/emirates.svg",
     countReview: 54,
   },
@@ -98,24 +112,28 @@ const tabs = [
 export default function FlightsSearch() {
   const [isSelected, setIsSelected] = useState("Cheapest");
 
-  let renderData: FlightData[] = [];
+  let sourceData: FlightData[] = [];
   switch (isSelected) {
     case "Cheapest":
-      renderData = MockCheapestData;
+      sourceData = MockCheapestData;
       break;
     case "Best":
-      renderData = MockBestData;
+      sourceData = MockBestData;
       break;
     case "Quicked":
-      renderData = MockQuickedData;
+      sourceData = MockQuickedData;
+      break;
+    default:
       break;
   }
+
+  const [renderData, setRenderData] = useState(sourceData);
 
   return (
     <main className="w-full">
       <FlightsInput
         isSearchFlight
-        otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-md shadow-primary-400"
+        otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
       />
 
       <div className="flex w-full mt-8">
@@ -131,7 +149,7 @@ export default function FlightsSearch() {
         </div>
 
         <div className="w-[70%] ml-4">
-          <div className="flex justify-start h-20 bg-white rounded-lg shadow-md shadow-primary-400">
+          <div className="flex justify-start h-20 bg-white rounded-lg shadow-full shadow-primary-400">
             {tabs.map((item, index) => {
               return item.type === "Cheapest" ? (
                 <Tab
@@ -164,43 +182,41 @@ export default function FlightsSearch() {
             })}
           </div>
 
-          <div className="flex justify-between py-5">
-            <div>
-              <h6 className="body-semibold">
-                Showing 4 of
-                <span className="text-[#FF8682] ml-1">257 places</span>
-              </h6>
-            </div>
-
-            <div className="flex justify-center items-center space-x-1">
-              <p className="paragraph-regular">Sort by</p>
-              <span className="paragraph-semibold">Recommended</span>
-              <button>
-                <Image
-                  src="/assets/icons/chevron_up.svg"
-                  alt="up"
-                  width={18}
-                  height={18}
-                />
-              </button>
-            </div>
+          <div>
+            <Reccomended />
           </div>
 
           <div>
-            {renderData.map((item, index) => (
+            {sourceData.map((item) => (
               <FlightsComp
-                key={index}
-                rating={item.rating}
-                reviews={item.reviews}
-                img={item.img}
-                countReview={item.countReview}
-                price={item.price}
+                item={item}
+                handleClick={(id: number) => {
+                  var updatedRenderData = renderData.map((data) => {
+                    if (data.id === id) {
+                      if (data.isFavourited === true) {
+                        return {
+                          ...data,
+                          isFavourited: false,
+                        };
+                      } else {
+                        return {
+                          ...data,
+                          isFavourited: true,
+                        };
+                      }
+                    } else {
+                      return data;
+                    }
+                  });
+                  //  set
+                  setRenderData(updatedRenderData);
+                }}
               />
             ))}
           </div>
 
           <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
-            <p className=" paragraph-semibold text-white">Show more result</p>
+            <p className="paragraph-semibold text-white">Show more result</p>
           </div>
         </div>
       </div>

@@ -6,7 +6,9 @@ const SriLanka = () => {
     <div className="mt-4 w-full flex justify-between">
       <div className="relative w-[44%] h-424 bg-primary-100 p-6 rounded-2xl">
         <div className="w-full mb-6">
-          <h1 className="w-[50%] title-bold">Backpacking Sri Lanka</h1>
+          <h1 className="w-[50%] title-bold line-clamp-2">
+            Backpacking Sri Lanka
+          </h1>
         </div>
 
         <div className="absolute bg-white top-0 right-0 m-6 px-3 py-1 rounded-md text-center">
@@ -14,7 +16,7 @@ const SriLanka = () => {
           <p className="h3-semibold">$700</p>
         </div>
 
-        <p className="paragraph-regular mb-20">
+        <p className="paragraph-regular mb-16 line-clamp-5">
           Traveling is a unique experience as it's the best way to unplug from
           the pushes and pulls of daily life. It helps us to forget about our
           problems, frustrations, and fears at home. During our journey, we

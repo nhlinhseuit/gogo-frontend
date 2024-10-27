@@ -8,8 +8,8 @@ const CheckComponent = ({ type, data }: { type: string; data: string[] }) => {
 
   return (
     <div>
-      <div className="mt-6 w-full pb-6 border-b-[1px]">
-        <div className="flex flex-between justify-center items-center mb-4">
+      <div className="mt-6 w-full border-b-[1px]">
+        <div className="flex flex-between justify-center items-center mb-6">
           <h6 className="paragraph-semibold ">{type}</h6>
           <button
             onClick={() => {
@@ -29,24 +29,25 @@ const CheckComponent = ({ type, data }: { type: string; data: string[] }) => {
           </button>
         </div>
 
-        {isToggled &&
-          data.map(
-            (
-              item,
-              index 
-            ) => (
-              <div className="mb-2 flex-col justify-center items-center" key={index}>
+        {isToggled && (
+          <div className="pb-6">
+            {data.map((item, index) => (
+              <div
+                className="mb-2 flex-col justify-center items-center"
+                key={index}
+              >
                 <input
                   type="checkbox"
                   className="mr-2 w-4 h-4 cursor-pointer focus:outline-none checked:accent-primary-100"
-                  id={`check_${index}`} 
+                  id={`check_${index}`}
                 />
                 <label htmlFor={`check_${index}`} className="paragraph-regular">
                   {item}
                 </label>
               </div>
-            )
-          )}
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,11 +2,17 @@ import CustomButton from "@/components/CustomButton";
 import Image from "next/image";
 import React from "react";
 
-const FlightsInput = ({isSearchFlight, otherClass} : {isSearchFlight:boolean, otherClass: string}) => {
+const FlightsInput = ({
+  isSearchFlight,
+  otherClass,
+}: {
+  isSearchFlight?: boolean;
+  otherClass?: string;
+}) => {
   return (
     <>
       {/* INPUT */}
-      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClass}`} >
+      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClass}`}>
         <div className="relative  w-[28.57%] font-normal">
           <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
             <label className="small-medium">From - To</label>
@@ -81,49 +87,49 @@ const FlightsInput = ({isSearchFlight, otherClass} : {isSearchFlight:boolean, ot
 
         {isSearchFlight ? (
           <div className="ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
-            <Image 
-              src='/assets/icons/searchFlight.svg'
+            <Image
+              src="/assets/icons/searchFlight.svg"
               alt="Search"
               width={20}
               height={20}
             />
           </div>
-        ):(
-          <>
-          </>
+        ) : (
+          <></>
         )}
       </div>
-      { isSearchFlight ? (
-        <>
-        </>
-        ): (
-          <div className="flex flex-row justify-end mt-4 mb-2">
+
+      {/* ACTION */}
+      {isSearchFlight ? (
+        <></>
+      ) : (
+        <div className="flex flex-row justify-end mt-4 mb-2">
           <div className="flex flex-row justify-center items-center mr-4 cursor-pointer">
-            <Image            
+            <Image
               src="/assets/icons/add.svg"
               width={20}
               height={20}
               alt="add-code"
             />
 
-          <p
-            className={`
+            <p
+              className={`
                 ml-1 
                 font-inter 
                 body-medium
                 text-dark-100
                 dark:text-light-900 
                 max-sm:hidden`}
-          >
-            Add Promo Code
-          </p>
-        </div>
+            >
+              Add Promo Code
+            </p>
+          </div>
 
-        <CustomButton
-          srcUrl="/assets/icons/show_flights.svg"
-          text="Show Flights"
-        />
-      </div>
+          <CustomButton
+            srcUrl="/assets/icons/show_flights.svg"
+            text="Show Flights"
+          />
+        </div>
       )}
     </>
   );

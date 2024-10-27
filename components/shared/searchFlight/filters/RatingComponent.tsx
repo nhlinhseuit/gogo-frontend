@@ -9,8 +9,8 @@ const ratingComponent = () => {
 
   return (
     <div>
-      <div className="mt-6 w-full pb-6 border-b-[1px]">
-        <div className="flex flex-between justify-center items-center mb-4">
+      <div className="mt-6 w-full border-b-[1px]">
+        <div className="flex flex-between justify-center items-center mb-6">
           <h6 className="paragraph-semibold ">Rating</h6>
           <button
             onClick={() => {
@@ -31,7 +31,7 @@ const ratingComponent = () => {
         </div>
 
         {isToggled && (
-          <div className="flex gap-3">
+          <div className="flex gap-3 pb-6">
             {Array.from({ length: 5 }, (_, index) => (
               <button
                 onClick={() => {

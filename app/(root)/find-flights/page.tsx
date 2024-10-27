@@ -8,28 +8,28 @@ import SriLanka from "@/components/shared/details/findComponents/SriLanka";
 export default function FindFlights() {
   const MockBookFlight = [
     {
-      type: 'Flight',
+      type: "Flight",
       imgUrl: "/assets/images/Melbourne.svg",
       country: "Melbourne",
       description: "An amazing journey",
-      price: 700,
+      price: 7000,
     },
     {
-      type: 'Flight',
+      type: "Flight",
       imgUrl: "/assets/images/Paris.svg",
       country: "Paris",
       description: "A Paris Adventure",
       price: 600,
     },
     {
-      type: 'Flight',
+      type: "Flight",
       imgUrl: "/assets/images/London.svg",
       country: "London",
       description: "London eye adventure",
       price: 350,
     },
     {
-      type: 'Flight',
+      type: "Flight",
       imgUrl: "/assets/images/Columbia.svg",
       country: "Columbia",
       description: "Amazing streets",
@@ -39,8 +39,8 @@ export default function FindFlights() {
 
   return (
     <main>
-      <div className="mb-16">
-        <div className="mb-4 flex justify-between items-center">
+      <div className="mt-16">
+        <div className="flex justify-between items-center">
           <div>
             <h1 className="mb-2 h2-bold tracking-normal">
               Let's go places together
@@ -52,13 +52,13 @@ export default function FindFlights() {
           </div>
 
           <div>
-            <button className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular">
+            <button className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular hover:bg-primary-100 transition duration-300">
               See All
             </button>
           </div>
         </div>
 
-        <div>
+        <div className="mt-8">
           <Image
             src="/assets/images/Map.svg"
             alt="Map"
@@ -69,10 +69,10 @@ export default function FindFlights() {
         </div>
       </div>
 
-      <div>
+      <div className="mt-16">
         <FindHeader />
 
-        <div className="mt-6 flex justify-between gap-x-4">
+        <div className="flex justify-between gap-x-4">
           {MockBookFlight.map((item, index) => (
             <BookFlightComponent
               key={index}
@@ -86,7 +86,7 @@ export default function FindFlights() {
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-16">
         <FindHeader />
         <SriLanka />
       </div>

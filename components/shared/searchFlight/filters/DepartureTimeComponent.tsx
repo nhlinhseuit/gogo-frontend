@@ -6,7 +6,7 @@ const DepartureTimeComponent = () => {
   const [isToggled, setIsToggled] = useState(true);
   return (
     <div>
-      <div className="mt-6 w-full pb-6 border-b-[1px]">
+      <div className="mt-6 w-full border-b-[1px]">
         <div className="flex flex-between justify-center items-center mb-6">
           <h6 className="paragraph-semibold ">Departure Time</h6>
           <button
@@ -28,7 +28,7 @@ const DepartureTimeComponent = () => {
         </div>
 
         {isToggled && (
-          <div>
+          <div className="pb-6">
             <div className="relative h-1 bg-gray-300 rounded-3xl">
               <div className="absolute h-1 rounded-md bg-black right-0 left-0"></div>
             </div>

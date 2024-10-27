@@ -11,7 +11,7 @@ const PlaceComponent = ({
   countPlace: number;
 }) => {
   return (
-    <div className="flex justify-start items-center mt-6 gap-x-4">
+    <div className="flex justify-start items-center mt-6 gap-x-4 cursor-pointer transition-transform transform hover:scale-105 duration-300">
       <div>
         <Image src={imgUrl} alt={country} width={90} height={90} />
       </div>
