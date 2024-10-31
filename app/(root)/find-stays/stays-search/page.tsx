@@ -10,7 +10,7 @@ import RatingComponent from "@/components/shared/searchFlight/filters/RatingComp
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const MockHotelsData = [
   {
@@ -154,6 +154,10 @@ export default function StaysSearch() {
   }
   const [renderData, setRenderData] = useState(sourceData);
 
+  useEffect(() => {
+    setRenderData(sourceData);
+  }, [isSelected]);
+
   return (
     <main className="w-full">
       <StaysInput
@@ -218,7 +222,7 @@ export default function StaysSearch() {
             <Reccomended />
           </div>
           <div>
-            {sourceData.map((item, index) => (
+            {renderData.map((item, index) => (
               <FavouriteComp
                 key={index}
                 id={item.id}

@@ -9,7 +9,7 @@ export const formatCurrency = ({ price }: { price: number }) => {
     } else if (absPrice < 1000000) {
       const value = price / 1000;
       formattedPrice = `${Number.isInteger(value) ? value : value.toFixed(2)}K`;
-    } else {
+    } else{
       const value = price / 1000000;
       formattedPrice = `${Number.isInteger(value) ? value : value.toFixed(2)}M`;
     }

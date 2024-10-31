@@ -35,7 +35,7 @@ export default function FindStays() {
       imgUrl: "/assets/images/Melbourne.svg",
       country: "Melbourne",
       description: "An amazing journey",
-      price: 70000,
+      price: 70000000,
     },
     {
       type: "Hotel",

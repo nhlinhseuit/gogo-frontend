@@ -10,7 +10,7 @@ import RatingComponent from "@/components/shared/searchFlight/filters/RatingComp
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import DepartureTimeComponent from "@/components/shared/searchFlight/filters/DepartureTimeComponent";
 import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
 import { log } from "console";
@@ -110,7 +110,7 @@ const tabs = [
   },
 ];
 export default function FlightsSearch() {
-  const [isSelected, setIsSelected] = useState("Cheapest");
+  const [isSelected, setIsSelected] = useState("Best");
 
   let sourceData: FlightData[] = [];
   switch (isSelected) {
@@ -126,6 +126,10 @@ export default function FlightsSearch() {
     default:
       break;
   }
+
+  useEffect(() => {
+    setRenderData(sourceData);
+  }, [isSelected]);
 
   const [renderData, setRenderData] = useState(sourceData);
 
@@ -187,7 +191,7 @@ export default function FlightsSearch() {
           </div>
 
           <div>
-            {sourceData.map((item) => (
+            {renderData.map((item) => (
               <FlightsComp
                 item={item}
                 handleClick={(id: number) => {
