@@ -21,19 +21,19 @@ const PaymentCardSelection = () => {
   }
 
   return (
-    <div className="w-full shadow rounded-lg p-4">
+    <div className="w-full rounded-lg p-4 shadow">
       <label
         htmlFor="saved-card"
         className={`block p-4 rounded-lg mb-4 cursor-pointer ${
           selectedCard === 'card' ? 'bg-primary-100' : ''
         }`}
       >
-        <div className="flex justify-between items-center">
-          <div className="flex flex-row gap-4 items-center">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col items-center gap-4 md:flex-row">
             <img
               src="/assets/icons/visa.svg"
               alt="Visa Logo"
-              className="w-8 h-5 mr-3"
+              className="mr-3 h-5 w-8"
             />
               <div className="font-medium">**** 4321</div>
               <div className="text-sm">Expires 02/27</div>
@@ -54,7 +54,7 @@ const PaymentCardSelection = () => {
               } flex items-center justify-center`}
             >
               {selectedCard === 'card' && (
-                <div className="w-2.5 h-2.5 selected bg-white rounded-full"></div>
+                <div className="rounded-full bg-white w-2.5 h-2.5 selected"></div>
               )}
             </div>
           </div>
@@ -78,8 +78,8 @@ const PaymentCardSelection = () => {
           className="sr-only"
         />
         <div className="flex flex-col items-center" onClick={handleAddCardClick}>
-          <div className="w-8 h-8 mb-2 rounded-full border-2 border-primary-100 flex items-center justify-center">
-            <span className="text-primary-100 text-lg font-bold">+</span>
+          <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary-100">
+            <span className="text-lg font-bold text-primary-100">+</span>
           </div>
           <p className="font-medium">Add a new card</p>
         </div>
