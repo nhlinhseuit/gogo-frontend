@@ -80,7 +80,15 @@ const HomeSearchTab = () => {
       </div>
 
       {/* INPUT & ACTION */}
-      {searchFilter === "flights" ? <FlightsInput /> : <StaysInput />} 
+      {searchFilter === "flights" ? (
+        <FlightsInput
+          otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-md shadow-primary-400"
+        />
+      ) : (
+        <StaysInput
+          otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-md shadow-primary-400"
+        />
+      )}
     </div>
   );
 };
