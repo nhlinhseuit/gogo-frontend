@@ -1,6 +1,6 @@
-import Image from "next/image";
+"use client";
+
 import React, { use, useState } from "react";
-import CustomButton from "../../../CustomButton";
 import FlightsInput from "../input-searchtab/FlightsInput";
 
 const FlightsSearchTab = () => {
