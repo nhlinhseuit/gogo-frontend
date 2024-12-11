@@ -44,6 +44,7 @@ module.exports = {
         spaceGrotesk: ["var(--font-spaceGrotesk)"],
       },
       boxShadow: {
+        'full': '0px 0px 20px rgba(0, 0, 0, 0.08)', 
         "light-100":
           "0px 12px 20px 0px rgba(184, 184, 184, 0.03), 0px 6px 12px 0px rgba(184, 184, 184, 0.02), 0px 2px 4px 0px rgba(184, 184, 184, 0.03)",
         "light-200": "10px 10px 20px 0px rgba(218, 213, 213, 0.10)",
@@ -71,6 +72,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      appearance: {
+        none: '-webkit-appearance: none; appearance: none;',
       },
     },
   },

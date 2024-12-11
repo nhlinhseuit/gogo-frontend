@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.6.0",
+    "@syncfusion/ej2-react-inputs": "^27.1.50",
     "@tailwindcss/typography": "^0.5.15",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
