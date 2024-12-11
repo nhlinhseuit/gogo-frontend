@@ -1,5 +1,5 @@
 import "@/app/globals.css";
-import Location from "@/components/shared/details/Location";
+import LocationComponent from "@/components/shared/details/LocationComponent";
 import Ratings from "@/components/shared/details/Ratings";
 import Checkbox from "@/components/shared/Checkbox";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";

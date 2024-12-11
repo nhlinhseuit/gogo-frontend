@@ -2,13 +2,14 @@
 
 import "@/app/globals.css";
 import React from "react";
+import Amenity from "@/types/Amenity";
 
-interface AmenitiesProps {
-
+interface AmenityComponentProps {
+  amenities: Amenity[];
 }
 
-const Amenities: React.FC<AmenitiesProps> = () => {
-  const [visibleAmenities, setVisibleAmenities] = React.useState(9);
+const AmenitiesComponent: React.FC<AmenityComponentProps> = (props) => {
+  const [visibleAmenities, setVisibleAmenities] = React.useState(3);
 
   const mockAmenities = [
     {
@@ -113,4 +114,4 @@ const Amenities: React.FC<AmenitiesProps> = () => {
   );
 }
 
-export default Amenities
+export default AmenitiesComponent

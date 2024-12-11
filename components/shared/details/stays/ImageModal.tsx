@@ -17,7 +17,7 @@ const ImageModal: React.FC<ImageModalProps> = (props) => {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center overflow-auto justify-center bg-gray-600 bg-opacity-50 p-8">
-      <div className="flex w-3/4 items-center flex-col gap-16 rounded-lg bg-white p-8">
+      <div className="flex w-3/4 items-center flex-col mt-16 gap-8 rounded-lg bg-white p-8">
         <img
           className="object-contain h-[60vh] rounded-lg"
           src={mainImageSrc}
