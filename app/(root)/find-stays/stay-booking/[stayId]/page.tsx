@@ -44,7 +44,7 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
       <div
         className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
         <span>We are holding this room...</span>
-        <img src="/assets/icons/clock.svg" alt="clock"/>
+        <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>
         <span>{timeLeft}</span>
       </div>
 
