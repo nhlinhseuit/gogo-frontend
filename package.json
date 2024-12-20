@@ -15,6 +15,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-tailwindcss": "^3.17.4",
+    "http-proxy-middleware": "^3.0.3",
     "jsbarcode": "^3.11.6",
     "mapbox-gl": "^3.7.0",
     "next": "14.2.13",
@@ -22,10 +23,12 @@
     "react-barcode": "^1.5.3",
     "react-dom": "^18.3.1",
     "react-to-pdf": "^1.0.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "undici": "^7.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/node": "^20.17.9",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
