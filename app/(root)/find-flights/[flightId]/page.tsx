@@ -71,11 +71,11 @@ export default function FlightDetail({params}: FlightDetailProps) {
         <span className="h2-bold">Emirates Airline Policies</span>
         <div className="flex flex-col gap-4 md:flex-row md:gap-8">
           <div className="flex flex-row items-center gap-4">
-            <img src="/assets/icons/clock.svg" alt="Bullet point"/>
+            <img src="/assets/icons/IC_CLOCK.svg" alt="Bullet point"/>
             <span className="font-light">Pre-flight cleaning, installation of cabin HEPA filters.</span>
           </div>
           <div className="flex flex-row items-center gap-4">
-            <img src="/assets/icons/clock.svg" alt="Bullet point"/>
+            <img src="/assets/icons/IC_CLOCK.svg" alt="Bullet point"/>
             <span className="font-light">Pre-flight health screening questions.</span>
           </div>
         </div>
