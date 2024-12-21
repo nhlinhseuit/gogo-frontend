@@ -9,6 +9,10 @@ import RatingComponent from "@/components/shared/searchFlight/filters/RatingComp
 import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
+import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
+import { searchStays } from "@/lib/actions/Search/SearchStayActions";
+import { convertDataReceive } from "@/utils/util";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 const MockCheapestData = [
   {
@@ -107,6 +111,32 @@ const tabs = [
 ];
 export default function FlightsSearch() {
   const [isSelected, setIsSelected] = useState("Best");
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const searchParams = useSearchParams();
+  const params = convertDataReceive(searchParams);
+
+  useEffect(() => {
+    searchFlights(params)
+      .then((data: any) => {
+        console.log("data", data);
+        // setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        // setIsLoading(false);
+      });
+  }, []);
+
+  // if (isLoading) {
+  //   return <div className="py-16 text-center">Loading...</div>;
+  // }
+
+  if (error) {
+    return <div className="py-16 text-center text-red-500">{error}</div>;
+  }
 
   let sourceData: FlightData[] = [];
   switch (isSelected) {

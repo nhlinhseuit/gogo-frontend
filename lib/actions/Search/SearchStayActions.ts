@@ -8,8 +8,6 @@ export const searchStays = async (params: any): Promise<Stay[]> => {
     const queryString = new URLSearchParams(params).toString();
     const urlWithParams = `${API_URL}?${queryString}`;
 
-    console.log("urlWithParams", urlWithParams);
-
     const response = await fetch(urlWithParams, {
       method: "GET",
       headers: {

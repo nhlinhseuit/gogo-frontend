@@ -6,8 +6,9 @@ import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
 import Location from "@/types/Location";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { formatDayApi, isDateValid } from "@/utils/util";
+import { convertDataNavigate, formatDayApi, isDateValid } from "@/utils/util";
 import { searchStays } from "@/lib/actions/Search/SearchStayActions";
+import { useRouter } from "next/navigation";
 
 const StaysInput = ({
   isSearchStay,
@@ -17,12 +18,13 @@ const StaysInput = ({
   otherClasses?: string;
 }) => {
   const { toast } = useToast();
+  const router = useRouter();
 
   const [locations, setLocations] = useState<{ data: Location[] }>({
     data: [],
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const [searchDestination, setSearchDestination] = useState("");
   const [selectedDateCheckin, setSelectedDateCheckin] = useState<
@@ -98,7 +100,7 @@ const StaysInput = ({
 
       toast({
         title: `Unable to get destinations.`,
-        description: "Please select a another departure or arrival location!.",
+        description: "Please select a another destination!.",
         variant: "error",
         duration: 3000,
       });
@@ -114,12 +116,24 @@ const StaysInput = ({
 
       toast({
         title: `You must not choose a day in the past!`,
-        description: "Please select a another departure or return date.",
+        description: "Please select a another checkin or checkout date.",
         variant: "error",
         duration: 3000,
       });
       setIsInvalidDate(0);
 
+      return false;
+    } else if (selectedDateCheckout < selectedDateCheckin) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+      if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
+
+      toast({
+        title: `Date checkout can not be earlier than date checkin!`,
+        description: "Please select a another checkin or checkout date.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
       return false;
     }
 
@@ -128,7 +142,7 @@ const StaysInput = ({
     return true;
   };
 
-  const searchStayAPI = () => {
+  const validateAndNavigateWithParams = () => {
     if (!handleValid()) return;
 
     const params = {
@@ -152,17 +166,14 @@ const StaysInput = ({
       // page_size
     };
 
-    console.log("params,", params);
+    handleNavigate(params);
+  };
 
-    searchStays(params)
-      .then((data: any) => {
-        console.log("data", data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setIsLoading(false);
-      });
+  const handleNavigate = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-stays/stays-search?${queryString}`);
   };
 
   return (
@@ -171,6 +182,8 @@ const StaysInput = ({
       <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClasses}`}>
         <div className="relative  w-1/3 font-normal">
           <SearchDropdown
+            isLoading={isLoading}
+            error={error}
             isMissingInfo={isMissingInfo}
             isUnalbleGetDestination={isUnalbleGetDestination}
             label="Enter Destination"
@@ -289,7 +302,7 @@ const StaysInput = ({
           <CustomButton
             srcUrl="/assets/icons/show_places.svg"
             text="Show Places"
-            onClick={searchStayAPI}
+            onClick={validateAndNavigateWithParams}
           />
         </div>
       )}

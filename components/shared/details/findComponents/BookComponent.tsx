@@ -18,13 +18,15 @@ const BookComponent = ({
   return (
     <div>
       <div className="relative">
-        <Image
-          src={imgUrl}
-          alt={country}
-          width={296}
-          height={420}
-          className="shadow-lg"
-        />
+        <div className="w-[296px] h-[420px] object-cover">
+          <Image
+            src={imgUrl}
+            alt={country}
+            width={296}
+            height={420}
+            className="shadow-lg object-contain"
+          />
+        </div>
 
         <div className="absolute w-full bottom-0 flex flex-col justify-center items-center my-6">
           <div className="w-[85%]">
@@ -44,7 +46,7 @@ const BookComponent = ({
             </div>
 
             <button className="w-full bg-primary-100 py-3 px-12 rounded-md transform transition-transform hover:scale-95 duration-300">
-              <p className="base-regular ">Book {type}</p>
+              <p className="base-regular">Book {type}</p>
             </button>
           </div>
         </div>

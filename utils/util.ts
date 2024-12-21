@@ -1,3 +1,28 @@
+import { ReadonlyURLSearchParams } from "next/navigation";
+
+export const convertDataNavigate = (params: any) => {
+  return Object.fromEntries(
+    Object.entries(params).map(([key, value]) => {
+      if (Array.isArray(value) || typeof value === "object") {
+        return [key, JSON.stringify(value)]; // Chuyển thành chuỗi JSON
+      }
+      return [key, String(value)]; // Đảm bảo mọi giá trị là chuỗi
+    })
+  );
+};
+
+export const convertDataReceive = (searchParams: ReadonlyURLSearchParams) => {
+  return Object.fromEntries(
+    Array.from(searchParams.entries()).map(([key, value]) => {
+      try {
+        return [key, JSON.parse(value)];
+      } catch {
+        return [key, value]; // Trả về giá trị ban đầu nếu không phải JSON
+      }
+    })
+  );
+};
+
 export const isDateValid = (selectedDate: Date): boolean => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);

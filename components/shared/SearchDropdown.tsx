@@ -11,6 +11,9 @@ interface SearchDropdownProps {
   value: string;
   onChange: (value: string) => void;
 
+  isLoading?: boolean;
+  error?: string;
+
   isMissingInfo?: number;
   isUnalbleGetDestination?: number;
   isInvalidDate?: number;
@@ -45,6 +48,9 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   data,
   value,
   onChange,
+
+  isLoading,
+  error,
 
   isMissingInfo,
   isUnalbleGetDestination,
@@ -114,7 +120,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           className={`small-medium ${
             value.includes("___") ||
             isMissingInfo === 0 ||
-            isUnalbleGetDestination === 0||
+            isUnalbleGetDestination === 0 ||
             isInvalidDate === 0
               ? "text-red-500"
               : ""
@@ -246,20 +252,26 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
                 </>
               ) : null}
 
-              <ul className="base-regular">
-                {getRenderData().map((suggestion, index) => (
-                  <li
-                    key={index}
-                    className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      onChange(suggestion);
-                      setIsFocused(false);
-                    }}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
+              {isLoading ? (
+                <div className="py-16 text-center">Loading...</div>
+              ) : error ? (
+                <div className="py-16 text-center text-red-500">{error}</div>
+              ) : (
+                <ul className="base-regular">
+                  {getRenderData().map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        onChange(suggestion);
+                        setIsFocused(false);
+                      }}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
