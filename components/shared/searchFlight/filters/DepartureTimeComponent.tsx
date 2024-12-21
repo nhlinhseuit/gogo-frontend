@@ -1,9 +1,41 @@
 "use client";
-import React, { useState } from "react";
+import { Slider, SliderSingleProps } from "antd";
 import Image from "next/image";
+import { useState } from "react";
 
 const DepartureTimeComponent = () => {
   const [isToggled, setIsToggled] = useState(true);
+
+  //! SLIDER
+
+  const marks: SliderSingleProps["marks"] = {
+    0: "00:00",
+    100: "23:59",
+  };
+
+  const [rangeValue, setRangeValue] = useState<number[]>([0, 100]);
+
+  const handleChange = (value: number[]) => {
+    setRangeValue(value);
+  };
+
+  const getRealTimes = () => {
+    const totalMinutes = 24 * 60 - 1; // Tổng số phút trong ngày: 1439 phút (23:59)
+    return rangeValue.map((v) => {
+      const minutes = (totalMinutes * v) / 100; // Chuyển đổi từ giá trị slider (0-100) sang phút
+      const hours = Math.floor(minutes / 60); // Tính giờ
+      const mins = Math.round(minutes % 60); // Tính phút còn lại
+      return `${hours.toString().padStart(2, "0")}:${mins
+        .toString()
+        .padStart(2, "0")}`; // Format thành hh:mm
+    });
+  };
+
+  const [startTime, endTime] = getRealTimes();
+
+  // startTime
+  // endTime
+
   return (
     <div>
       <div className="mt-6 w-full border-b-[1px]">
@@ -28,35 +60,38 @@ const DepartureTimeComponent = () => {
         </div>
 
         {isToggled && (
-          <div className="pb-6">
-            <div className="relative h-1 bg-gray-300 rounded-3xl">
-              <div className="absolute h-1 rounded-md bg-black right-0 left-0"></div>
-            </div>
-            <div className="relative">
-              <input
-                type="range"
-                className="range-min right-1 appearance-none"
-                min="50"
-                max="1200"
-                value="50"
-              />
-              <input
-                type="range"
-                className="range-max left-1 appearance-none"
-                min="50"
-                max="1200"
-                value="1200"
-              />
-            </div>
-
-            <div className="flex flex-between mt-1">
-              <div className="flex">
-                <p>12:01Am</p>
-              </div>
-              <div className="flex">
-                <p>11:56Pm</p>
-              </div>
-            </div>
+          <div className="mt-10 pb-6">
+            <Slider
+              range
+              marks={marks}
+              defaultValue={[20, 50]}
+              onChange={handleChange}
+              tooltip={{
+                formatter: (value) => {
+                  if (value === undefined) {
+                    return "";
+                  }
+                  const totalMinutes = 24 * 60 - 1;
+                  const minutes = (totalMinutes * value) / 100;
+                  const hours = Math.floor(minutes / 60);
+                  const mins = Math.round(minutes % 60);
+                  return `${hours.toString().padStart(2, "0")}:${mins
+                    .toString()
+                    .padStart(2, "0")}`;
+                },
+              }}
+              styles={{
+                track: {
+                  background: "transparent",
+                },
+                tracks: {
+                  background: "#8dd3bb",
+                },
+                rail: {
+                  background: "#e5e7eb",
+                },
+              }}
+            />
           </div>
         )}
       </div>
