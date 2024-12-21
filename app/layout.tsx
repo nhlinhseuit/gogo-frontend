@@ -1,15 +1,10 @@
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
-import { Inter, Space_Grotesk,  } from "next/font/google";
-import "./globals.css";
-import { Metadata } from "next";
-import Navbar from "@/components/shared/navbar/Navbar";
 import FooterComponent from "@/components/shared/FooterComponent";
+import {
+  ClerkProvider
+} from "@clerk/nextjs";
+import { Metadata } from "next";
+import { Inter, Space_Grotesk, } from "next/font/google";
+import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],

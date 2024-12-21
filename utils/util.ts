@@ -1,11 +1,26 @@
-export const formatStartDayToISO = (date: Date): string => {
-  date.setHours(0, 0, 0, 0);
-  return date.toISOString();
+export const isDateValid = (selectedDate: Date): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return selectedDate >= today;
 };
-export const formatEndDayToISO = (date: Date): string => {
-  date.setHours(23, 59, 0, 0);
-  return date.toISOString();
+
+export const formatDayApi = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 };
+
+// export const formatStartDayToISO = (date: Date): string => {
+//   date.setHours(0, 0, 0, 0);
+//   return date.toISOString();
+// };
+// export const formatEndDayToISO = (date: Date): string => {
+//   date.setHours(23, 59, 0, 0);
+//   return date.toISOString();
+// };
 
 export const normalizeSearchItem = (term: string | number) => {
   const lowerCaseTerm = term.toString().trim().toLowerCase();
@@ -21,20 +36,20 @@ export const normalizeSearchItem = (term: string | number) => {
 };
 
 export const formatCurrency = ({ price }: { price: number }) => {
-    if (price === 0) return `0`;
+  if (price === 0) return `0`;
 
-    const absPrice = Math.abs(price);
-    let formattedPrice;
+  const absPrice = Math.abs(price);
+  let formattedPrice;
 
-    if (absPrice < 1000) {
-      formattedPrice = `${price}`;
-    } else if (absPrice < 1000000) {
-      const value = price / 1000;
-      formattedPrice = `${Number.isInteger(value) ? value : value.toFixed(2)}K`;
-    } else{
-      const value = price / 1000000;
-      formattedPrice = `${Number.isInteger(value) ? value : value.toFixed(2)}M`;
-    }
+  if (absPrice < 1000) {
+    formattedPrice = `${price}`;
+  } else if (absPrice < 1000000) {
+    const value = price / 1000;
+    formattedPrice = `${Number.isInteger(value) ? value : value.toFixed(2)}K`;
+  } else {
+    const value = price / 1000000;
+    formattedPrice = `${Number.isInteger(value) ? value : value.toFixed(2)}M`;
+  }
 
-    return formattedPrice;
-  };
+  return formattedPrice;
+};
