@@ -1,8 +1,8 @@
 import "@/app/globals.css";
-import LocationComponent from "@/components/shared/details/LocationComponent";
-import Ratings from "@/components/shared/details/Ratings";
 import Checkbox from "@/components/shared/Checkbox";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
+import LocationComponent from "@/components/shared/details/LocationComponent";
+import Ratings from "@/components/shared/details/Ratings";
 import ReviewsSection from "@/components/shared/details/ReviewsSection";
 
 interface FlightDetailProps {
@@ -34,7 +34,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
           ${mockFlightData.baseFare}
         </span>
       </div>
-      <Location location={mockFlightData.departureAirportName}/>
+      <LocationComponent location={mockFlightData.departureAirportName}/>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <Ratings rating={4.5} numberOfReviews={100}/>
         <div className="flex flex-row gap-4">

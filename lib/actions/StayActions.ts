@@ -1,6 +1,7 @@
+import { BASE_URL } from "@/constants";
 import Stay from "@/types/Stay";
 
-const API_URL = `http://52.64.172.62:8080/api/v1/stays`
+const API_URL = `${BASE_URL}/api/v1/stays`
 
 
 export const fetchStay = async (stayId: string): Promise<Stay> => {

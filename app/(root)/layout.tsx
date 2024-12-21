@@ -1,4 +1,5 @@
 import Navbar from "@/components/shared/navbar/Navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -21,6 +22,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="mx-auto w-full max-w-6xl">{children}</div>
         </section>
       </div>
+
+      {/* TOAST */}
+      <div className="fixed top-10 right-10 z-50">
+          <Toaster />
+        </div>
     </main>
   );
 };

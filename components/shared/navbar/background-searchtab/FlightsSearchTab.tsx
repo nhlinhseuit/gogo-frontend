@@ -1,12 +1,8 @@
 "use client";
 
-import React, { use, useState } from "react";
 import FlightsInput from "../input-searchtab/FlightsInput";
 
 const FlightsSearchTab = () => {
-  const [searchFilter, setSearchFilter] = useState("flights");
-
-  const indicatorClass = "!border-primary-100";
   return (
     <div
       className="
