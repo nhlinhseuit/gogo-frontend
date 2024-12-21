@@ -1,19 +1,15 @@
 "use client";
 
 import "@/app/globals.css";
-import FlightsSearchTab from "@/components/shared/navbar/background-searchtab/FlightsSearchTab";
 import FlightsInput from "@/components/shared/navbar/input-searchtab/FlightsInput";
-import Link from "next/link";
-import Image from "next/image";
-import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
-import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
-import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
-import DepartureTimeComponent from "@/components/shared/searchFlight/filters/DepartureTimeComponent";
 import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
-import { useEffect, useState } from "react";
-import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
+import DepartureTimeComponent from "@/components/shared/searchFlight/filters/DepartureTimeComponent";
+import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
+import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
+import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
-import { log } from "console";
+import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
+import { useEffect, useState } from "react";
 const MockCheapestData = [
   {
     id: 1,

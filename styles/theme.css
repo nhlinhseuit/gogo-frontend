@@ -136,15 +136,19 @@
   }
 
   .base-medium {
-    @apply text-[18px] font-medium leading-[25.2px];
+    @apply text-[15px] font-medium leading-[25.2px];
+  }
+
+  .base-regular {
+    @apply text-[15px] font-normal leading-[25.2px];
   }
 
   .base-semibold {
-    @apply text-[18px] font-semibold leading-[25.2px];
+    @apply text-[15px] font-semibold leading-[25.2px];
   }
 
   .base-bold {
-    @apply text-[18px] font-bold leading-[140%];
+    @apply text-[15px] font-bold leading-[140%];
   }
 
   .paragraph-regular {
@@ -170,8 +174,6 @@
   .body-semibold {
     @apply text-[14px] font-semibold leading-[18.2px];
   }
-
-  
 
   .small-regular {
     @apply text-[12px] font-normal leading-[15.6px];
