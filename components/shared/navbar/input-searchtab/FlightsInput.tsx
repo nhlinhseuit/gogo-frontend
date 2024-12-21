@@ -1,11 +1,11 @@
 import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
-import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Location from "@/types/Location";
-import { formatDayApi, isDateValid } from "@/utils/util";
+import { convertDataNavigate, formatDayApi, isDateValid } from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SearchDropdown from "../../SearchDropdown";
 
@@ -17,12 +17,13 @@ const FlightsInput = ({
   otherClass?: string;
 }) => {
   const { toast } = useToast();
+  const router = useRouter();
 
   const [locations, setLocations] = useState<{ data: Location[] }>({
     data: [],
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const [searchQueryFrom, setSearchQueryFrom] = useState("");
   const [searchQueryTo, setSearchQueryTo] = useState("");
@@ -73,14 +74,6 @@ const FlightsInput = ({
       });
   }, []);
 
-  if (isLoading) {
-    return <div className="py-16 text-center">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="py-16 text-center text-red-500">{error}</div>;
-  }
-
   const handleValid = () => {
     if (
       !selectedDateDepart ||
@@ -116,13 +109,27 @@ const FlightsInput = ({
       return false;
     } else if (
       !isDateValid(selectedDateDepart) ||
-      !isDateValid(selectedDateDepart)
+      (selectedDateReturn && !isDateValid(selectedDateReturn))
     ) {
       if (isMissingInfo === 0) setIsMissingInfo(1);
       if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
 
       toast({
         title: `You must not choose a day in the past!`,
+        description: "Please select a another departure or return date.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
+      return false;
+    } else if (
+      selectedDateReturn && (selectedDateReturn < selectedDateDepart)
+    ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+      if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
+
+      toast({
+        title: `Date return can not be earlier than date depart!`,
         description: "Please select a another departure or return date.",
         variant: "error",
         duration: 3000,
@@ -136,7 +143,7 @@ const FlightsInput = ({
     return true;
   };
 
-  const searchFlightAPI = () => {
+  const validateAndNavigateWithParams = () => {
     if (!handleValid()) return;
 
     const params = {
@@ -166,17 +173,14 @@ const FlightsInput = ({
       // page_size: 10,
     };
 
-    console.log("params,", params);
+    handleNavigate(params);
+  };
 
-    searchFlights(params)
-      .then((data: any) => {
-        console.log("data", data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setIsLoading(false);
-      });
+  const handleNavigate = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-flights/flights-search?${queryString}`);
   };
 
   return (
@@ -186,6 +190,8 @@ const FlightsInput = ({
         <div className="w-[42.5%] flex gap-2 font-normal">
           <div className="flex-grow">
             <SearchDropdown
+              isLoading={isLoading}
+              error={error}
               isMissingInfo={isMissingInfo}
               isUnalbleGetDestination={isUnalbleGetDestination}
               label="From"
@@ -197,6 +203,8 @@ const FlightsInput = ({
           </div>
           <div className="flex-grow">
             <SearchDropdown
+              isLoading={isLoading}
+              error={error}
               isMissingInfo={isMissingInfo}
               isUnalbleGetDestination={isUnalbleGetDestination}
               label="To"
@@ -225,7 +233,9 @@ const FlightsInput = ({
             isMissingInfo={isMissingInfo}
             isInvalidDate={isInvalidDate}
             label={tripType === "Round trip" ? "Depart - Return" : "Depart"}
-            placeholder={`1/12/2024 - 5/12/2024`}
+            placeholder={
+              tripType === "Round trip" ? `1/12/2024 - 5/12/2024` : "1/12/2024"
+            }
             isChooseDate
             isRoundTrip={tripType === "Round trip"}
             data={[]}
@@ -316,11 +326,18 @@ const FlightsInput = ({
             </p>
           </div>
 
+          {/* <Link
+            href={{
+              pathname: "/find-flights/flights-search",
+              query: { param1: "value1", param2: "value2" },
+            }}
+          > */}
           <CustomButton
             srcUrl="/assets/icons/show_flights.svg"
             text="Show Flights"
-            onClick={searchFlightAPI}
+            onClick={validateAndNavigateWithParams}
           />
+          {/* </Link> */}
         </div>
       )}
     </>
