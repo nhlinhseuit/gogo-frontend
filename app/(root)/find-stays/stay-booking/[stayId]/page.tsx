@@ -6,9 +6,12 @@ import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import PriceDetails from "@/components/shared/details/PriceDetails";
 import StayInformation from "@/components/shared/details/stays/StayInformation";
+import Stay from "@/types/Stay";
+import {fetchRoom, fetchStay} from "@/lib/actions/StayActions";
+import CountriesDropdown from "@/components/shared/CountriesDropdown";
 
 interface StayBookingPageProps {
-  id: number;
+  id: string;
 }
 
 const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
@@ -17,8 +20,13 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
 
   const [timeLeft, setTimeLeft] = useState<string>("");
 
+  const [stayData, setStayData] = useState<Stay|null>(null)
   useEffect(() => {
-    console.log("useEffect is running");
+    fetchStay(props.id).then((data) => {
+      setStayData(data);
+    }).catch((error) => {
+      console.error('Error fetching stay:', error);
+    })
     console.log(new Date().getTime());
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -39,7 +47,6 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
   }, [targetTime]);
 
   return (
-
     <main className="flex w-full flex-col gap-4">
       <div
         className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
@@ -56,8 +63,12 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
             <span className="h2-bold">Who is the lead guest?</span>
             <form action="" className="grid grid-cols-2 gap-4">
               <div className="flex flex-col">
-                <label htmlFor="name">Name</label>
-                <input type="text" placeholder="Name" className="border-2 rounded-md p-2"/>
+                <label htmlFor="name">First Name</label>
+                <input type="text" placeholder="First Name" className="border-2 rounded-md p-2"/>
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="name">Last Name</label>
+                <input type="text" placeholder="Last Name" className="border-2 rounded-md p-2"/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="email">Email</label>
@@ -67,17 +78,10 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
                 <label htmlFor="phone">Phone</label>
                 <input type="tel" placeholder="Phone" className="border-2 rounded-md p-2"/>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col col-span-2">
                 <label htmlFor="country">Country</label>
-                <select id="country" className="border-2 rounded-md p-2">
-                  <option value="USA">USA</option>
-                  <option value="Canada">Canada</option>
-                  <option value="UK">UK</option>
-                  <option value="Australia">Australia</option>
-                </select>
+                <CountriesDropdown/>
               </div>
-
-
             </form>
           </div>
           <PaymentOptions/>
@@ -89,7 +93,6 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
         </div>
       </div>
     </main>
-
   );
 }
 
