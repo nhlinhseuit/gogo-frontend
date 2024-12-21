@@ -11,6 +11,10 @@ interface SearchDropdownProps {
   value: string;
   onChange: (value: string) => void;
 
+  isMissingInfo?: number;
+  isUnalbleGetDestination?: number;
+  isInvalidDate?: number;
+
   isChooseDate?: boolean;
   isRoundTrip?: boolean;
   dateDepart?: Date;
@@ -24,6 +28,15 @@ interface SearchDropdownProps {
   passegers?: number;
   onValueIncrement?: () => void;
   onValueDecrement?: () => void;
+
+  isStaysInput?: boolean;
+  isSelectRoomAndGuest?: boolean;
+  rooms?: number;
+  guests?: number;
+  onValueIncrementRooms?: () => void;
+  onValueDecrementRooms?: () => void;
+  onValueIncrementGuests?: () => void;
+  onValueDecrementGuests?: () => void;
 }
 
 const SearchDropdown: React.FC<SearchDropdownProps> = ({
@@ -32,6 +45,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   data,
   value,
   onChange,
+
+  isMissingInfo,
+  isUnalbleGetDestination,
+  isInvalidDate,
 
   isChooseDate,
   isRoundTrip,
@@ -46,6 +63,15 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   passegers,
   onValueIncrement,
   onValueDecrement,
+
+  isStaysInput,
+  isSelectRoomAndGuest,
+  rooms,
+  onValueIncrementRooms,
+  onValueDecrementRooms,
+  guests,
+  onValueIncrementGuests,
+  onValueDecrementGuests,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,7 +96,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   }, [isFocused]);
 
   const getRenderData = () => {
-    return isSelectPasseger || isSelectTrip || isChooseDate
+    return isSelectPasseger ||
+      isSelectTrip ||
+      isChooseDate ||
+      isSelectRoomAndGuest
       ? data
       : data.filter((suggestion) =>
           suggestion.toLowerCase().includes(value.toLowerCase())
@@ -81,7 +110,18 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     <div className="relative" ref={dropdownRef}>
       {/* Label */}
       <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-        <label className="small-medium">{label}</label>
+        <label
+          className={`small-medium ${
+            value.includes("___") ||
+            isMissingInfo === 0 ||
+            isUnalbleGetDestination === 0||
+            isInvalidDate === 0
+              ? "text-red-500"
+              : ""
+          }`}
+        >
+          {label}
+        </label>
       </div>
 
       {/* Input */}
@@ -90,7 +130,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={
-          isSelectPasseger || isSelectTrip || isChooseDate
+          isSelectPasseger ||
+          isSelectTrip ||
+          isChooseDate ||
+          isSelectRoomAndGuest
             ? () => {}
             : (e) => onChange(e.target.value)
         }
@@ -98,7 +141,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
         className={`
             base-regular border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full
             ${
-              isSelectPasseger || isSelectTrip || isChooseDate
+              isSelectPasseger ||
+              isSelectTrip ||
+              isChooseDate ||
+              isSelectRoomAndGuest
                 ? "caret-transparent cursor-pointer"
                 : ""
             }`}
@@ -110,9 +156,12 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
             <div className="flex space-x-4 absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 p-4">
               {/* Calendar for Depart Date */}
               <div>
-                <label className="text-center block text-sm font-bold mb-2">
-                  Depart date
-                </label>
+                {isStaysInput ? null : (
+                  <label className="text-center block text-sm font-bold mb-2">
+                    Depart date
+                  </label>
+                )}
+
                 <Calendar
                   mode="single"
                   selected={dateDepart}
@@ -167,6 +216,36 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
                 </>
               ) : null}
 
+              {isSelectRoomAndGuest ? (
+                <>
+                  <div className="py-2 px-4 flex gap-2 items-center justify-between">
+                    <label className="base-regular dark:text-gray-400">
+                      Rooms
+                    </label>
+
+                    <CustomNumberInput
+                      value={rooms ?? 0}
+                      onIncrement={onValueIncrementRooms}
+                      onDecrement={onValueDecrementRooms}
+                    />
+                  </div>
+
+                  <div className="my-2 h-px bg-gray-300"></div>
+
+                  <div className="py-2 px-4 flex gap-2 items-center justify-between">
+                    <label className="base-regular dark:text-gray-400">
+                      Guests
+                    </label>
+
+                    <CustomNumberInput
+                      value={guests ?? 0}
+                      onIncrement={onValueIncrementGuests}
+                      onDecrement={onValueDecrementGuests}
+                    />
+                  </div>
+                </>
+              ) : null}
+
               <ul className="base-regular">
                 {getRenderData().map((suggestion, index) => (
                   <li
@@ -184,15 +263,27 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
             </div>
           )}
 
-      <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-        <Image
-          className="cursor-pointer"
-          src="/assets/icons/toggle.svg"
-          width={20}
-          height={20}
-          alt="Icon"
-        />
-      </span>
+      {isChooseDate ? (
+        <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+          <Image
+            className="cursor-pointer"
+            src="/assets/icons/calendar.svg"
+            width={20}
+            height={20}
+            alt="Icon"
+          />
+        </span>
+      ) : (
+        <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+          <Image
+            className="cursor-pointer"
+            src="/assets/icons/toggle.svg"
+            width={20}
+            height={20}
+            alt="Icon"
+          />
+        </span>
+      )}
     </div>
   );
 };

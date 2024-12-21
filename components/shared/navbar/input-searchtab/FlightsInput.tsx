@@ -1,9 +1,9 @@
 import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLocations } from "@/lib/actions/SearchFlight/FetchLocationsActions";
-import { searchFlights } from "@/lib/actions/SearchFlight/SearchFlightActions";
+import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
+import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Location from "@/types/Location";
-import { formatEndDayToISO, formatStartDayToISO } from "@/utils/util";
+import { formatDayApi, isDateValid } from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -29,6 +29,11 @@ const FlightsInput = ({
   const [tripType, setTripType] = useState("One way");
   const [classType, setClassType] = useState("");
 
+  //TODO: error indicator
+  const [isMissingInfo, setIsMissingInfo] = useState(-1);
+  const [isUnalbleGetDestination, setIsUnalbleGetDestination] = useState(-1);
+  const [isInvalidDate, setIsInvalidDate] = useState(-1);
+
   //TODO: number of passeger
   const [passegers, setPassegers] = useState(0);
   const onValueIncrement = () => {
@@ -46,6 +51,15 @@ const FlightsInput = ({
   >();
   const tripTypes = ["One way", "Round trip"];
   const classTypes = ["First Class", "Business Class", "Economy Class"];
+  const getClassTypeReq = () => {
+    if (classType === "First Class") return "FIRST_CLASS";
+    if (classType === "Business Class") return "BUSINESS";
+    if (classType === "Economy Class") return "ECONOMY";
+  };
+
+  useEffect(() => {
+    if (selectedDateDepart) setSelectedDateReturn(undefined);
+  }, [tripType]);
 
   useEffect(() => {
     fetchLocations()
@@ -68,7 +82,6 @@ const FlightsInput = ({
   }
 
   const handleValid = () => {
-    console.log("here");
     if (
       !selectedDateDepart ||
       (tripType === "Round trip" && !selectedDateReturn) ||
@@ -83,20 +96,42 @@ const FlightsInput = ({
         variant: "error",
         duration: 3000,
       });
+      setIsMissingInfo(0);
+
       return false;
     } else if (
       !locations.data.find((item) => item.city === searchQueryFrom)?.id ||
       !locations.data.find((item) => item.city === searchQueryTo)?.id
     ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+
       toast({
         title: `Unable to get destinations.`,
-        description:
-          "Please select a different departure or arrival location!.",
+        description: "Please select a another departure or arrival location!.",
         variant: "error",
         duration: 3000,
       });
+      setIsUnalbleGetDestination(0);
+
+      return false;
+    } else if (
+      !isDateValid(selectedDateDepart) ||
+      !isDateValid(selectedDateDepart)
+    ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+      if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
+
+      toast({
+        title: `You must not choose a day in the past!`,
+        description: "Please select a another departure or return date.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
       return false;
     }
+
+    if (isInvalidDate === 0) setIsInvalidDate(1);
 
     return true;
   };
@@ -104,34 +139,38 @@ const FlightsInput = ({
   const searchFlightAPI = () => {
     if (!handleValid()) return;
 
-    searchFlights({
-      page: 0,
+    const params = {
+      // page: 0,
       roundTrip: tripType === "Round trip",
       departure_location_id:
         locations.data.find((item) => item.city === searchQueryFrom)?.id ?? "",
       arrival_location_id:
         locations.data.find((item) => item.city === searchQueryTo)?.id ?? "",
       departure_time_from: selectedDateDepart
-        ? formatStartDayToISO(selectedDateDepart)
+        ? formatDayApi(selectedDateDepart)
         : "",
       departure_time_to: selectedDateDepart
-        ? formatEndDayToISO(selectedDateDepart)
+        ? formatDayApi(selectedDateDepart)
         : "",
       return_time_from: selectedDateReturn
-        ? formatStartDayToISO(selectedDateReturn)
+        ? formatDayApi(selectedDateReturn)
         : "",
       return_time_to: selectedDateReturn
-        ? formatEndDayToISO(selectedDateReturn)
+        ? formatDayApi(selectedDateReturn)
         : "",
-      seat_classes: [classType],
-      min_price: 0,
-      max_price: 0,
-      order_by: "CHEAPEST",
+      seat_classes: [getClassTypeReq()],
+      // min_price: 0,
+      // max_price: 0,
+      // order_by: "CHEAPEST",
       passenger_count: passegers,
-      page_size: 10,
-    })
+      // page_size: 10,
+    };
+
+    console.log("params,", params);
+
+    searchFlights(params)
       .then((data: any) => {
-        console.log("data, data");
+        console.log("data", data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -147,6 +186,8 @@ const FlightsInput = ({
         <div className="w-[42.5%] flex gap-2 font-normal">
           <div className="flex-grow">
             <SearchDropdown
+              isMissingInfo={isMissingInfo}
+              isUnalbleGetDestination={isUnalbleGetDestination}
               label="From"
               placeholder="Hà Nội"
               data={locations.data.map((item) => item.city)}
@@ -156,6 +197,8 @@ const FlightsInput = ({
           </div>
           <div className="flex-grow">
             <SearchDropdown
+              isMissingInfo={isMissingInfo}
+              isUnalbleGetDestination={isUnalbleGetDestination}
               label="To"
               placeholder="Hồ Chí Minh"
               data={locations.data.map((item) => item.city)}
@@ -167,6 +210,7 @@ const FlightsInput = ({
 
         <div className="relative w-[14.28%]  font-normal">
           <SearchDropdown
+            isMissingInfo={isMissingInfo}
             label="Trip"
             placeholder="One way"
             isSelectTrip
@@ -178,6 +222,8 @@ const FlightsInput = ({
 
         <div className="relative  w-[21.61%] font-normal">
           <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            isInvalidDate={isInvalidDate}
             label={tripType === "Round trip" ? "Depart - Return" : "Depart"}
             placeholder={`1/12/2024 - 5/12/2024`}
             isChooseDate
@@ -212,6 +258,7 @@ const FlightsInput = ({
 
         <div className="relative  w-[21.61%] font-normal">
           <SearchDropdown
+            isMissingInfo={isMissingInfo}
             label="Passenger - Class"
             placeholder={`1 Passenger, Economy`}
             // ${selectedDateDepart || selectedDateReturn ? " - " : ""}

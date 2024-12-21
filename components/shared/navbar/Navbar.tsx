@@ -1,19 +1,15 @@
 "use client";
 
-import SearchTab from "@/components/shared/navbar/background-searchtab/HomeSearchTab";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-import HomeBackground from "./background-searchtab/HomeBackground";
 import FlightsBackground from "./background-searchtab/FlightsBackground";
+import HomeBackground from "./background-searchtab/HomeBackground";
 import StaysBackground from "./background-searchtab/StaysBackground";
 
 const Navbar = () => {
   const pathName = usePathname();
-  // const indicatorClass =
-  //   "mt-6 bg-primary-100 h-1 absolute z-100 w-20 bottom-0 mt-6 h-1 absolute z-100 w-20 bottom-0";
   const indicatorClass = "!border-primary-100";
 
   console.log(pathName === "/");
@@ -21,7 +17,7 @@ const Navbar = () => {
   return (
     // 60vh của background đè navbar, 144px phần dư ra của  searchtab
     <div
-      className={`relative ${
+      className={`relative z-50 ${
         (pathName === "/" ||
           pathName === "/find-flights" ||
           pathName === "/find-stays") &&

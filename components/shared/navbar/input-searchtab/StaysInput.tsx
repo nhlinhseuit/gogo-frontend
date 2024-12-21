@@ -1,115 +1,249 @@
 import CustomButton from "@/components/CustomButton";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import SearchDropdown from "../../SearchDropdown";
+import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
+import Location from "@/types/Location";
+import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import { formatDayApi, isDateValid } from "@/utils/util";
+import { searchStays } from "@/lib/actions/Search/SearchStayActions";
 
 const StaysInput = ({
   isSearchStay,
-  otherClass,
+  otherClasses,
 }: {
   isSearchStay?: boolean;
-  otherClass: string;
+  otherClasses?: string;
 }) => {
+  const { toast } = useToast();
+
+  const [locations, setLocations] = useState<{ data: Location[] }>({
+    data: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [searchDestination, setSearchDestination] = useState("");
+  const [selectedDateCheckin, setSelectedDateCheckin] = useState<
+    Date | undefined
+  >();
+  const [selectedDateCheckout, setSelectedDateCheckout] = useState<
+    Date | undefined
+  >();
+
+  //TODO: error indicator
+  const [isMissingInfo, setIsMissingInfo] = useState(-1);
+  const [isUnalbleGetDestination, setIsUnalbleGetDestination] = useState(-1);
+  const [isInvalidDate, setIsInvalidDate] = useState(-1);
+
+  //TODO: number of rooms and guests
+  const [rooms, setRooms] = useState(0);
+  const onValueIncrementRooms = () => {
+    setRooms((prev) => prev + 1);
+  };
+  const onValueDecrementRooms = () => {
+    if (rooms > 0) setRooms((prev) => prev - 1);
+  };
+
+  const [guests, setGuests] = useState(0);
+  const onValueIncrementGuests = () => {
+    setGuests((prev) => prev + 1);
+  };
+  const onValueDecrementGuests = () => {
+    if (guests > 0) setGuests((prev) => prev - 1);
+  };
+
+  useEffect(() => {
+    fetchLocations()
+      .then((data: any) => {
+        setLocations(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (isLoading) {
+    return <div className="py-16 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="py-16 text-center text-red-500">{error}</div>;
+  }
+
+  const handleValid = () => {
+    if (
+      !selectedDateCheckin ||
+      !selectedDateCheckout ||
+      searchDestination === "" ||
+      rooms === 0 ||
+      guests === 0
+    ) {
+      toast({
+        title: `Please fill in all the information!`,
+        description: "Re-check the information.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsMissingInfo(0);
+
+      return false;
+    } else if (
+      !locations.data.find((item) => item.city === searchDestination)?.id
+    ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+
+      toast({
+        title: `Unable to get destinations.`,
+        description: "Please select a another departure or arrival location!.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsUnalbleGetDestination(0);
+
+      return false;
+    } else if (
+      !isDateValid(selectedDateCheckin) ||
+      !isDateValid(selectedDateCheckout)
+    ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+      if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
+
+      toast({
+        title: `You must not choose a day in the past!`,
+        description: "Please select a another departure or return date.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
+
+      return false;
+    }
+
+    if (isInvalidDate === 0) setIsInvalidDate(1);
+
+    return true;
+  };
+
+  const searchStayAPI = () => {
+    if (!handleValid()) return;
+
+    const params = {
+      // page: 0,
+      location_id:
+        locations.data.find((item) => item.city === searchDestination)?.id ??
+        "",
+      checkin_date: selectedDateCheckin
+        ? formatDayApi(selectedDateCheckin)
+        : "",
+      checkout_date: selectedDateCheckout
+        ? formatDayApi(selectedDateCheckout)
+        : "",
+      rooms: rooms,
+      guests: guests,
+
+      // min_price
+      // max_price
+      // rating
+      // type
+      // page_size
+    };
+
+    console.log("params,", params);
+
+    searchStays(params)
+      .then((data: any) => {
+        console.log("data", data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  };
+
   return (
     <>
       {/* INPUT */}
-      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClass}`}>
+      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClasses}`}>
         <div className="relative  w-1/3 font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Enter Destination</label>
-          </div>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="Istanbul, Turkey"
-            className="border border-gray-300 rounded-md py-3  px-4 pr-10 pl-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            isUnalbleGetDestination={isUnalbleGetDestination}
+            label="Enter Destination"
+            placeholder="Hà Nội"
+            data={locations.data.map((item) => item.city)}
+            value={searchDestination}
+            onChange={(value) => setSearchDestination(value)}
           />
-
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <Image
-              src="/assets/icons/hotel.svg"
-              width={20}
-              height={20}
-              alt="Icon"
-            />
-          </span>
         </div>
 
         <div className="relative  w-1/6  font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Check In</label>
-          </div>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="Fri 12/2"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            isInvalidDate={isInvalidDate}
+            label={"Check In"}
+            placeholder={`1/12/2024`}
+            isChooseDate
+            isStaysInput
+            data={[]}
+            value={
+              selectedDateCheckin
+                ? format(selectedDateCheckin, "dd/MM/yyyy")
+                : ""
+            }
+            onChange={() => {}}
+            dateDepart={selectedDateCheckin}
+            onDateDepartChange={(date) => setSelectedDateCheckin(date)}
           />
-
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Image
-              className="cursor-pointer"
-              src="/assets/icons/calendar.svg"
-              width={20}
-              height={20}
-              alt="Icon"
-            />
-          </span>
         </div>
         <div className="relative  w-1/6  font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Check Out</label>
-          </div>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="Sun 12/4"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            isInvalidDate={isInvalidDate}
+            label={"Check Out"}
+            placeholder={`1/12/2024`}
+            isChooseDate
+            isStaysInput
+            data={[]}
+            value={
+              selectedDateCheckout
+                ? format(selectedDateCheckout, "dd/MM/yyyy")
+                : ""
+            }
+            onChange={() => {}}
+            dateDepart={selectedDateCheckout}
+            onDateDepartChange={(date) => setSelectedDateCheckout(date)}
           />
-
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Image
-              className="cursor-pointer"
-              src="/assets/icons/calendar.svg"
-              width={20}
-              height={20}
-              alt="Icon"
-            />
-          </span>
         </div>
 
         <div className="relative  w-1/3 font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Rooms - Guests</label>
-          </div>
-
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <Image
-              src="/assets/icons/user.svg"
-              width={20}
-              height={20}
-              alt="Icon"
-            />
-          </span>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="1 Room, 2 guests"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 pl-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            label="Rooms - Guests"
+            placeholder={`1 Room, 2 Guests`}
+            data={[]}
+            value={`${
+              rooms != 0
+                ? `${rooms} Rooms, `
+                : guests != 0
+                ? "___ Passengers, "
+                : ""
+            }${
+              guests != 0 ? `${guests} Guests` : rooms != 0 ? "___ Guests" : ""
+            }`}
+            onChange={() => {}}
+            isSelectRoomAndGuest
+            rooms={rooms}
+            onValueIncrementRooms={onValueIncrementRooms}
+            onValueDecrementRooms={onValueDecrementRooms}
+            guests={guests}
+            onValueIncrementGuests={onValueIncrementGuests}
+            onValueDecrementGuests={onValueDecrementGuests}
           />
-
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Image
-              className="cursor-pointer"
-              src="/assets/icons/toggle.svg"
-              width={20}
-              height={20}
-              alt="Icon"
-            />
-          </span>
         </div>
 
         {isSearchStay ? (
@@ -153,8 +287,9 @@ const StaysInput = ({
           </div>
 
           <CustomButton
-            srcUrl="/assets/icons/show_flights.svg"
-            text="Show Flights"
+            srcUrl="/assets/icons/show_places.svg"
+            text="Show Places"
+            onClick={searchStayAPI}
           />
         </div>
       )}
