@@ -79,7 +79,7 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
             alt="Airplane"
           />
           <div className="h-6 hidden md:block border-l border-gray-300"></div>
-          <img className="size-6" src="/assets/icons/IC_WIFI.svg" alt="wifi" />
+          <img className="size-6" src="/assets/icons/wifi.svg" alt="wifi" />
           <div className="h-6 hidden md:block border-l border-gray-300"></div>
           <img
             className="size-6"
