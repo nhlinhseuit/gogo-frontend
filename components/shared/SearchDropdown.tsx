@@ -3,6 +3,7 @@ import { enUS } from "date-fns/locale";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import CustomNumberInput from "./CustomNumberInput";
+import { normalizeSearchItem } from "@/utils/util";
 
 interface SearchDropdownProps {
   label: string;
@@ -108,7 +109,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       isSelectRoomAndGuest
       ? data
       : data.filter((suggestion) =>
-          suggestion.toLowerCase().includes(value.toLowerCase())
+          normalizeSearchItem(suggestion).includes(normalizeSearchItem(value))
         );
   };
 
