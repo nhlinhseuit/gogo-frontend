@@ -1,7 +1,74 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { convertDataNavigate } from "@/utils/util";
 
-const SriLanka = () => {
+const SriLanka = ({ type }: { type: string }) => {
+  const router = useRouter();
+
+  const handleNavigateFlight = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-flights/flights-search?${queryString}`);
+  };
+
+  const validateAndNavigateWithParamsFlight = () => {
+    const params = {
+      // page: 0,
+      roundTrip: false,
+      departure_location_id: "2",
+      arrival_location_id: "3",
+      departure_time_from: "2024-12-25",
+      departure_time_to: "2024-12-25",
+      return_time_from: "",
+      return_time_to: "",
+      seat_classes: ["FIRST_CLASS"],
+      // min_price: 0,
+      // max_price: 0,
+      // order_by: "CHEAPEST",
+      passenger_count: 1,
+      // page_size: 10,
+    };
+
+    handleNavigateFlight(params);
+  };
+
+  const handleNavigateHotel = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-stays/stays-search?${queryString}`);
+  };
+
+  const validateAndNavigateWithParamsHotel = () => {
+    const params = {
+      // page: 0,
+      location_id: "3",
+      checkin_date: "2024-12-25",
+      checkout_date: "2024-12-25",
+      rooms: 1,
+      guests: 1,
+
+      // min_price
+      // max_price
+      // rating
+      // type
+      // page_size
+    };
+
+    handleNavigateHotel(params);
+  };
+
+  const handleBook = () => {
+    if (type === "Hotel") {
+      validateAndNavigateWithParamsFlight();
+    } else {
+      validateAndNavigateWithParamsHotel();
+    }
+  };
   return (
     <div className="mt-4 w-full flex justify-between">
       <div className="relative w-[44%] h-424 bg-primary-100 p-6 rounded-2xl">
@@ -24,7 +91,7 @@ const SriLanka = () => {
           cuisines, traditions, and ways of living.
         </p>
 
-        <button className="w-full bg-white py-3 rounded-lg">
+        <button onClick={handleBook} className="w-full bg-white py-3 rounded-lg">
           <p className="paragraph-regular">Book Flight</p>
         </button>
       </div>

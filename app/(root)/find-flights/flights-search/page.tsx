@@ -10,7 +10,6 @@ import FlightsComp from "@/components/shared/searchFlight/flightComponent/Flight
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
-import { searchStays } from "@/lib/actions/Search/SearchStayActions";
 import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -121,6 +120,7 @@ export default function FlightsSearch() {
   useEffect(() => {
     searchFlights(params)
       .then((data: any) => {
+        console.log("params", params);
         console.log("data", data);
         // setIsLoading(false);
       })
@@ -164,6 +164,14 @@ export default function FlightsSearch() {
       <FlightsInput
         isSearchFlight
         otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
+        
+        departure_location={params.departure_location}
+        arrival_location={params.arrival_location}
+        tripTypeParams={params.roundTrip}
+        classTypeParams={params.seat_classes}
+        passegersParams={params.passenger_count}
+        selectedDateDepartParams={params.departure_time_from}
+        selectedDateReturnParams={params.return_time_from}
       />
 
       <div className="flex w-full mt-8">
