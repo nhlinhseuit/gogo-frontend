@@ -3,13 +3,15 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import FlightsBackground from "./background-searchtab/FlightsBackground";
 import HomeBackground from "./background-searchtab/HomeBackground";
 import StaysBackground from "./background-searchtab/StaysBackground";
 
 const Navbar = () => {
   const pathName = usePathname();
+  const router = useRouter();
+
   const indicatorClass = "!border-primary-100";
 
   console.log(pathName === "/");
@@ -186,16 +188,32 @@ const Navbar = () => {
             <SignInButton />
           </SignedOut>
           <SignedIn>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-9  w-9",
-                },
-                variables: {
-                  colorPrimary: "#ff7000",
-                },
-              }}
-            />
+            <div className="flex gap-2 items-center">
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "h-9  w-9",
+                  },
+                  variables: {
+                    colorPrimary: "#ff7000",
+                  },
+                }}
+              />
+              <p
+                onClick={() => {
+                  router.push(`/profile`);
+                }}
+                className={`
+                  cursor-pointer
+                  font-inter 
+                  body-semibold 
+                  ${pathName === "/" ? "text-white" : "text-dark-100"}
+                  dark:text-light-900 
+                  max-sm:hidden`}
+              >
+                View profile
+              </p>
+            </div>
           </SignedIn>
         </div>
       </nav>

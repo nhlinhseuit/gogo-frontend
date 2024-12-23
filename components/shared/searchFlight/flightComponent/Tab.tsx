@@ -1,6 +1,4 @@
-import React from "react";
 import Image from "next/image";
-import { formatCurrency } from "@/utils/util";
 
 const Tab = ({
   type,
