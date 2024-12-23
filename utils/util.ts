@@ -38,6 +38,31 @@ export const formatDayApi = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
+export const parseDayFromApi = (dateString: string): Date | undefined => {
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
+  
+  if (!dateRegex.test(dateString)) {
+    return undefined; // Chuỗi không hợp lệ
+  }
+  
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  // Tạo đối tượng Date (chú ý month - 1 vì tháng trong JS bắt đầu từ 0)
+  const parsedDate = new Date(year, month - 1, day);
+
+  // Kiểm tra tính hợp lệ của ngày (JS tự động sửa ngày không hợp lệ, cần kiểm tra lại)
+  if (
+    parsedDate.getFullYear() !== year ||
+    parsedDate.getMonth() !== month - 1 ||
+    parsedDate.getDate() !== day
+  ) {
+    return undefined; // Ngày không hợp lệ
+  }
+
+  return parsedDate;
+};
+
+
 // export const formatStartDayToISO = (date: Date): string => {
 //   date.setHours(0, 0, 0, 0);
 //   return date.toISOString();

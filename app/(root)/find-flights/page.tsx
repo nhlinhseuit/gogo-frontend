@@ -89,7 +89,7 @@ export default function FindFlights() {
 
       <div className="mt-16">
         <FindHeader />
-        <SriLanka />
+        <SriLanka type="Flight" />
       </div>
     </main>
   );

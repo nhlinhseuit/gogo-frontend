@@ -6,19 +6,52 @@ import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
 import Location from "@/types/Location";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { convertDataNavigate, formatDayApi, isDateValid } from "@/utils/util";
+import {
+  convertDataNavigate,
+  formatDayApi,
+  isDateValid,
+  parseDayFromApi,
+} from "@/utils/util";
 import { searchStays } from "@/lib/actions/Search/SearchStayActions";
 import { useRouter } from "next/navigation";
 
 const StaysInput = ({
   isSearchStay,
   otherClasses,
+
+  destination,
+  roomsParams,
+  guestsParams,
+  selectedCheckinDateParams,
+  selectedCheckoutDateParams,
 }: {
   isSearchStay?: boolean;
   otherClasses?: string;
+
+  destination?: string;
+  roomsParams?: number;
+  guestsParams?: number;
+  selectedCheckinDateParams?: string;
+  selectedCheckoutDateParams?: string;
 }) => {
   const { toast } = useToast();
   const router = useRouter();
+
+  //TODO: params passed in
+
+  const getCheckinDateParams = () => {
+    return selectedCheckinDateParams
+      ? parseDayFromApi(selectedCheckinDateParams)
+      : undefined;
+  };
+
+  const getCheckoutDateParams = () => {
+    return selectedCheckoutDateParams
+      ? parseDayFromApi(selectedCheckoutDateParams)
+      : undefined;
+  };
+
+  ///
 
   const [locations, setLocations] = useState<{ data: Location[] }>({
     data: [],
@@ -26,13 +59,15 @@ const StaysInput = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const [searchDestination, setSearchDestination] = useState("");
+  const [searchDestination, setSearchDestination] = useState(
+    destination !== undefined ? destination : ""
+  );
   const [selectedDateCheckin, setSelectedDateCheckin] = useState<
     Date | undefined
-  >();
+  >(getCheckinDateParams());
   const [selectedDateCheckout, setSelectedDateCheckout] = useState<
     Date | undefined
-  >();
+  >(getCheckoutDateParams());
 
   //TODO: error indicator
   const [isMissingInfo, setIsMissingInfo] = useState(-1);
@@ -40,7 +75,9 @@ const StaysInput = ({
   const [isInvalidDate, setIsInvalidDate] = useState(-1);
 
   //TODO: number of rooms and guests
-  const [rooms, setRooms] = useState(0);
+  const [rooms, setRooms] = useState(
+    roomsParams !== undefined ? roomsParams : 0
+  );
   const onValueIncrementRooms = () => {
     setRooms((prev) => prev + 1);
   };
@@ -48,7 +85,9 @@ const StaysInput = ({
     if (rooms > 0) setRooms((prev) => prev - 1);
   };
 
-  const [guests, setGuests] = useState(0);
+  const [guests, setGuests] = useState(
+    guestsParams !== undefined ? guestsParams : 0
+  );
   const onValueIncrementGuests = () => {
     setGuests((prev) => prev + 1);
   };
@@ -67,14 +106,6 @@ const StaysInput = ({
         setIsLoading(false);
       });
   }, []);
-
-  if (isLoading) {
-    return <div className="py-16 text-center">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="py-16 text-center text-red-500">{error}</div>;
-  }
 
   const handleValid = () => {
     if (
@@ -150,6 +181,7 @@ const StaysInput = ({
       location_id:
         locations.data.find((item) => item.city === searchDestination)?.id ??
         "",
+      location: searchDestination,
       checkin_date: selectedDateCheckin
         ? formatDayApi(selectedDateCheckin)
         : "",
@@ -260,7 +292,7 @@ const StaysInput = ({
         </div>
 
         {isSearchStay ? (
-          <div className="ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
+          <div className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
             <Image
               src="/assets/icons/searchFlight.svg"
               alt="Search"

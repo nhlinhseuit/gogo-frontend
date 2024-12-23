@@ -2,7 +2,12 @@ import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
 import Location from "@/types/Location";
-import { convertDataNavigate, formatDayApi, isDateValid } from "@/utils/util";
+import {
+  convertDataNavigate,
+  formatDayApi,
+  isDateValid,
+  parseDayFromApi,
+} from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,12 +17,61 @@ import SearchDropdown from "../../SearchDropdown";
 const FlightsInput = ({
   isSearchFlight,
   otherClass,
+
+  departure_location,
+  arrival_location,
+  tripTypeParams,
+  classTypeParams,
+  passegersParams,
+  selectedDateDepartParams,
+  selectedDateReturnParams,
 }: {
   isSearchFlight?: boolean;
   otherClass?: string;
+
+  departure_location?: string;
+  arrival_location?: string;
+  tripTypeParams?: boolean;
+  classTypeParams?: string;
+  passegersParams?: number;
+  selectedDateDepartParams?: string;
+  selectedDateReturnParams?: string;
 }) => {
   const { toast } = useToast();
   const router = useRouter();
+
+  //TODO: params passed in
+
+  const getTripTypeParams = () => {
+    return tripTypeParams !== undefined
+      ? tripTypeParams === true
+        ? "Round trip"
+        : "One way"
+      : "One way";
+  };
+
+  const getClassTypeParams = () => {
+    if (classTypeParams !== undefined) {
+      if (classTypeParams?.includes("FIRST_CLASS")) return "First Class";
+      if (classTypeParams?.includes("BUSINESS")) return "Business Class";
+      if (classTypeParams?.includes("ECONOMY")) return "Economy Class";
+    }
+    return "";
+  };
+
+  const getDateDepartParams = () => {
+    return selectedDateDepartParams
+      ? parseDayFromApi(selectedDateDepartParams)
+      : undefined;
+  };
+
+  const getDateReturnParams = () => {
+    return selectedDateReturnParams
+      ? parseDayFromApi(selectedDateReturnParams)
+      : undefined;
+  };
+
+  ///
 
   const [locations, setLocations] = useState<{ data: Location[] }>({
     data: [],
@@ -25,10 +79,14 @@ const FlightsInput = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const [searchQueryFrom, setSearchQueryFrom] = useState("");
-  const [searchQueryTo, setSearchQueryTo] = useState("");
-  const [tripType, setTripType] = useState("One way");
-  const [classType, setClassType] = useState("");
+  const [searchQueryFrom, setSearchQueryFrom] = useState(
+    departure_location !== undefined ? departure_location : ""
+  );
+  const [searchQueryTo, setSearchQueryTo] = useState(
+    arrival_location !== undefined ? arrival_location : ""
+  );
+  const [tripType, setTripType] = useState(getTripTypeParams());
+  const [classType, setClassType] = useState(getClassTypeParams());
 
   //TODO: error indicator
   const [isMissingInfo, setIsMissingInfo] = useState(-1);
@@ -36,7 +94,9 @@ const FlightsInput = ({
   const [isInvalidDate, setIsInvalidDate] = useState(-1);
 
   //TODO: number of passeger
-  const [passegers, setPassegers] = useState(0);
+  const [passegers, setPassegers] = useState(
+    passegersParams ? passegersParams : 0
+  );
   const onValueIncrement = () => {
     setPassegers((prev) => prev + 1);
   };
@@ -46,12 +106,13 @@ const FlightsInput = ({
 
   const [selectedDateDepart, setSelectedDateDepart] = useState<
     Date | undefined
-  >();
+  >(getDateDepartParams());
   const [selectedDateReturn, setSelectedDateReturn] = useState<
     Date | undefined
-  >();
+  >(getDateReturnParams());
   const tripTypes = ["One way", "Round trip"];
   const classTypes = ["First Class", "Business Class", "Economy Class"];
+
   const getClassTypeReq = () => {
     if (classType === "First Class") return "FIRST_CLASS";
     if (classType === "Business Class") return "BUSINESS";
@@ -59,7 +120,9 @@ const FlightsInput = ({
   };
 
   useEffect(() => {
-    if (selectedDateDepart) setSelectedDateReturn(undefined);
+    if (tripType === "One Way") {
+      if (selectedDateDepart) setSelectedDateReturn(undefined);
+    }
   }, [tripType]);
 
   useEffect(() => {
@@ -122,9 +185,7 @@ const FlightsInput = ({
       });
       setIsInvalidDate(0);
       return false;
-    } else if (
-      selectedDateReturn && (selectedDateReturn < selectedDateDepart)
-    ) {
+    } else if (selectedDateReturn && selectedDateReturn < selectedDateDepart) {
       if (isMissingInfo === 0) setIsMissingInfo(1);
       if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
 
@@ -149,8 +210,10 @@ const FlightsInput = ({
     const params = {
       // page: 0,
       roundTrip: tripType === "Round trip",
+      departure_location: searchQueryFrom,
       departure_location_id:
         locations.data.find((item) => item.city === searchQueryFrom)?.id ?? "",
+      arrival_location: searchQueryTo,
       arrival_location_id:
         locations.data.find((item) => item.city === searchQueryTo)?.id ?? "",
       departure_time_from: selectedDateDepart
@@ -289,7 +352,7 @@ const FlightsInput = ({
         </div>
 
         {isSearchFlight ? (
-          <div className="ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
+          <div className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
             <Image
               src="/assets/icons/searchFlight.svg"
               alt="Search"
