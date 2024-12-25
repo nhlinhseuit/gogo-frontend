@@ -1,6 +1,6 @@
 import "@/app/globals.css";
 import React from "react";
-import PriceDetails from "@/components/shared/details/PriceDetails";
+import PriceDetailsComponent from "@/components/shared/details/PriceDetailsComponent";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
 import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
@@ -20,7 +20,7 @@ const FlightPayment: React.FC<FlightPaymentProps> = ({flightId}) => {
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
-          <PriceDetails type="flight" id={1}/>
+          <PriceDetailsComponent type="flight" id={1}/>
         </div>
       </div>
     </main>

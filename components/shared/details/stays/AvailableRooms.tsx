@@ -1,3 +1,5 @@
+"use client";
+
 import "@/app/globals.css"
 import React, {useEffect, useState} from "react";
 import type Room from "@/types/Room";
@@ -9,27 +11,6 @@ interface AvailableRoomsProps {
 }
 
 const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
-  const mockRooms = [
-    {
-      id: 1,
-      imageUrl: "/assets/images/mock-room-image.png",
-      roomType: "Single room",
-      price: 100,
-    },
-    {
-      id: 2,
-      imageUrl: "/assets/images/mock-room-image.png",
-      roomType: "Double room",
-      price: 150,
-    },
-    {
-      id: 3,
-      imageUrl: "/assets/images/mock-room-image.png",
-      roomType: "Suite",
-      price: 200,
-    }
-  ]
-
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
   useEffect(() => {
@@ -48,7 +29,7 @@ const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
       <div>
         {availableRooms.map((room) => {
           return (
-            <RoomComponent room={room}/>
+            <RoomComponent stayId={stayId} room={room} key={room.id}/>
           )
         })}
       </div>
