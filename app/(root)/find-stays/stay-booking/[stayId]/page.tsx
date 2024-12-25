@@ -1,44 +1,49 @@
 "use client";
 
 import "@/app/globals.css";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
-import PriceDetails from "@/components/shared/details/PriceDetails";
-import StayInformation from "@/components/shared/details/stays/StayInformation";
+import PriceDetailsComponent from "@/components/shared/details/PriceDetailsComponent";
+import StayInformationComponent from "@/components/shared/details/stays/StayInformationComponent";
 import Stay from "@/types/Stay";
-import {fetchRoom, fetchStay} from "@/lib/actions/StayActions";
+import { fetchStay } from "@/lib/actions/StayActions";
 import CountriesDropdown from "@/components/shared/CountriesDropdown";
+import { useParams, useSearchParams } from "next/navigation";
 
-interface StayBookingPageProps {
-  id: string;
+interface PageParams {
+  stayId: string;
 }
+const StayBookingPage: React.FC = () => {
+  const { stayId } = useParams() as unknown as PageParams;
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get("room_id");
 
-const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
-  // Ensure target date format is consistent
-  const targetTime = new Date("2024-11-01T24:00:00").getTime();
-
+  const targetTime = new Date("2024-12-30T00:00:00").getTime();
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const [stayData, setStayData] = useState<Stay | null>(null);
 
-  const [stayData, setStayData] = useState<Stay|null>(null)
   useEffect(() => {
-    fetchStay(props.id).then((data) => {
+    if (!stayId || !roomId) return;
+
+    fetchStay(stayId).then((data) => {
       setStayData(data);
     }).catch((error) => {
       console.error('Error fetching stay:', error);
-    })
-    console.log(new Date().getTime());
+    });
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetTime - now;
-      console.log("haha")
+
       if (distance < 0) {
         clearInterval(interval);
         setTimeLeft("Time's up!");
       } else {
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
         setTimeLeft(`${minutes}m ${seconds}s`);
       }
     }, 1000);
@@ -46,10 +51,17 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
     return () => clearInterval(interval);
   }, [targetTime]);
 
+  if (!stayId || !roomId) {
+    return <div>Missing required parameters</div>;
+  }
+
+  if (!stayData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <main className="flex w-full flex-col gap-4">
-      <div
-        className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
+      <div className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
         <span>We are holding this room...</span>
         <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>
         <span>{timeLeft}</span>
@@ -57,26 +69,25 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
 
       <div className="grid w-full grid-cols-5 gap-8 mt-">
         <div className="col-span-3 flex flex-col gap-8">
-          <StayInformation flightId={1} showPrice={true}/>
+          <StayInformationComponent stayId={stayId} roomId={roomId}/>
           <div className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
-
             <span className="h2-bold">Who is the lead guest?</span>
             <form action="" className="grid grid-cols-2 gap-4">
               <div className="flex flex-col">
-                <label htmlFor="name">First Name</label>
-                <input type="text" placeholder="First Name" className="border-2 rounded-md p-2"/>
+                <label htmlFor="firstName">First Name</label>
+                <input id="firstName" type="text" placeholder="First Name" className="border-2 rounded-md p-2"/>
               </div>
               <div className="flex flex-col">
-                <label htmlFor="name">Last Name</label>
-                <input type="text" placeholder="Last Name" className="border-2 rounded-md p-2"/>
+                <label htmlFor="lastName">Last Name</label>
+                <input id="lastName" type="text" placeholder="Last Name" className="border-2 rounded-md p-2"/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="email">Email</label>
-                <input type="email" placeholder="Email" className="border-2 rounded-md p-2"/>
+                <input id="email" type="email" placeholder="Email" className="border-2 rounded-md p-2"/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="phone">Phone</label>
-                <input type="tel" placeholder="Phone" className="border-2 rounded-md p-2"/>
+                <input id="phone" type="tel" placeholder="Phone" className="border-2 rounded-md p-2"/>
               </div>
               <div className="flex flex-col col-span-2">
                 <label htmlFor="country">Country</label>
@@ -89,7 +100,7 @@ const StayBookingPage: React.FC<StayBookingPageProps> = (props) => {
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
-          <PriceDetails type="flight" id={1}/>
+          <PriceDetailsComponent type="room" id={roomId}/>
         </div>
       </div>
     </main>

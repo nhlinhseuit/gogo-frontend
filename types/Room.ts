@@ -8,6 +8,7 @@ interface Room {
   service_fee: number;
   is_available: boolean;
   max_guests: number;
+  image_url: string;
 }
 
 export default Room;

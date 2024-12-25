@@ -1,31 +1,40 @@
 import "@/app/globals.css"
+import type Seat from "@/types/Seat";
+import type Room from "@/types/Room";
 
-import React from "react";
-import {mock} from "node:test";
+import React, {useEffect} from "react";
 import Ratings from "@/components/shared/details/Ratings";
+import {fetchSeat} from "@/lib/actions/SeatActions";
+import {fetchRoom} from "@/lib/actions/RoomActions";
 
-interface PaymentDetailsProps {
+interface PriceDetailsProps {
   type: string;
-  id: number;
+  id: string;
+  parentId: string
 }
 
-const PriceDetails: React.FC<PaymentDetailsProps> = (props) => {
+const PriceDetailsComponent: React.FC<PriceDetailsProps> = (props) => {
+  const [paymentDetails, setPaymentDetails] = React.useState<any>(null);
+  const [parent, setParent] = React.useState<any>(null);
+  useEffect(() => {
+    if (props.type === 'seat') {
+      fetchSeat(props.id).then((data) => {
+        setPaymentDetails(data);
+      }).catch((error) => {
+        console.error('Error fetching seat:', error);
+      });
+      fetchFlight
+    } else if (props.type === 'room') {
+      fetchRoom(props.id).then((data) => {
+        setPaymentDetails(data);
+      }).catch((error) => {
+        console.error('Error fetching room:', error);
+      });
+    }
+  }, []);
 
-  const mockData = {
-    name: "Emirates A390 Airbus",
-    tier: "Economy",
-    averageRating: 4.5,
-    rating: "Very Good",
-    totalRatings: 100,
-  };
-
-  const mockStayData = {
-    name: "Hotel California",
-    location: "Los Angeles, California",
-    roomType: "Deluxe Room - 1 King Bed",
-    averageRating: 4.5,
-    rating: "Very Good",
-    totalRatings: 100,
+  if (!paymentDetails) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -33,8 +42,10 @@ const PriceDetails: React.FC<PaymentDetailsProps> = (props) => {
       <div className="flex flex-col gap-6 md:flex-row">
         <img className="rounded size-[120px]" src="/assets/images/flight-mock-image00001.jpg" alt="Stay"/>
         <div className="flex flex-grow flex-col gap-1">
-          <span className="w-full overflow-ellipsis">{props.type === "flight" ? mockData.tier : mockStayData.name}</span>
-          <span className="overflow-ellipsis text-xl font-semibold">{ props.type === "flight" ? mockData.name : mockStayData.roomType}</span>
+          <span
+            className="w-full overflow-ellipsis">{props.type === "seat" ? paymentDetails.seatClass : paymentDetails.name}</span>
+          <span
+            className="overflow-ellipsis text-xl font-semibold">{props.type === "seat" ? mockData.name : mockStayData.roomType}</span>
           <Ratings rating={4.2} numberOfReviews={54}/>
         </div>
       </div>
@@ -73,4 +84,4 @@ const PriceDetails: React.FC<PaymentDetailsProps> = (props) => {
   );
 }
 
-export default PriceDetails;
+export default PriceDetailsComponent;
