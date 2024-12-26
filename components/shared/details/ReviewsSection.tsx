@@ -2,7 +2,7 @@
 
 import "@/app/globals.css";
 import React from "react";
-import Review from "@/components/shared/Review";
+import ReviewComponent from "@/components/shared/ReviewComponent";
 
 interface ReviewsSectionProps {
   type: String;

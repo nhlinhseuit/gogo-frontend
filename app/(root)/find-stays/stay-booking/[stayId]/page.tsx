@@ -1,37 +1,64 @@
 "use client";
 
 import "@/app/globals.css";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import PriceDetailsComponent from "@/components/shared/details/PriceDetailsComponent";
 import StayInformationComponent from "@/components/shared/details/stays/StayInformationComponent";
-import Stay from "@/types/Stay";
-import { fetchStay } from "@/lib/actions/StayActions";
+import type Stay from "@/types/Stay";
+import type Room from "@/types/Room";
+import {fetchStay} from "@/lib/actions/StayActions";
 import CountriesDropdown from "@/components/shared/CountriesDropdown";
-import { useParams, useSearchParams } from "next/navigation";
+import {useParams, useSearchParams} from "next/navigation";
+import {fetchRoom} from "@/lib/actions/RoomActions";
+import Price from "@/types/Price";
 
 interface PageParams {
   stayId: string;
 }
+
 const StayBookingPage: React.FC = () => {
-  const { stayId } = useParams() as unknown as PageParams;
+  const {stayId} = useParams() as unknown as PageParams;
   const searchParams = useSearchParams();
   const roomId = searchParams.get("room_id");
 
   const targetTime = new Date("2024-12-30T00:00:00").getTime();
+  const [price, setPrice] = useState<Price | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [stayData, setStayData] = useState<Stay | null>(null);
+  const [roomData, setRoomData] = useState<Room | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string>("full"); // Default to 'full'
 
   useEffect(() => {
-    if (!stayId || !roomId) return;
-
     fetchStay(stayId).then((data) => {
       setStayData(data);
     }).catch((error) => {
       console.error('Error fetching stay:', error);
     });
+    fetchRoom(roomId!).then((data) => {
+      setRoomData(data);
+    }).catch((error) => {
+      console.error('Error fetching room:', error);
+    })
+
   }, []);
+
+  useEffect(() => {
+    if (roomData) {
+      setPrice({
+        base_fare: roomData.base_fare ?? 0,
+        discount: roomData.discount ?? 0,
+        tax: roomData.tax ?? 0,
+        service_fee: roomData.service_fee ?? 0,
+        total:
+          (roomData.base_fare ?? 0) -
+          (roomData.discount ?? 0) +
+          (roomData.tax ?? 0) +
+          (roomData.service_fee ?? 0),
+      });
+    }
+  }, [roomData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,7 +88,8 @@ const StayBookingPage: React.FC = () => {
 
   return (
     <main className="flex w-full flex-col gap-4">
-      <div className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
+      <div
+        className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
         <span>We are holding this room...</span>
         <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>
         <span>{timeLeft}</span>
@@ -95,12 +123,12 @@ const StayBookingPage: React.FC = () => {
               </div>
             </form>
           </div>
-          <PaymentOptions/>
+          <PaymentOptions total={price?.total ?? 0} checkout={"2024-12-30T12:00:00"} selectedOption={selectedOption} setSelectedOption={setSelectedOption}/>
           <PaymentCardSelection/>
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
-          <PriceDetailsComponent type="room" id={roomId}/>
+          <PriceDetailsComponent room={roomData} stay={stayData} seat={null} flight={null} price={price!}/>
         </div>
       </div>
     </main>
