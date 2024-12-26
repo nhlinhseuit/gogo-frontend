@@ -51,8 +51,8 @@ const StayInformationComponent: React.FC<StayInformationComponentProps> = (props
       </div>
 
       <div
-        className="flex w-full flex-col items-center gap-8 rounded-md px-8 py-4 border-[1px] border-primary-100 md:flex-row">
-        <img src="/assets/icons/emirates-logo.svg" alt="Emirates Logo"/>
+        className="flex w-full flex-col items-center gap-8 rounded-md px-4 py-2 border-[1px] border-primary-100 md:flex-row">
+        <img className="h-20 w-24 rounded" src={stayData.featured_images[0].url} alt="Emirates Logo"/>
         <div className="flex flex-col justify-between gap-1">
           <span className="h3-semibold">{stayData.name}</span>
           <span className="text-sm font-light flex flex-row items-center"><img src="/assets/icons/location.svg"
