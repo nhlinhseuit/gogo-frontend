@@ -8,7 +8,7 @@ import AvailableRooms from "@/components/shared/details/stays/AvailableRooms";
 import AmenitiesComponent from "@/components/shared/details/stays/AmenitiesComponent";
 import AdvantageComponent from "@/components/shared/details/stays/AdvantageComponent";
 import ImageModal from "@/components/shared/details/stays/ImageModal";
-import { fetchStay } from "@/lib/actions/StayActions";
+import {fetchAvailableRooms, fetchStay} from "@/lib/actions/StayActions";
 
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
@@ -22,7 +22,8 @@ interface StayDetailProp {
   };
 }
 
-export default function StayDetail({ params }: StayDetailProp) {
+
+export default function StayDetail({params}: StayDetailProp) {
   const [stayData, setStayData] = useState<Stay | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -118,6 +119,7 @@ export default function StayDetail({ params }: StayDetailProp) {
           <button className="rounded-md px-9 py-4 bg-primary-100">
             Book Now
           </button>
+          <a href="#available-rooms" className="rounded-md px-9 py-4 bg-primary-100">Book Now</a>
         </div>
       </div>
 
@@ -173,7 +175,9 @@ export default function StayDetail({ params }: StayDetailProp) {
         <AdvantageComponent name={"Free Wi-Fi"} />
       </div>
 
-      <AvailableRooms stayId={Number(stayData?.id)} />
+      <div id="available-rooms">
+        <AvailableRooms stayId={stayData!.id}/>
+      </div>
 
       <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-4 md:flex-row md:justify-between">
