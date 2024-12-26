@@ -1,92 +1,358 @@
 import CustomButton from "@/components/CustomButton";
+import { useToast } from "@/hooks/use-toast";
+import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
+import Location from "@/types/Location";
+import {
+  convertDataNavigate,
+  formatDayApi,
+  isDateValid,
+  parseDayFromApi,
+} from "@/utils/util";
+import { format } from "date-fns";
 import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import SearchDropdown from "../../SearchDropdown";
 
 const FlightsInput = ({
   isSearchFlight,
   otherClass,
+
+  departure_location,
+  arrival_location,
+  tripTypeParams,
+  classTypeParams,
+  passegersParams,
+  selectedDateDepartParams,
+  selectedDateReturnParams,
 }: {
   isSearchFlight?: boolean;
   otherClass?: string;
+
+  departure_location?: string;
+  arrival_location?: string;
+  tripTypeParams?: boolean;
+  classTypeParams?: string;
+  passegersParams?: number;
+  selectedDateDepartParams?: string;
+  selectedDateReturnParams?: string;
 }) => {
+  const { toast } = useToast();
+  const router = useRouter();
+
+  //TODO: params passed in
+
+  const getTripTypeParams = () => {
+    return tripTypeParams !== undefined
+      ? tripTypeParams === true
+        ? "Round trip"
+        : "One way"
+      : "One way";
+  };
+
+  const getClassTypeParams = () => {
+    if (classTypeParams !== undefined) {
+      if (classTypeParams?.includes("FIRST_CLASS")) return "First Class";
+      if (classTypeParams?.includes("BUSINESS")) return "Business Class";
+      if (classTypeParams?.includes("ECONOMY")) return "Economy Class";
+    }
+    return "";
+  };
+
+  const getDateDepartParams = () => {
+    return selectedDateDepartParams
+      ? parseDayFromApi(selectedDateDepartParams)
+      : undefined;
+  };
+
+  const getDateReturnParams = () => {
+    return selectedDateReturnParams
+      ? parseDayFromApi(selectedDateReturnParams)
+      : undefined;
+  };
+
+  ///
+
+  const [locations, setLocations] = useState<{ data: Location[] }>({
+    data: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  const [searchQueryFrom, setSearchQueryFrom] = useState(
+    departure_location !== undefined ? departure_location : ""
+  );
+  const [searchQueryTo, setSearchQueryTo] = useState(
+    arrival_location !== undefined ? arrival_location : ""
+  );
+  const [tripType, setTripType] = useState(getTripTypeParams());
+  const [classType, setClassType] = useState(getClassTypeParams());
+
+  //TODO: error indicator
+  const [isMissingInfo, setIsMissingInfo] = useState(-1);
+  const [isUnalbleGetDestination, setIsUnalbleGetDestination] = useState(-1);
+  const [isInvalidDate, setIsInvalidDate] = useState(-1);
+
+  //TODO: number of passeger
+  const [passegers, setPassegers] = useState(
+    passegersParams ? passegersParams : 0
+  );
+  const onValueIncrement = () => {
+    setPassegers((prev) => prev + 1);
+  };
+  const onValueDecrement = () => {
+    if (passegers > 0) setPassegers((prev) => prev - 1);
+  };
+
+  const [selectedDateDepart, setSelectedDateDepart] = useState<
+    Date | undefined
+  >(getDateDepartParams());
+  const [selectedDateReturn, setSelectedDateReturn] = useState<
+    Date | undefined
+  >(getDateReturnParams());
+  const tripTypes = ["One way", "Round trip"];
+  const classTypes = ["First Class", "Business Class", "Economy Class"];
+
+  const getClassTypeReq = () => {
+    if (classType === "First Class") return "FIRST_CLASS";
+    if (classType === "Business Class") return "BUSINESS";
+    if (classType === "Economy Class") return "ECONOMY";
+  };
+
+  useEffect(() => {
+    if (tripType === "One Way") {
+      if (selectedDateDepart) setSelectedDateReturn(undefined);
+    }
+  }, [tripType]);
+
+  useEffect(() => {
+    fetchLocations()
+      .then((data: any) => {
+        setLocations(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const handleValid = () => {
+    if (
+      !selectedDateDepart ||
+      (tripType === "Round trip" && !selectedDateReturn) ||
+      searchQueryFrom === "" ||
+      searchQueryTo === "" ||
+      classType === "" ||
+      passegers === 0
+    ) {
+      toast({
+        title: `Please fill in all the information!`,
+        description: "Re-check the information.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsMissingInfo(0);
+
+      return false;
+    } else if (
+      !locations.data.find((item) => item.city === searchQueryFrom)?.id ||
+      !locations.data.find((item) => item.city === searchQueryTo)?.id
+    ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+
+      toast({
+        title: `Unable to get destinations.`,
+        description: "Please select a another departure or arrival location!.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsUnalbleGetDestination(0);
+
+      return false;
+    } else if (
+      !isDateValid(selectedDateDepart) ||
+      (selectedDateReturn && !isDateValid(selectedDateReturn))
+    ) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+      if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
+
+      toast({
+        title: `You must not choose a day in the past!`,
+        description: "Please select a another departure or return date.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
+      return false;
+    } else if (selectedDateReturn && selectedDateReturn < selectedDateDepart) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+      if (isUnalbleGetDestination === 0) setIsUnalbleGetDestination(1);
+
+      toast({
+        title: `Date return can not be earlier than date depart!`,
+        description: "Please select a another departure or return date.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
+      return false;
+    }
+
+    if (isInvalidDate === 0) setIsInvalidDate(1);
+
+    return true;
+  };
+
+  const validateAndNavigateWithParams = () => {
+    if (!handleValid()) return;
+
+    const params = {
+      // page: 0,
+      roundTrip: tripType === "Round trip",
+      departure_location: searchQueryFrom,
+      departure_location_id:
+        locations.data.find((item) => item.city === searchQueryFrom)?.id ?? "",
+      arrival_location: searchQueryTo,
+      arrival_location_id:
+        locations.data.find((item) => item.city === searchQueryTo)?.id ?? "",
+      departure_time_from: selectedDateDepart
+        ? formatDayApi(selectedDateDepart)
+        : "",
+      departure_time_to: selectedDateDepart
+        ? formatDayApi(selectedDateDepart)
+        : "",
+      return_time_from: selectedDateReturn
+        ? formatDayApi(selectedDateReturn)
+        : "",
+      return_time_to: selectedDateReturn
+        ? formatDayApi(selectedDateReturn)
+        : "",
+      seat_classes: [getClassTypeReq()],
+      // min_price: 0,
+      // max_price: 0,
+      // order_by: "CHEAPEST",
+      passenger_count: passegers,
+      // page_size: 10,
+    };
+
+    handleNavigate(params);
+  };
+
+  const handleNavigate = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-flights/flights-search?${queryString}`);
+  };
+
   return (
     <>
       {/* INPUT */}
       <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClass}`}>
-        <div className="relative  w-[28.57%] font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">From - To</label>
-          </div>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="Lahore - Karachi"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
-          />
-
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Image
-              className="cursor-pointer"
-              src="/assets/icons/swap.svg"
-              width={20}
-              height={20}
-              alt="Icon"
+        <div className="w-[42.5%] flex gap-2 font-normal">
+          <div className="flex-grow">
+            <SearchDropdown
+              isLoading={isLoading}
+              error={error}
+              isMissingInfo={isMissingInfo}
+              isUnalbleGetDestination={isUnalbleGetDestination}
+              label="From"
+              placeholder="Hà Nội"
+              data={locations.data.map((item) => item.city)}
+              value={searchQueryFrom}
+              onChange={(value) => setSearchQueryFrom(value)}
             />
-          </span>
-        </div>
-
-        <div className="relative  w-[14.28%]  font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Trip</label>
           </div>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="Return"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
-          />
-
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Image
-              className="cursor-pointer"
-              src="/assets/icons/toggle.svg"
-              width={20}
-              height={20}
-              alt="Icon"
+          <div className="flex-grow">
+            <SearchDropdown
+              isLoading={isLoading}
+              error={error}
+              isMissingInfo={isMissingInfo}
+              isUnalbleGetDestination={isUnalbleGetDestination}
+              label="To"
+              placeholder="Hồ Chí Minh"
+              data={locations.data.map((item) => item.city)}
+              value={searchQueryTo}
+              onChange={(value) => setSearchQueryTo(value)}
             />
-          </span>
+          </div>
         </div>
 
-        <div className="relative  w-[28.57%] font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Depart - Return</label>
-          </div>
-
-          <input
-            id="input-field"
-            type="text"
-            placeholder="07 Nov 22 - 13 Nov 22"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
+        <div className="relative w-[14.28%]  font-normal">
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            label="Trip"
+            placeholder="One way"
+            isSelectTrip
+            data={tripTypes}
+            value={tripType}
+            onChange={(value) => setTripType(value)}
           />
         </div>
 
-        <div className="relative  w-[28.57%] font-normal">
-          <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-            <label className="small-medium">Passenger</label>
-          </div>
+        <div className="relative  w-[21.61%] font-normal">
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            isInvalidDate={isInvalidDate}
+            label={tripType === "Round trip" ? "Depart - Return" : "Depart"}
+            placeholder={
+              tripType === "Round trip" ? `1/12/2024 - 5/12/2024` : "1/12/2024"
+            }
+            isChooseDate
+            isRoundTrip={tripType === "Round trip"}
+            data={[]}
+            value={
+              tripType !== "Round trip"
+                ? selectedDateDepart
+                  ? format(selectedDateDepart, "dd/MM/yyyy")
+                  : ""
+                : `${
+                    selectedDateDepart
+                      ? format(selectedDateDepart, "dd/MM/yyyy")
+                      : selectedDateReturn
+                      ? "__/__/____"
+                      : ""
+                  }${selectedDateDepart || selectedDateReturn ? " - " : ""}${
+                    selectedDateReturn
+                      ? format(selectedDateReturn, "dd/MM/yyyy")
+                      : selectedDateDepart
+                      ? "__/__/____"
+                      : ""
+                  }`
+            }
+            onChange={() => {}}
+            dateDepart={selectedDateDepart}
+            onDateDepartChange={(date) => setSelectedDateDepart(date)}
+            dateReturn={selectedDateReturn}
+            onDateReturnChange={(date) => setSelectedDateReturn(date)}
+          />
+        </div>
 
-          <input
-            id="input-field"
-            type="text"
-            placeholder="1 Passenger, Economy"
-            className="border border-gray-300 rounded-md py-3 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 w-full"
+        <div className="relative  w-[21.61%] font-normal">
+          <SearchDropdown
+            isMissingInfo={isMissingInfo}
+            label="Passenger - Class"
+            placeholder={`1 Passenger, Economy`}
+            // ${selectedDateDepart || selectedDateReturn ? " - " : ""}
+            data={classTypes}
+            value={`${
+              passegers != 0
+                ? `${passegers} Passengers, `
+                : classType != ""
+                ? "___ Passengers, "
+                : ""
+            }${classType != "" ? classType : passegers != 0 ? "___" : ""}`}
+            onChange={(value) => setClassType(value)}
+            isSelectPasseger
+            passegers={passegers}
+            onValueIncrement={onValueIncrement}
+            onValueDecrement={onValueDecrement}
           />
         </div>
 
         {isSearchFlight ? (
-          <div className="ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
+          <div className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
             <Image
               src="/assets/icons/searchFlight.svg"
               alt="Search"
@@ -94,9 +360,7 @@ const FlightsInput = ({
               height={20}
             />
           </div>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </div>
 
       {/* ACTION */}
@@ -125,10 +389,18 @@ const FlightsInput = ({
             </p>
           </div>
 
+          {/* <Link
+            href={{
+              pathname: "/find-flights/flights-search",
+              query: { param1: "value1", param2: "value2" },
+            }}
+          > */}
           <CustomButton
             srcUrl="/assets/icons/show_flights.svg"
             text="Show Flights"
+            onClick={validateAndNavigateWithParams}
           />
+          {/* </Link> */}
         </div>
       )}
     </>

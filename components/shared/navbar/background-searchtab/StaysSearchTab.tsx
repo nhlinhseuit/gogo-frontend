@@ -1,12 +1,6 @@
-import Image from "next/image";
-import React, { use, useState } from "react";
-import CustomButton from "../../../CustomButton";
 import StaysInput from "../input-searchtab/StaysInput";
 
 const StaysSearchTab = () => {
-  const [searchFilter, setSearchFilter] = useState("flights");
-
-  const indicatorClass = "!border-primary-100";
   return (
     <div
       className="
