@@ -7,12 +7,13 @@ import Ratings from "@/components/shared/details/Ratings";
 import Stay from "@/types/Stay";
 import Flight from "@/types/Flight";
 import Price from "@/types/Price";
+import FlightDetails from "@/types/FlightDetails";
 
 interface PriceDetailsProps {
   room: Room | null;
   seat: Seat | null;
   stay: Stay | null
-  flight: Flight | null;
+  flight: FlightDetails | null;
   price: Price
 }
 
