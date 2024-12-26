@@ -1,3 +1,7 @@
+interface FlightItemProfile {
+  id: number;
+  img: string;
+}
 interface FlightData {
   id: number;
   isFavourited: boolean;
@@ -9,15 +13,15 @@ interface FlightData {
 }
 
 interface StayData {
-  id: number,
-  isFavourited: boolean,
-  img: string,
-  title: string,
-  address: string,
-  star: number,
-  aminities: string,
-  rating: number,
-  review: string,
-  countReview: number,
-  price: number,
+  id: number;
+  isFavourited: boolean;
+  img: string;
+  title: string;
+  address: string;
+  star: number;
+  aminities: string;
+  rating: number;
+  review: string;
+  countReview: number;
+  price: number;
 }

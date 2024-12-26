@@ -1,7 +1,8 @@
 import type Stay from "@/types/Stay";
 import type Room from "@/types/Room";
+import { BASE_URL } from "@/constants";
 
-const API_URL = `http://52.64.172.62:8080/api/v1/stays`
+const API_URL = `${BASE_URL}/api/v1/stays`
 
 
 export const fetchStay = async (stayId: string): Promise<Stay> => {

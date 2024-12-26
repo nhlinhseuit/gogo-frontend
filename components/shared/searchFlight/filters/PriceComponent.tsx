@@ -1,9 +1,36 @@
 "use client";
-import React, { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
+
+import { Slider, SliderSingleProps } from "antd";
 
 const PriceComponent = () => {
   const [isToggled, setIsToggled] = useState(true);
+
+  //! SLIDER
+
+  const marks: SliderSingleProps["marks"] = {
+    0: "$50",
+    100: "$1200",
+  };
+
+  const [rangeValue, setRangeValue] = useState<number[]>([0, 100]);
+
+  const handleChange = (value: number[]) => {
+    setRangeValue(value);
+  };
+
+  const getRealValues = () => {
+    const min = 50;
+    const max = 1200;
+    return rangeValue.map((v) => min + ((max - min) * v) / 100);
+  };
+
+  const [realMin, realMax] = getRealValues();
+
+  // realMin.toFixed(0)
+  // realMax.toFixed(0)
+
   return (
     <div>
       <div className="mt-6 w-full border-b-[1px]">
@@ -28,35 +55,35 @@ const PriceComponent = () => {
         </div>
 
         {isToggled && (
-          <div className="pb-6">
-            <div className="relative h-1 bg-gray-300 rounded-3xl">
-              <div className="absolute h-1 rounded-md bg-black right-0 left-0"></div>
-            </div>
-            <div className="relative">
-              <input
-                type="range"
-                className="range-min right-1 appearance-none"
-                min="50"
-                max="1200"
-                value="50"
-              />
-              <input
-                type="range"
-                className="range-max left-1 appearance-none"
-                min="50"
-                max="1200"
-                value="1200"
-              />
-            </div>
-
-            <div className="flex flex-between mt-1">
-              <div className="flex">
-                <p>$50</p>
-              </div>
-              <div className="flex">
-                <p>$1200</p>
-              </div>
-            </div>
+          <div className="mt-10 pb-6">
+            <Slider
+              range
+              marks={marks}
+              defaultValue={[20, 50]}
+              onChange={handleChange}
+              tooltip={{
+                formatter: (value) => {
+                  if (value === undefined) {
+                    return "";
+                  }
+                  const min = 50;
+                  const max = 1200;
+                  const price = min + ((max - min) * value) / 100;
+                  return `$${price.toFixed(0)}`;
+                },
+              }}
+              styles={{
+                track: {
+                  background: "transparent",
+                },
+                tracks: {
+                  background: "#8dd3bb",
+                },
+                rail: {
+                  background: "#e5e7eb",
+                },
+              }}
+            />
           </div>
         )}
       </div>

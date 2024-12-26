@@ -9,7 +9,10 @@ import PriceComponent from "@/components/shared/searchFlight/filters/PriceCompon
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
+import { searchStays } from "@/lib/actions/Search/SearchStayActions";
+import { convertDataReceive } from "@/utils/util";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const MockHotelsData = [
@@ -138,6 +141,33 @@ const tabs = [
 export default function StaysSearch() {
   const [isSelected, setIsSelected] = useState("Hotels");
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const searchParams = useSearchParams();
+  const params = convertDataReceive(searchParams);
+
+  useEffect(() => {
+    searchStays(params)
+      .then((data: any) => {
+        console.log("params", params);
+        console.log("data", data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // if (isLoading) {
+  //   return <div className="py-16 text-center">Loading...</div>;
+  // }
+
+  if (error) {
+    return <div className="py-16 text-center text-red-500">{error}</div>;
+  }
+
   let sourceData: StayData[] = [];
   switch (isSelected) {
     case "Hotels":
@@ -162,7 +192,13 @@ export default function StaysSearch() {
     <main className="w-full">
       <StaysInput
         isSearchStay
-        otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
+        otherClasses="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
+
+        destination={params.location}
+        roomsParams={params.rooms}
+        guestsParams={params.guests}
+        selectedCheckinDateParams={params.checkin_date}
+        selectedCheckoutDateParams={params.checkout_date}
       />
 
       <div className="flex w-full mt-8">
