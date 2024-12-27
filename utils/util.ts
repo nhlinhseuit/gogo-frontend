@@ -1,5 +1,29 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const extractDateAndTime = (isoString: string): { date: string; time: string } | undefined => {
+  if (!isoString) return undefined;
+
+  const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
+  if (!dateTimeRegex.test(isoString)) return undefined;
+
+  try {
+    const dateObj = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO 8601
+    const year = dateObj.getUTCFullYear();
+    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getUTCDate()).padStart(2, "0");
+    const hours = String(dateObj.getUTCHours()).padStart(2, "0");
+    const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
+
+    return {
+      date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
+      time: `${hours}:${minutes}`,    // Giờ theo định dạng HH:mm
+    };
+  } catch (error) {
+    return undefined; // Trả về undefined nếu xảy ra lỗi
+  }
+};
+
+
 export const convertDataNavigate = (params: any) => {
   return Object.fromEntries(
     Object.entries(params).map(([key, value]) => {
@@ -38,13 +62,15 @@ export const formatDayApi = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const parseDayFromApi = (dateString: string): Date | undefined => {
+export const parseDayFromSearchParams = (
+  dateString: string
+): Date | undefined => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
-  
+
   if (!dateRegex.test(dateString)) {
     return undefined; // Chuỗi không hợp lệ
   }
-  
+
   const [year, month, day] = dateString.split("-").map(Number);
 
   // Tạo đối tượng Date (chú ý month - 1 vì tháng trong JS bắt đầu từ 0)
@@ -61,7 +87,6 @@ export const parseDayFromApi = (dateString: string): Date | undefined => {
 
   return parsedDate;
 };
-
 
 // export const formatStartDayToISO = (date: Date): string => {
 //   date.setHours(0, 0, 0, 0);

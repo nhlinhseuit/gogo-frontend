@@ -10,7 +10,7 @@ import {
   convertDataNavigate,
   formatDayApi,
   isDateValid,
-  parseDayFromApi,
+  parseDayFromSearchParams,
 } from "@/utils/util";
 import { searchStays } from "@/lib/actions/Search/SearchStayActions";
 import { useRouter } from "next/navigation";
@@ -41,13 +41,13 @@ const StaysInput = ({
 
   const getCheckinDateParams = () => {
     return selectedCheckinDateParams
-      ? parseDayFromApi(selectedCheckinDateParams)
+      ? parseDayFromSearchParams(selectedCheckinDateParams)
       : undefined;
   };
 
   const getCheckoutDateParams = () => {
     return selectedCheckoutDateParams
-      ? parseDayFromApi(selectedCheckoutDateParams)
+      ? parseDayFromSearchParams(selectedCheckoutDateParams)
       : undefined;
   };
 
