@@ -1,5 +1,15 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const getReviewComment = (rating: number) => {
+  if (rating >= 4) {
+    return "Very good";
+  } else if (rating < 4 && rating >= 3) {
+    return "Good";
+  } else {
+    return "Average";
+  }
+};
+
 export const convertDataNavigate = (params: any) => {
   return Object.fromEntries(
     Object.entries(params).map(([key, value]) => {
