@@ -12,9 +12,19 @@ interface Stay  {
   overview: string;
   latitude: number;
   longitude: number;
-  advantages: string[];
+  advantages: StayAdvantage[];
   star_rating: number;
-  stay_type: "HOTEL" | "HOSTEL" | "RESORT" | "VILLA" | "APARTMENT" | string;
+  stay_type: "HOTEL" | "MOTEL" | "RESORT" | string;
   featured_images: Image[];
+  min_price: number,
+  review_count: number,
+  average_rating: number,
+  amenity_count: number,
 }
 export default Stay;
+
+interface StayAdvantage {
+  id: string,
+  stay: Stay,
+  name: string
+}
