@@ -1,4 +1,3 @@
-import FooterComponent from "@/components/shared/FooterComponent";
 import { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -41,7 +40,6 @@ export default function RootLayout({
             <UserButton />
           </SignedIn> */}
           {children}
-        <FooterComponent />
         </body>
       </html>
   );
