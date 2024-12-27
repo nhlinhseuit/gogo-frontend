@@ -2,6 +2,7 @@
 
 import "@/app/globals.css";
 import React from 'react';
+import CountriesDropdown from "@/components/shared/CountriesDropdown";
 
 interface AddCardModalProps {
   closeModal: () => void;
@@ -74,11 +75,7 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
             <label htmlFor="country" className="block text-sm font-medium">
               Country or Region
             </label>
-            <select id="country" className="w-full bg-transparent border p-2 rounded mt-1">
-              <option>United States</option>
-              <option>Canada</option>
-              <option>United Kingdom</option>
-            </select>
+            <CountriesDropdown />
           </div>
 
           <div className="flex items-center mb-6">

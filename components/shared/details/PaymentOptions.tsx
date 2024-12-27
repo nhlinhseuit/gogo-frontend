@@ -1,12 +1,18 @@
 "use client";
 import "@/app/globals.css"
-import {useState} from 'react';
+import React from 'react';
 
-const PaymentOptions = () => {
-  const [selectedOption, setSelectedOption] = useState('full');
+interface PaymentOptionsComponentProps {
+  total: number;
+  checkout: string;
+  selectedOption: string;
+  setSelectedOption: (value: string) => void;
 
+}
+
+const PaymentOptions: React.FC<PaymentOptionsComponentProps> = (props) => {
   const handleOptionChange = (value: string) => {
-    setSelectedOption(value);
+    props.setSelectedOption(value);
   };
 
   return (
@@ -16,7 +22,7 @@ const PaymentOptions = () => {
         <label
           htmlFor="pay-full"
           className={`block p-4 rounded-lg mb-2 cursor-pointer ${
-            selectedOption === 'full' ? 'bg-primary-100' : ''
+            props.selectedOption === 'full' ? 'bg-primary-100' : ''
           }`}
         >
           <div className="flex items-center justify-between">
@@ -30,16 +36,16 @@ const PaymentOptions = () => {
                 id="pay-full"
                 name="paymentOption"
                 value="full"
-                checked={selectedOption === 'full'}
+                checked={props.selectedOption === 'full'}
                 onChange={() => handleOptionChange('full')}
                 className="sr-only"
               />
               <div
                 className={`w-5 h-5 rounded-full border-2 ${
-                  selectedOption === 'full' ? 'border-white' : 'border-black'
+                  props.selectedOption === 'full' ? 'border-white' : 'border-black'
                 } flex items-center justify-center`}
               >
-                {selectedOption === 'full' && (
+                {props.selectedOption === 'full' && (
                   <div className="rounded-full bg-white w-2.5 h-2.5"></div>
                 )}
               </div>
@@ -51,14 +57,15 @@ const PaymentOptions = () => {
         <label
           htmlFor="pay-part"
           className={`block p-4 rounded-lg cursor-pointer ${
-            selectedOption === 'part' ? 'bg-primary-100' : ''
+            props.selectedOption === 'part' ? 'bg-primary-100' : ''
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Pay part now, part later</p>
               <p className="text-sm text-gray-600">
-                Pay $207.43 now, and the rest ($207.43) will be automatically charged to the same payment method on Nov 14, 2022. No extra fees.
+                {`Pay $${props.total / 2} now, and the rest ($${props.total / 2}) will be automatically charged to the same payment method on Nov`}
+                14, 2022. No extra fees.
               </p>
               <div className="mt-4">
                 <a href="#" className="text-sm underline">
@@ -72,16 +79,16 @@ const PaymentOptions = () => {
                 id="pay-part"
                 name="paymentOption"
                 value="part"
-                checked={selectedOption === 'part'}
+                checked={props.selectedOption === 'part'}
                 onChange={() => handleOptionChange('part')}
                 className="sr-only"
               />
               <div
                 className={`w-5 h-5 rounded-full border-2 ${
-                  selectedOption === 'part' ? 'border-white' : 'border-black'
+                  props.selectedOption === 'part' ? 'border-white' : 'border-black'
                 } flex items-center justify-center`}
               >
-                {selectedOption === 'part' && (
+                {props.selectedOption === 'part' && (
                   <div className="rounded-full bg-white w-2.5 h-2.5"></div>
                 )}
               </div>
