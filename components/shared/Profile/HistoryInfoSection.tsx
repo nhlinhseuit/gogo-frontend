@@ -1,9 +1,8 @@
-import AccountChangeButton from "@/components/shared/Profile/AccountChangeButton";
-import AddEmailButton from "@/components/shared/Profile/AddEmailButton";
+import { fetchMyFlights } from "@/lib/actions/Search/FetchMyFlights";
+import { useEffect, useState } from "react";
 import AccountTab from "./AccountTab";
-import { useState } from "react";
-import FlightsComp from "./FlightsItem";
 import FlightsItem from "./FlightsItem";
+import BookingFlight from "@/types/BookingFlight";
 
 const MockFlightData = [
   {
@@ -36,7 +35,15 @@ const MockStayData = [
 ];
 
 const HistoryInfoSection = () => {
+  const [bookingFlights, setBookingFlights] = useState<{
+    data: BookingFlight[];
+  }>({
+    data: [],
+  });
+
   const [isSelected, setIsSelected] = useState("Flights");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const tabs = [
     {
@@ -52,9 +59,21 @@ const HistoryInfoSection = () => {
   ];
 
   const renderData = () => {
-    if (isSelected === "Flights") return MockFlightData;
+    if (isSelected === "Flights") return bookingFlights.data;
     else return MockStayData;
   };
+
+  useEffect(() => {
+    fetchMyFlights("3")
+      .then((data: any) => {
+        setBookingFlights(data);
+        // setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        // setIsLoading(false);
+      });
+  }, []);
 
   return (
     <>
@@ -91,8 +110,8 @@ const HistoryInfoSection = () => {
       </div>
 
       <div>
-        {renderData().map((item) => (
-          <FlightsItem item={item} />
+        {renderData().map((item: any) => (
+          <FlightsItem key={item.id} item={item} />
         ))}
       </div>
     </>

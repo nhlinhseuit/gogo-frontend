@@ -50,7 +50,6 @@ export default function RootLayout({
             <UserButton />
           </SignedIn> */}
           {children}
-        <FooterComponent />
         </body>
       </html>
     </ClerkProvider>

@@ -6,7 +6,7 @@ import {
   convertDataNavigate,
   formatDayApi,
   isDateValid,
-  parseDayFromApi,
+  parseDayFromSearchParams,
 } from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -61,13 +61,13 @@ const FlightsInput = ({
 
   const getDateDepartParams = () => {
     return selectedDateDepartParams
-      ? parseDayFromApi(selectedDateDepartParams)
+      ? parseDayFromSearchParams(selectedDateDepartParams)
       : undefined;
   };
 
   const getDateReturnParams = () => {
     return selectedDateReturnParams
-      ? parseDayFromApi(selectedDateReturnParams)
+      ? parseDayFromSearchParams(selectedDateReturnParams)
       : undefined;
   };
 
