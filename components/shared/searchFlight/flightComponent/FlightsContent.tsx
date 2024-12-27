@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import CheckFlight from "./CheckFlight";
 import { formatCurrency } from "@/utils/util";
+import Flight from "@/types/Flight";
 
 const MockCheckFlight = [
   {
@@ -25,19 +26,21 @@ const MockCheckFlight = [
 
 const FlightsComp = ({
   item,
+  item2,
   handleClick,
 }: {
   item: FlightData;
+  item2: Flight | undefined;
   handleClick: (id: number) => void;
 }) => {
   return (
     <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[20%] p-3">
         <Image
-          src={item.img}
+          src={item2?.outbound_flight.airline.image ?? ""}
           alt="places"
-          width={0}
-          height={0}
+          width={200}
+          height={200}
           className="w-full"
         />
       </div>

@@ -10,6 +10,7 @@ import FlightsComp from "@/components/shared/searchFlight/flightComponent/Flight
 import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
+import Flight from "@/types/Flight";
 import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -110,6 +111,7 @@ const tabs = [
 ];
 export default function FlightsSearch() {
   const [isSelected, setIsSelected] = useState("Best");
+  const [flights, setFlights] = useState<Flight[]>();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,9 +122,9 @@ export default function FlightsSearch() {
   useEffect(() => {
     searchFlights(params)
       .then((data: any) => {
-        console.log("params", params);
         console.log("data", data);
         // setIsLoading(false);
+        setFlights(data.data);
       })
       .catch((error) => {
         setError(error.message);
@@ -158,13 +160,13 @@ export default function FlightsSearch() {
   }, [isSelected]);
 
   const [renderData, setRenderData] = useState(sourceData);
+  console.log("Flight", flights);
 
   return (
     <main className="w-full">
       <FlightsInput
         isSearchFlight
         otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
-        
         departure_location={params.departure_location}
         arrival_location={params.arrival_location}
         tripTypeParams={params.roundTrip}
@@ -228,6 +230,7 @@ export default function FlightsSearch() {
             {renderData.map((item) => (
               <FlightsComp
                 item={item}
+                item2={flights?.[0]}
                 handleClick={(id: number) => {
                   var updatedRenderData = renderData.map((data) => {
                     if (data.id === id) {
