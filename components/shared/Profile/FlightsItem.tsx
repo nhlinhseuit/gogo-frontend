@@ -3,11 +3,7 @@
 import Image from "next/image";
 import MyIcon from "./MyIcon";
 
-const FlightsItem = ({
-  item,
-}: {
-  item: FlightItemProfile;
-}) => {
+const FlightsItem = ({ item }: { item: FlightItemProfile }) => {
   return (
     <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[10%] my-4 p-2 flex mr-1 px-3 border border-primary-100 rounded-md justify-center items-center">
@@ -25,14 +21,18 @@ const FlightsItem = ({
         <div className="flex items-center">
           <>
             <div>
-              <p className="title-medium text-[#112211]">Newark (EWR)</p>
+              <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">
+                Newark (EWR)
+              </p>
               <p className="paragraph-semibold">12:00 pm</p>
             </div>
 
             <div className="mx-4">---</div>
 
             <div>
-              <p className="title-medium text-[#112211]">Newark (EWR)</p>
+              <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">
+                Newark (EWR)
+              </p>
               <p className="paragraph-semibold">6:00 pm</p>
             </div>
           </>
