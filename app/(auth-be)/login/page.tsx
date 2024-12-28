@@ -22,6 +22,7 @@ const Login = () => {
       password: password,
     }).then((data) => {
       sessionStorage.setItem("authToken", data.token);
+      router.push("/");
     });
   };
 
