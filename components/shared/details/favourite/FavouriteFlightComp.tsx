@@ -5,7 +5,7 @@ import { formatCurrency, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const FavouriteComp = ({ item }: { item: Stay }) => {
+const FavouriteFlightComp = ({ item }: { item: Stay }) => {
   const [error, setError] = useState<string | null>(null);
 
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
@@ -156,4 +156,4 @@ const FavouriteComp = ({ item }: { item: Stay }) => {
   );
 };
 
-export default FavouriteComp;
+export default FavouriteFlightComp;

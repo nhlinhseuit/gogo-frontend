@@ -1,15 +1,12 @@
 import { BASE_URL } from "@/constants";
-import FavouriteStay from "@/types/FavouriteStay";
+import FavouriteFlights from "@/types/FavouriteFlight";
 
-const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
+const API_URL = `${BASE_URL}/api/v1/flights/favorites`;
 
 
-export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]> => {
+export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFlights[]> => {
   try {
-    const queryString = new URLSearchParams(params).toString();
-    const urlWithParams = `${API_URL}?${queryString}`;
-
-    const response = await fetch(urlWithParams, {
+    const response = await fetch(`${API_URL}/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -20,20 +17,17 @@ export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]>
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteStay[]>;
+    return (await response.json()) as Promise<FavouriteFlights[]>;
   } catch (error) {
     console.error("Error fetching favourite stays:", error);
     throw error;
   }
 };
 
-export const changeFavouriteStayStatus = async (params: any): Promise<FavouriteStay[]> => {
+export const changeFavouriteStayStatus = async (params: any): Promise<FavouriteFlights[]> => {
   try {
-    console.log('params:',params)
     const queryString = new URLSearchParams(params).toString();
-    console.log("query string", queryString)
     const urlWithParams = `${API_URL}?${queryString}`;
-    console.log("urlWithParams", urlWithParams)
 
     const response = await fetch(urlWithParams, {
       method: "GET",
@@ -46,7 +40,7 @@ export const changeFavouriteStayStatus = async (params: any): Promise<FavouriteS
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteStay[]>;
+    return (await response.json()) as Promise<FavouriteFlights[]>;
   } catch (error) {
     console.error("Error fetching favourite stays:", error);
     throw error;

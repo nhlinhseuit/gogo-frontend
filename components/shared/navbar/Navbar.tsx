@@ -1,6 +1,5 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -184,37 +183,37 @@ const Navbar = () => {
           </Link>
 
           {/* AVATAR */}
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <div className="flex gap-2 items-center">
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox: "h-9  w-9",
-                  },
-                  variables: {
-                    colorPrimary: "#ff7000",
-                  },
-                }}
-              />
-              <p
-                onClick={() => {
-                  router.push(`/profile`);
-                }}
-                className={`
+
+          <div className="flex gap-2 items-center">
+            <p
+              onClick={() => {
+                router.push(`/profile`);
+              }}
+              className={`
                   cursor-pointer
                   font-inter 
                   body-semibold 
                   ${pathName === "/" ? "text-white" : "text-dark-100"}
                   dark:text-light-900 
                   max-sm:hidden`}
-              >
-                View profile
-              </p>
-            </div>
-          </SignedIn>
+            >
+              View profile
+            </p>
+            <p
+              onClick={() => {
+                router.push(`/login`);
+              }}
+              className={`
+                  cursor-pointer
+                  font-inter 
+                  body-semibold 
+                  ${pathName === "/" ? "text-white" : "text-dark-100"}
+                  dark:text-light-900 
+                  max-sm:hidden`}
+            >
+              Login
+            </p>
+          </div>
         </div>
       </nav>
     </div>

@@ -19,7 +19,7 @@ const HomeBackground = () => {
       >
         <p
           className="
-            font-inter 
+            font-inter
             title-semibold 
             text-white
             dark:text-light-900 
