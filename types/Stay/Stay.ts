@@ -63,7 +63,7 @@ interface NestedAmenity {
 interface Review {
   id: string;
   service: Service;
-  user: User;
+  user: UserInfo;
   rating: number;
   description: string;
   serviceType: ServiceType;
@@ -76,7 +76,7 @@ interface Service {
   featuredImages: FeaturedImage[];
 }
 
-interface User {
+interface UserInfo {
   id: string;
   firstName: string;
   lastName: string;

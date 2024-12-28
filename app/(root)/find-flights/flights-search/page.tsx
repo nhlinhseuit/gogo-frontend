@@ -1,17 +1,13 @@
 "use client";
 
 import "@/app/globals.css";
-import FlightsInput from "@/components/shared/navbar/input-searchtab/FlightsInput";
 import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
 import DepartureTimeComponent from "@/components/shared/searchFlight/filters/DepartureTimeComponent";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
 import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
-import Reccomended from "@/components/shared/searchFlight/flightComponent/Reccomended";
-import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Flight from "@/types/Flight";
-import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

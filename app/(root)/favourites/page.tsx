@@ -4,6 +4,8 @@ import Tab from "@/components/shared/details/favourite/Tab";
 import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
 import { useEffect, useState } from "react";
 import "../../globals.css";
+import { getCurrentUser } from "@/utils/util";
+import { useRouter } from "next/navigation";
 const tabs = [
   {
     type: "Flights",
@@ -91,6 +93,15 @@ const MockPlaceData = [
 ];
 
 export default function Favourites() {
+  //? Middleware
+  const router = useRouter();
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push(`/login?ref=favourites`)
+    };
+  }, []);
+
   const [isSelected, setIsSelected] = useState("Flights");
   const [flightData, setFlightData] = useState(MockFlightData);
   const [placeData, setPlaceData] = useState(MockPlaceData);
