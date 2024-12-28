@@ -9,40 +9,57 @@ interface AddCardModalProps {
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = (props) => {
+  const [cardNumber, setCardNumber] = React.useState('');
+  const [expDate, setExpDate] = React.useState('');
+  const [cvc, setCvc] = React.useState('');
+  const [nameOnCard, setNameOnCard] = React.useState('');
+  const [country, setCountry] = React.useState('United States');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Add Card", cardNumber, expDate, cvc, nameOnCard, country);
+    // addCard("1", cardNumber, expDate, cvc, nameOnCard, country);
+  }
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-16 w-full max-w-lg relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-50">
+      <div className="relative w-full max-w-lg rounded-lg bg-white p-16">
         <button
           onClick={props.closeModal}
-          className="absolute text-2xl top-10 right-16"
+          className="absolute top-10 right-16 text-2xl"
         >
           &times;
         </button>
-        <h2 className="text-2xl font-semibold mb-6">Add a new Card</h2>
+        <h2 className="mb-6 text-2xl font-semibold">Add a new Card</h2>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="cardNumber" className="block text-sm font-medium">
               Card Number
             </label>
             <input
               type="text"
+              required
               id="cardNumber"
               placeholder="4321 4321 4321 4321"
-              className="w-full border p-2 rounded mt-1"
+              className="mt-1 w-full rounded border p-2"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value)}
             />
           </div>
 
-          <div className="flex space-x-4 mb-4">
+          <div className="mb-4 flex space-x-4">
             <div className="flex-1">
               <label htmlFor="expDate" className="block text-sm font-medium">
                 Exp. Date
               </label>
               <input
                 type="text"
+                required
                 id="expDate"
                 placeholder="02/27"
-                className="w-full border p-2 rounded mt-1"
+                className="mt-1 w-full rounded border p-2"
+                value={expDate}
+                onChange={(e) => setExpDate(e.target.value)}
               />
             </div>
 
@@ -52,9 +69,12 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
               </label>
               <input
                 type="text"
+                required
                 id="cvc"
                 placeholder="123"
-                className="w-full border p-2 rounded mt-1"
+                className="mt-1 w-full rounded border p-2"
+                value={cvc}
+                onChange={(e) => setCvc(e.target.value)}
               />
             </div>
           </div>
@@ -65,9 +85,12 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
             </label>
             <input
               type="text"
+              required
               id="nameOnCard"
               placeholder="John Doe"
-              className="w-full border p-2 rounded mt-1"
+              className="mt-1 w-full rounded border p-2"
+              value={nameOnCard}
+              onChange={(e) => setNameOnCard(e.target.value)}
             />
           </div>
 
@@ -75,28 +98,21 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
             <label htmlFor="country" className="block text-sm font-medium">
               Country or Region
             </label>
-            <CountriesDropdown />
-          </div>
-
-          <div className="flex items-center mb-6">
-            <input type="checkbox" id="saveCard" className="mr-2" />
-            <label htmlFor="saveCard" className="text-sm">
-              Securely save my information for 1-click checkout
-            </label>
+            <CountriesDropdown selectedCountry={country} onSelectCountry={setCountry}/>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary-100 py-2 rounded"
+            className="w-full rounded py-2 bg-primary-100"
           >
             Add Card
           </button>
         </form>
 
         {/* Footer Note */}
-        <p className="mt-4 text-xs text-center text-gray-600">
-          By confirming your subscription, you allow The Outdoor Inn Crowd
-          Limited to charge your card for this payment and future payments in
+        <p className="mt-4 text-center text-xs text-gray-600">
+          By confirming your subscription, you allow Gogo Travel to charge your card for this payment and future
+          payments in
           accordance with their terms. You can always cancel your subscription.
         </p>
       </div>

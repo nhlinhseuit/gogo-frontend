@@ -1,12 +1,15 @@
 import type Room from "@/types/Room";
+import {BASE_URL} from "@/constants";
 
-const API_URL = `http://52.64.172.62:8080/api/v1/rooms`
+const API_URL = `${BASE_URL}/api/v1/rooms`
+const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`;
 
 export const fetchRoom = async (roomId: string): Promise<Room> => {
   try {
     const response = await fetch(`${API_URL}/${roomId}`, {
       method: "GET",
       headers: {
+        "Authorization": TEST_TOKEN,
         "Content-Type": "application/json",
       },
     });

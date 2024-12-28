@@ -123,7 +123,7 @@ const StayBookingPage: React.FC = () => {
               </div>
             </form>
           </div>
-          <PaymentOptions total={price?.total ?? 0} checkout={"2024-12-30T12:00:00"} selectedOption={selectedOption} setSelectedOption={setSelectedOption}/>
+          <PaymentOptions total={price?.total ?? 0} />
           <PaymentCardSelection/>
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>

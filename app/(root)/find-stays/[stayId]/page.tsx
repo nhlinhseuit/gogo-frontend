@@ -116,9 +116,6 @@ export default function StayDetail({params}: StayDetailProp) {
               alt="Share"
             />
           </button>
-          <button className="rounded-md px-9 py-4 bg-primary-100">
-            Book Now
-          </button>
           <a href="#available-rooms" className="rounded-md px-9 py-4 bg-primary-100">Book Now</a>
         </div>
       </div>
@@ -194,7 +191,7 @@ export default function StayDetail({params}: StayDetailProp) {
       </div>
 
       <AmenitiesComponent amenities={stayData?.amenities || []} />
-      <ReviewsSection type="stay" id={Number(stayData?.id)} />
+      {/*<ReviewsSection type="stay" id={Number(stayData?.id)} />*/}
       {isModalOpen && stayData && (
         <ImageModal closeModal={closeModal} stayId={stayData.id} />
       )}
