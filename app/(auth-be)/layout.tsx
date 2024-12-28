@@ -1,4 +1,3 @@
-import FooterComponent from "@/components/shared/FooterComponent";
 import Navbar from "@/components/shared/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -19,7 +18,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </section>
       </div>
 
-      <FooterComponent />
 
       {/* TOAST */}
       <div className="fixed top-10 right-10 z-50">

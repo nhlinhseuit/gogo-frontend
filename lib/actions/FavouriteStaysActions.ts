@@ -6,11 +6,8 @@ const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
 
 export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]> => {
   try {
-    console.log('params:',params)
     const queryString = new URLSearchParams(params).toString();
-    console.log("query string", queryString)
     const urlWithParams = `${API_URL}?${queryString}`;
-    console.log("urlWithParams", urlWithParams)
 
     const response = await fetch(urlWithParams, {
       method: "GET",

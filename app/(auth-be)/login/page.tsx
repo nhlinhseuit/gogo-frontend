@@ -4,6 +4,7 @@ import One from "@/components/gallery/one";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import SocialIcon from "@/components/shared/SocialIcon";
+import { authenticate } from "@/lib/actions/AuthenActions";
 import { validateEmail, validatePassword } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,6 +15,15 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isChecked, setisChecked] = useState(false);
   const router = useRouter();
+
+  const handleAuthen = () => {
+    authenticate({
+      email: email,
+      password: password,
+    }).then((data) => {
+      sessionStorage.setItem("authToken", data.token);
+    });
+  };
 
   return (
     <main>
@@ -81,7 +91,10 @@ const Login = () => {
           </div>
 
           <div className="w-full flex flex-col gap-6">
-            <button className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 ">
+            <button
+              onClick={handleAuthen}
+              className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 "
+            >
               <p className="body-semibold text-black">Login</p>
             </button>
 
