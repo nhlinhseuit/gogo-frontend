@@ -98,7 +98,7 @@ export default function Favourites() {
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      router.push(`/login?ref=favourites`)
+      router.replace(`/login?ref=favourites`)
     };
   }, []);
 
