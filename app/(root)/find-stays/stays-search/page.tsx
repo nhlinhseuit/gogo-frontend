@@ -57,8 +57,6 @@ export default function StaysSearch() {
   useEffect(() => {
     searchStays(params)
       .then((data: any) => {
-        console.log("params", params);
-        console.log("data", data);
         setIsLoading(false);
         setStays(data.data);
       })

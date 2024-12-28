@@ -26,11 +26,8 @@ export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFl
 
 export const changeFavouriteStayStatus = async (params: any): Promise<FavouriteFlights[]> => {
   try {
-    console.log('params:',params)
     const queryString = new URLSearchParams(params).toString();
-    console.log("query string", queryString)
     const urlWithParams = `${API_URL}?${queryString}`;
-    console.log("urlWithParams", urlWithParams)
 
     const response = await fetch(urlWithParams, {
       method: "GET",
