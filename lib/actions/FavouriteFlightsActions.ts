@@ -1,5 +1,5 @@
 import { BASE_URL } from "@/constants";
-import FavouriteFlights from "@/types/FavouriteFlight";
+import FavouriteFlights from "@/types/FavouriteFlights";
 
 const API_URL = `${BASE_URL}/api/v1/flights/favorites`;
 
