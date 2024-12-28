@@ -3,16 +3,16 @@
 import MyAvatar from "@/components/shared/MyAvatar";
 import AccountInfoSection from "@/components/shared/Profile/AccountInfoSection";
 import AccountTab from "@/components/shared/Profile/AccountTab";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import "../../globals.css";
 import HistoryInfoSection from "@/components/shared/Profile/HistoryInfoSection";
 import PaymentInfoSection from "@/components/shared/Profile/PaymentInfoSection";
 import { editUserCoverPicture } from "@/lib/actions/Search/EditUserCoverPicture";
 import { getUserInfo } from "@/lib/actions/Search/GetUserInfo";
 import UserInfo from "@/types/UserInfo";
-import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/utils/util";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import "../../globals.css";
 
 export default function Profile() {
   //? Middleware
@@ -20,7 +20,7 @@ export default function Profile() {
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      router.push(`/login?ref=profile`)
+      router.replace(`/login?ref=profile`)
     };
   }, []);
 
@@ -132,16 +132,6 @@ export default function Profile() {
 
     handleSaveCoverPictureAPI();
   };
-  //? Middleware
-  const router = useRouter();
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      router.push(`/login?ref=profile`)
-    };
-  }, []);
-
-  const [isSelected, setIsSelected] = useState("Account");
 
   const renderComponent = () => {
     if (isSelected === "Account")
