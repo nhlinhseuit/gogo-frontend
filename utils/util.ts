@@ -1,5 +1,60 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const getCurrentUser = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("currentUser")
+      ? JSON.parse(sessionStorage.getItem("currentUser")!)
+      : null;
+  } else return null;
+};
+export const getToken = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("authToken")
+      ? JSON.parse(sessionStorage.getItem("authToken")!)
+      : null;
+  } else return null;
+};
+
+export const validateName = (firstName: string, lastName: string) => {
+  return firstName.trim() === "" && lastName.trim() === ""
+    ? "First name and last name cannot both be empty."
+    : null;
+};
+
+export const validateEmail = (value: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value) ? null : "Invalid email format.";
+};
+
+export const validatePassword = (value: string) => {
+  return value.length >= 6
+    ? null
+    : "Password must be at least 6 characters long.";
+};
+
+export const validateConfirmPassword = (
+  password: string,
+  confirmPassword: string
+) => {
+  return password === confirmPassword
+    ? null
+    : "Confirm password is not correct.";
+};
+
+export const validatePhoneNumber = (value: string): string | null => {
+  const phoneRegex = /^[0-9]{9,11}$/;
+
+  if (!value) {
+    return "Phone number is required.";
+  }
+
+  if (!phoneRegex.test(value)) {
+    return "Invalid phone number.";
+  }
+
+  return null;
+};
+
 export const getReviewComment = (rating: number) => {
   if (rating >= 4) {
     return "Very good";
@@ -50,11 +105,11 @@ export const formatDayApi = (date: Date): string => {
 
 export const parseDayFromApi = (dateString: string): Date | undefined => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
-  
+
   if (!dateRegex.test(dateString)) {
     return undefined; // Chuỗi không hợp lệ
   }
-  
+
   const [year, month, day] = dateString.split("-").map(Number);
 
   // Tạo đối tượng Date (chú ý month - 1 vì tháng trong JS bắt đầu từ 0)
@@ -71,7 +126,6 @@ export const parseDayFromApi = (dateString: string): Date | undefined => {
 
   return parsedDate;
 };
-
 
 // export const formatStartDayToISO = (date: Date): string => {
 //   date.setHours(0, 0, 0, 0);
@@ -114,7 +168,9 @@ export const formatCurrency = ({ price }: { price: number }) => {
   return formattedPrice;
 };
 
-export const extractDateAndTime = (isoString: string): { date: string; time: string } | undefined => {
+export const extractDateAndTime = (
+  isoString: string
+): { date: string; time: string } | undefined => {
   if (!isoString) return undefined;
 
   const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
@@ -130,7 +186,7 @@ export const extractDateAndTime = (isoString: string): { date: string; time: str
 
     return {
       date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
-      time: `${hours}:${minutes}`,    // Giờ theo định dạng HH:mm
+      time: `${hours}:${minutes}`, // Giờ theo định dạng HH:mm
     };
   } catch (error) {
     return undefined; // Trả về undefined nếu xảy ra lỗi

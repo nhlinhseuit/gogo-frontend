@@ -9,6 +9,8 @@ import FavouriteFlights from "@/types/FavouriteFlights";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
 import FavouriteFlightComp from "@/components/shared/details/favourite/FavouriteFlightComp";
+import { getCurrentUser } from "@/utils/util";
+import { useRouter } from "next/navigation";
 
 const tabs = [
   {
@@ -97,6 +99,15 @@ const tabs = [
 // ];
 
 export default function Favourites() {
+  //? Middleware
+  const router = useRouter();
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push(`/login?ref=favourites`);
+    }
+  }, []);
+
   const [isSelected, setIsSelected] = useState("Flights");
   const [error, setError] = useState<string | null>(null);
   const [favStays, setFavStays] = useState<FavouriteStay[]>();

@@ -4,12 +4,23 @@ import MyAvatar from "@/components/shared/MyAvatar";
 import AccountInfoSection from "@/components/shared/Profile/AccountInfoSection";
 import AccountTab from "@/components/shared/Profile/AccountTab";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../globals.css";
 import HistoryInfoSection from "@/components/shared/Profile/HistoryInfoSection";
 import PaymentInfoSection from "@/components/shared/Profile/PaymentInfoSection";
+import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/utils/util";
 
 export default function Profile() {
+  //? Middleware
+  const router = useRouter();
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push(`/login?ref=profile`)
+    };
+  }, []);
+
   const [isSelected, setIsSelected] = useState("Account");
 
   const renderComponent = () => {
