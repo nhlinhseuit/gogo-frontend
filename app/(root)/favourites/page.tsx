@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import "../../globals.css";
-import FavouriteComp from "@/components/shared/details/favourite/FavouriteComp";
 import Tab from "@/components/shared/details/favourite/Tab";
+import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
+import { useEffect, useState } from "react";
+import "../../globals.css";
+import { getCurrentUser } from "@/utils/util";
+import { useRouter } from "next/navigation";
 const tabs = [
   {
     type: "Flights",
@@ -91,9 +93,37 @@ const MockPlaceData = [
 ];
 
 export default function Favourites() {
+  //? Middleware
+  const router = useRouter();
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push(`/login?ref=favourites`)
+    };
+  }, []);
+
   const [isSelected, setIsSelected] = useState("Flights");
   const [flightData, setFlightData] = useState(MockFlightData);
   const [placeData, setPlaceData] = useState(MockPlaceData);
+  const [error, setError] = useState<string | null>(null);
+
+  const params = {
+    user_id: "1",
+    page: 0,
+    size: 10,
+  };
+
+  useEffect(() => {
+    fetchFavouriteStays(params)
+      .then((data: any) => {
+        console.log("params", params);
+        console.log("data", data);
+        setPlaceData(data.data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  }, []);
 
   return (
     <main>
@@ -113,7 +143,7 @@ export default function Favourites() {
         ))}
       </div>
 
-      <div className="mt-10">
+      {/* <div className="mt-10">
         {isSelected === "Flights"
           ? flightData.map((item) => (
               <FavouriteComp
@@ -176,8 +206,8 @@ export default function Favourites() {
                   setPlaceData(updatedPlaceData);
                 }}
               />
-            ))}
-      </div>
+            ))} */}
+      {/* </div> */}
     </main>
   );
 }

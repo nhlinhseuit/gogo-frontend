@@ -5,9 +5,9 @@ import React, { useState } from "react";
 const MyAvatar = ({ img }: { img: string | undefined }) => {
   const [avatarSrc, setAvatarSrc] = useState(
     img ? img : "/assets/images/avatar.JPG"
-  ); 
-  const [tempAvatarSrc, setTempAvatarSrc] = useState<string | null>(null); 
-  const [isEditingAvatar, setIsEditingAvatar] = useState(false); 
+  );
+  const [tempAvatarSrc, setTempAvatarSrc] = useState<string | null>(null);
+  const [isEditingAvatar, setIsEditingAvatar] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

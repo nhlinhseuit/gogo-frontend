@@ -29,8 +29,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* TOAST */}
       <div className="fixed top-10 right-10 z-50">
-          <Toaster />
-        </div>
+        <Toaster />
+      </div>
     </main>
   );
 };

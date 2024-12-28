@@ -1,50 +1,57 @@
-import { formatCurrency } from "@/utils/util";
+import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
+import FavouriteStay from "@/types/FavouriteStay";
+import Stay from "@/types/Stay";
+import { formatCurrency, getReviewComment } from "@/utils/util";
 import Image from "next/image";
-import React from "react";
+import { useEffect, useState } from "react";
 
-const FavouriteComp = ({
-  id,
-  isFavourite,
-  img,
-  title,
-  address,
-  star,
-  aminities,
-  rating,
-  review,
-  countReview,
-  price,
-  handleClick,
-}: {
-  id: number;
-  isFavourite: boolean;
-  img: string;
-  title: string;
-  address: string;
-  star: number;
-  aminities: string;
-  rating: number;
-  review: string;
-  countReview: number;
-  price: number;
-  handleClick: (id?: number) => void;
-}) => {
+const FavouriteStayComp = ({ item }: { item: Stay }) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const [favStays, setFavStays] = useState<FavouriteStay[]>();
+
+  const params = {
+    user_id: "2",
+    page: 0,
+    size: 10,
+  };
+
+  useEffect(() => {
+    fetchFavouriteStays(params)
+      .then((data: any) => {
+        setFavStays(data.data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  }, []);
+
+  const handleFavoriteAStay = () => {};
+
+  const getIsFavoriteItem = () => {
+    const result = favStays?.find((stay) => stay.id === item.id);
+    if (result != undefined) return true;
+    return false;
+  };
+
   return (
     <div className="flex w-[100%] mb-6 rounded-lg shadow-full shadow-primary-400">
-      <div className="w-[38%]">
-        <Image
-          src={img}
-          alt="Ảnh hotel"
-          width={0}
-          height={0}
-          className="w-full"
-        />
+      <div className="w-[40%]">
+        {item.featured_images.length === 0 ? null : (
+          <Image
+            src={item.featured_images[0].url}
+            alt="Ảnh hotel"
+            width={200}
+            height={200}
+            className="w-full rounded-tl-lg"
+          />
+        )}
       </div>
 
-      <div className="w-[62%] p-5">
+      <div className="w-[60%] p-5">
         <div className="flex justify-between">
           <div className="mb-5">
-            <h2 className="h3-semibold">{title}</h2>
+            <h2 className="h3-semibold">{item.name}</h2>
 
             <div className="flex mt-2">
               <Image
@@ -53,12 +60,12 @@ const FavouriteComp = ({
                 width={16}
                 height={16}
               />
-              <p>{address}</p>
+              <p>{item.address}</p>
             </div>
 
             <div className="flex items-center mt-1">
               <div className="flex gap-x-[1px]">
-                {Array.from({ length: star }, (_, index) => (
+                {Array.from({ length: item.star_rating }, (_, index) => (
                   <Image
                     key={index}
                     src="/assets/icons/Star.svg"
@@ -70,7 +77,9 @@ const FavouriteComp = ({
               </div>
 
               <div>
-                <p className="ml-2 body-regular leading-4">{star} Star Hotel</p>
+                <p className="ml-2 body-regular leading-4">
+                  {item.star_rating} Star Hotel
+                </p>
               </div>
 
               <div className="ml-8 flex">
@@ -82,22 +91,22 @@ const FavouriteComp = ({
                   className="mr-1"
                 />
                 <p>
-                  <span className="mr-1 paragraph-semibold">{aminities}</span>
+                  <span className="mr-1 paragraph-semibold">
+                    {item.amenity_count}
+                  </span>
                   Aminities
                 </p>
               </div>
             </div>
 
             <div className="flex mt-2">
-              <div className="flex mr-1 px-3 border border-primary-100 rounded-md justify-center items-center">
-                {rating}
+              <div className="flex mr-1 px-3 py-1 border border-primary-100 rounded-md justify-center items-center">
+                {item.rating}
               </div>
 
-              <div className="py-2">
-                <p>
-                  <span className="body-semibold mr-1">{review}</span>
-                  {countReview} reviews
-                </p>
+              <div className="py-2 flex gap-2">
+                <p className="font-bold">{getReviewComment(item.rating)}</p>
+                <p>{item.review_count} reviews</p>
               </div>
             </div>
           </div>
@@ -107,7 +116,9 @@ const FavouriteComp = ({
               <p>starting from</p>
             </div>
             <div className="flex items-baseline text-[#FF8682]">
-              <h1 className="h2-bold">${formatCurrency({ price: price })}</h1>
+              <h1 className="h2-bold">
+                ${formatCurrency({ price: item.min_price })}
+              </h1>
               <h1 className="body-semibold">/night</h1>
             </div>
             <div className="text-right">
@@ -117,12 +128,10 @@ const FavouriteComp = ({
         </div>
         <div className="flex w-full pt-6 border-t-[1px]">
           <div
-            onClick={() => {
-              handleClick(id);
-            }}
+            onClick={handleFavoriteAStay}
             className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer "
           >
-            {isFavourite ? (
+            {getIsFavoriteItem() ? (
               <Image
                 src="/assets/icons/Heart.svg"
                 alt="Anh heart"
@@ -147,4 +156,4 @@ const FavouriteComp = ({
   );
 };
 
-export default FavouriteComp;
+export default FavouriteStayComp;
