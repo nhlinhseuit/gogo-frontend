@@ -33,12 +33,6 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${spaceGrotesk.variable} flex flex-col`}
         >
-          {/* <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn> */}
           {children}
         </body>
       </html>
