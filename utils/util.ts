@@ -1,11 +1,25 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const getCurrentUser = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("currentUser")
+      ? JSON.parse(sessionStorage.getItem("currentUser")!)
+      : null;
+  } else return null;
+};
+export const getToken = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("authToken")
+      ? JSON.parse(sessionStorage.getItem("authToken")!)
+      : null;
+  } else return null;
+};
+
 export const validateName = (firstName: string, lastName: string) => {
-  return firstName.trim() === '' && lastName.trim() === ''
+  return firstName.trim() === "" && lastName.trim() === ""
     ? "First name and last name cannot both be empty."
     : null;
 };
-
 
 export const validateEmail = (value: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
