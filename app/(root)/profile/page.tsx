@@ -11,8 +11,19 @@ import PaymentInfoSection from "@/components/shared/Profile/PaymentInfoSection";
 import { editUserCoverPicture } from "@/lib/actions/Search/EditUserCoverPicture";
 import { getUserInfo } from "@/lib/actions/Search/GetUserInfo";
 import UserInfo from "@/types/UserInfo";
+import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/utils/util";
 
 export default function Profile() {
+  //? Middleware
+  const router = useRouter();
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push(`/login?ref=profile`)
+    };
+  }, []);
+
   const [isSelected, setIsSelected] = useState("Tickets/Bookings");
   const [userInfo, setUserInfo] = useState<UserInfo>();
 
@@ -121,6 +132,16 @@ export default function Profile() {
 
     handleSaveCoverPictureAPI();
   };
+  //? Middleware
+  const router = useRouter();
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push(`/login?ref=profile`)
+    };
+  }, []);
+
+  const [isSelected, setIsSelected] = useState("Account");
 
   const renderComponent = () => {
     if (isSelected === "Account")

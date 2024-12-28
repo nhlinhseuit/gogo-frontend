@@ -21,6 +21,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-tailwindcss": "^3.17.4",
+    "framer-motion": "^11.15.0",
     "http-proxy-middleware": "^3.0.3",
     "jsbarcode": "^3.11.6",
     "lucide-react": "^0.469.0",

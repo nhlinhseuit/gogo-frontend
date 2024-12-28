@@ -1,19 +1,18 @@
 import CustomButton from "@/components/CustomButton";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import SearchDropdown from "../../SearchDropdown";
+import { useToast } from "@/hooks/use-toast";
 import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
 import Location from "@/types/Location";
-import { format } from "date-fns";
-import { useToast } from "@/hooks/use-toast";
 import {
   convertDataNavigate,
   formatDayApi,
   isDateValid,
   parseDayFromSearchParams,
 } from "@/utils/util";
-import { searchStays } from "@/lib/actions/Search/SearchStayActions";
+import { format } from "date-fns";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import SearchDropdown from "../../SearchDropdown";
 
 const StaysInput = ({
   isSearchStay,
