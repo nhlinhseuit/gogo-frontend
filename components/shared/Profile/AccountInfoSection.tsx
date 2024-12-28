@@ -13,7 +13,7 @@ const AccountInfoSection = () => {
       >
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
-            <p className="title-medium text-[#112211]">Name</p>
+            <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">Name</p>
             <p className="paragraph-semibold">John Doe.</p>
           </div>
 
@@ -22,7 +22,7 @@ const AccountInfoSection = () => {
 
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
-            <p className="title-medium text-[#112211]">Email</p>
+            <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">Email</p>
             <p className="paragraph-semibold">john.doe@gmail.com</p>
           </div>
 
@@ -34,7 +34,7 @@ const AccountInfoSection = () => {
 
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
-            <p className="title-medium text-[#112211]">Password</p>
+            <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">Password</p>
             <p className="paragraph-semibold">************</p>
           </div>
 
@@ -43,7 +43,7 @@ const AccountInfoSection = () => {
 
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
-            <p className="title-medium text-[#112211]">Phone number</p>
+            <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">Phone number</p>
             <p className="paragraph-semibold">0378060972</p>
           </div>
 
@@ -52,7 +52,7 @@ const AccountInfoSection = () => {
 
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
-            <p className="title-medium text-[#112211]">Address</p>
+            <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">Address</p>
             <p className="paragraph-semibold">
               St 32 main downtown, Los Angeles, California, USA
             </p>
@@ -63,7 +63,7 @@ const AccountInfoSection = () => {
 
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
-            <p className="title-medium text-[#112211]">Date of birth</p>
+            <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">Date of birth</p>
             <p className="paragraph-semibold">26/09/2003</p>
           </div>
 

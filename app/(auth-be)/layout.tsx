@@ -1,4 +1,3 @@
-import FooterComponent from "@/components/shared/FooterComponent";
 import Navbar from "@/components/shared/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -9,22 +8,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   background-light850_dark100 
   relative"
     >
-      {/* NAVBAR */}
-      {/* <NavbarRaw /> */}
-      <Navbar />
-
       {/* CONTENT */}
       <div>
         <section
           className="
-            flex min-h-screen flex-1 flex-col 
-            px-6 pb-6 max-md:pb-14 sm:px-14"
+            flex min-h-screen flex-1 flex-col"
         >
-          <div className="mx-auto w-full max-w-6xl">{children}</div>
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
         </section>
       </div>
-
-      <FooterComponent />
 
 
       {/* TOAST */}
