@@ -87,7 +87,7 @@ export default function FlightDetail({params}: FlightDetailProps) {
       <FlightInformation flightId={1}
                          className="my-4"/>
 
-      <ReviewsSection type={"flight"} id={1} />
+      {/*<ReviewsSection type={"flight"} id={1} />*/}
     </main>
   );
 }
