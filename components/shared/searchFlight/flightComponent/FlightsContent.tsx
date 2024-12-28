@@ -5,10 +5,11 @@ import Image from "next/image";
 import CheckFlight from "./CheckFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Flight from "@/types/Flight";
-import FavouriteFlights from "@/types/FavouriteFlight";
+import FavouriteFlights from "@/types/FavouriteFlights";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 
 const FlightsComp = ({ item }: { item: Flight }) => {
+  console.log("Flight Item", item);
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
   const userId = "3";

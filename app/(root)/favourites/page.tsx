@@ -4,6 +4,12 @@ import Tab from "@/components/shared/details/favourite/Tab";
 import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
 import { useEffect, useState } from "react";
 import "../../globals.css";
+import FavouriteStay from "@/types/FavouriteStay";
+import FavouriteFlights from "@/types/FavouriteFlights";
+import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
+import FavouriteFlightComp from "@/components/shared/details/favourite/FavouriteFlightComp";
+
 const tabs = [
   {
     type: "Flights",
@@ -17,102 +23,114 @@ const tabs = [
   },
 ];
 
-const MockFlightData = [
-  {
-    id: 1,
-    isFavourite: true,
-    img: "/assets/images/favourite.svg",
-    title: "Eresin Hotels - Boutique Class",
-    address: "Chiet Giang, Trung Quoc",
-    star: 5,
-    aminities: "20+",
-    rating: 4.2,
-    review: "Very Good",
-    countReview: 371,
-    price: 240,
-  },
+// const MockFlightData = [
+//   {
+//     id: 1,
+//     isFavourite: true,
+//     img: "/assets/images/favourite.svg",
+//     title: "Eresin Hotels - Boutique Class",
+//     address: "Chiet Giang, Trung Quoc",
+//     star: 5,
+//     aminities: "20+",
+//     rating: 4.2,
+//     review: "Very Good",
+//     countReview: 371,
+//     price: 240,
+//   },
 
-  {
-    id: 2,
-    isFavourite: true,
-    img: "/assets/images/favourite.svg",
-    title: "Eresin Hotels - Boutique Class",
-    address: "Chiet Giang, Trung Quoc",
-    star: 5,
-    aminities: "20+",
-    rating: 4.2,
-    review: "Very Good",
-    countReview: 371,
-    price: 240,
-  },
-  {
-    id: 3,
-    isFavourite: true,
-    img: "/assets/images/favourite.svg",
-    title: "Eresin Hotels - Boutique Class",
-    address: "Chiet Giang, Trung Quoc",
-    star: 5,
-    aminities: "20+",
-    rating: 4.2,
-    review: "Very Good",
-    countReview: 371,
-    price: 240,
-  },
-];
+//   {
+//     id: 2,
+//     isFavourite: true,
+//     img: "/assets/images/favourite.svg",
+//     title: "Eresin Hotels - Boutique Class",
+//     address: "Chiet Giang, Trung Quoc",
+//     star: 5,
+//     aminities: "20+",
+//     rating: 4.2,
+//     review: "Very Good",
+//     countReview: 371,
+//     price: 240,
+//   },
+//   {
+//     id: 3,
+//     isFavourite: true,
+//     img: "/assets/images/favourite.svg",
+//     title: "Eresin Hotels - Boutique Class",
+//     address: "Chiet Giang, Trung Quoc",
+//     star: 5,
+//     aminities: "20+",
+//     rating: 4.2,
+//     review: "Very Good",
+//     countReview: 371,
+//     price: 240,
+//   },
+// ];
 
-const MockPlaceData = [
-  {
-    id: 1,
-    isFavourite: true,
-    img: "/assets/images/favourite.svg",
-    title: "Eresin Hotels - Boutique Class",
-    address: "Chiet Giang, Trung Quoc",
-    star: 5,
-    aminities: "20+",
-    rating: 4.2,
-    review: "Very Good",
-    countReview: 371,
-    price: 2400,
-  },
+// const MockPlaceData = [
+//   {
+//     id: 1,
+//     isFavourite: true,
+//     img: "/assets/images/favourite.svg",
+//     title: "Eresin Hotels - Boutique Class",
+//     address: "Chiet Giang, Trung Quoc",
+//     star: 5,
+//     aminities: "20+",
+//     rating: 4.2,
+//     review: "Very Good",
+//     countReview: 371,
+//     price: 2400,
+//   },
 
-  {
-    id: 2,
-    isFavourite: true,
-    img: "/assets/images/favourite.svg",
-    title: "Eresin Hotels - Boutique Class",
-    address: "Chiet Giang, Trung Quoc",
-    star: 5,
-    aminities: "20+",
-    rating: 4.2,
-    review: "Very Good",
-    countReview: 371,
-    price: 240,
-  },
-];
+//   {
+//     id: 2,
+//     isFavourite: true,
+//     img: "/assets/images/favourite.svg",
+//     title: "Eresin Hotels - Boutique Class",
+//     address: "Chiet Giang, Trung Quoc",
+//     star: 5,
+//     aminities: "20+",
+//     rating: 4.2,
+//     review: "Very Good",
+//     countReview: 371,
+//     price: 240,
+//   },
+// ];
 
 export default function Favourites() {
   const [isSelected, setIsSelected] = useState("Flights");
-  const [flightData, setFlightData] = useState(MockFlightData);
-  const [placeData, setPlaceData] = useState(MockPlaceData);
   const [error, setError] = useState<string | null>(null);
+  const [favStays, setFavStays] = useState<FavouriteStay[]>();
+  const [favFlights, setFavFlights] = useState<FavouriteFlights>();
 
   const params = {
-    user_id: "1",
+    user_id: "2",
     page: 0,
     size: 10,
   };
 
+  const userId = "2";
   useEffect(() => {
-    fetchFavouriteStays(params)
+    fetchFavouriteFlights(userId)
       .then((data: any) => {
-        console.log("params", params);
-        console.log("data", data);
-        setPlaceData(data.data);
+        setFavFlights(data.data);
       })
       .catch((error) => {
         setError(error.message);
       });
   }, []);
+
+  console.log("favFlights", favFlights?.flight_favorites);
+  useEffect(() => {
+    fetchFavouriteStays(params)
+      .then((data: any) => {
+        setFavStays(data.data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  }, []);
+
+  console.log("favStays", favStays);
 
   return (
     <main>
@@ -132,71 +150,13 @@ export default function Favourites() {
         ))}
       </div>
 
-      {/* <div className="mt-10">
+      <div className="mt-10 flex flex-col gap-8">
         {isSelected === "Flights"
-          ? flightData.map((item) => (
-              <FavouriteComp
-                id={item.id}
-                isFavourite={item.isFavourite}
-                img={item.img}
-                title={item.title}
-                address={item.address}
-                star={item.star}
-                aminities={item.aminities}
-                rating={item.rating}
-                review={item.review}
-                countReview={item.countReview}
-                price={item.price}
-                handleClick={() => {
-                  //delete o API
-
-                  const updatedFlightData = MockFlightData.map((data) => {
-                    if (data.id === item.id) {
-                      return {
-                        ...data,
-                        isFavourite: false,
-                      };
-                    } else {
-                      return data;
-                    }
-                  });
-                  setFlightData(updatedFlightData);
-                }}
-              />
+          ? favFlights?.flight_favorites.map((item, index) => (
+              <FavouriteFlightComp key={index} item={item} />
             ))
-          : placeData.map((item) => (
-              <FavouriteComp
-                id={item.id}
-                isFavourite={item.isFavourite}
-                img={item.img}
-                title={item.title}
-                address={item.address}
-                star={item.star}
-                aminities={item.aminities}
-                rating={item.rating}
-                review={item.review}
-                countReview={item.countReview}
-                price={item.price}
-                handleClick={() => {
-                  //delete o API
-
-                  const updatedPlaceData = MockPlaceData.map((data) => {
-                    if (data.id === item.id) {
-                      return {
-                        ...data,
-                        isFavourite: false,
-                      };
-                    } else {
-                      return {
-                        ...data,
-                      };
-                    }
-                  });
-                  setPlaceData(updatedPlaceData);
-                }}
-              />
-            ))} */}
-      {/* </div> */}
+          : favStays?.map((item) => <FavouriteStayComp item={item.stay} />)}
+      </div>
     </main>
   );
 }
