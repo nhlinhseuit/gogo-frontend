@@ -4,6 +4,8 @@ import One from "@/components/gallery/one";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import SocialIcon from "@/components/shared/SocialIcon";
+import { toast } from "@/hooks/use-toast";
+import { registerAccount } from "@/lib/actions/RegisterActions";
 import {
   validateConfirmPassword,
   validateEmail,
@@ -28,7 +30,41 @@ const Signup = () => {
 
   const [isNameEmpty, setIsNameEmpty] = useState(false);
 
-  console.log("isNameEmpty", isNameEmpty);
+  const isValidForm = () => {
+    return (
+      !(firstName === "" && lastName === "") &&
+      email != "" &&
+      phone != "" &&
+      password != "" &&
+      passwordConfirm != "" &&
+      isChecked
+    );
+  };
+
+  const handleRegister = () => {
+    registerAccount({
+      email: email,
+      password: password,
+      phone: phone,
+      first_name: firstName,
+      last_name: lastName,
+    }).then((data) => {
+      if (!data) {
+        toast({
+          title: `Register failed!`,
+          variant: "error",
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: `Register successfully!`,
+          variant: "success",
+          duration: 3000,
+        });
+        router.push(`/login`);
+      }
+    });
+  };
 
   return (
     <main>
@@ -110,9 +146,7 @@ const Signup = () => {
               placeholder="Enter confirm password"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
-              validate={(value) =>
-                validateConfirmPassword(password, value)
-              }
+              validate={(value) => validateConfirmPassword(password, value)}
             />
 
             <div className="flex gap-44 justify-between items-center w-full">
@@ -142,10 +176,18 @@ const Signup = () => {
 
           <div className="w-full flex flex-col gap-6">
             <button
-              onClick={() => {
-                if (validateName(firstName, lastName)) setIsNameEmpty(true);
-              }}
-              className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 "
+              onClick={
+                isValidForm()
+                  ? () => {
+                      if (validateName(firstName, lastName))
+                        setIsNameEmpty(true);
+                      handleRegister();
+                    }
+                  : () => {}
+              }
+              className={`w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 ${
+                isValidForm() ? "bg-primary-100" : "bg-primary-100/30"
+              } `}
             >
               <p className="body-semibold text-black">Create account</p>
             </button>

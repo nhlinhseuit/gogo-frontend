@@ -6,14 +6,37 @@ import { usePathname, useRouter } from "next/navigation";
 import FlightsBackground from "./background-searchtab/FlightsBackground";
 import HomeBackground from "./background-searchtab/HomeBackground";
 import StaysBackground from "./background-searchtab/StaysBackground";
+import { getCurrentUser } from "@/utils/util";
+import MyAvatar from "../MyAvatar";
+import MyProfileAvatar from "../MyProfileAvatar";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const pathName = usePathname();
   const router = useRouter();
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
   const indicatorClass = "!border-primary-100";
 
-  console.log(pathName === "/");
+  const currentUser = getCurrentUser();
+
+  const handleLogout = () => {
+    setIsDropdownOpen(false);
+    toast({
+      title: `Đăng xuất thành công.`,
+      variant: "success",
+      duration: 3000,
+    });
+
+    sessionStorage.removeItem("authToken");
+    sessionStorage.removeItem("currentUser");
+    router.push("/login");
+  };
+
+  const { toast } = useToast();
 
   return (
     // 60vh của background đè navbar, 144px phần dư ra của  searchtab
@@ -184,35 +207,48 @@ const Navbar = () => {
 
           {/* AVATAR */}
 
-          <div className="flex gap-2 items-center">
-            <p
-              onClick={() => {
-                router.push(`/profile`);
-              }}
-              className={`
-                  cursor-pointer
-                  font-inter 
-                  body-semibold 
-                  ${pathName === "/" ? "text-white" : "text-dark-100"}
-                  dark:text-light-900 
-                  max-sm:hidden`}
-            >
-              View profile
-            </p>
-            <p
-              onClick={() => {
-                router.push(`/login`);
-              }}
-              className={`
-                  cursor-pointer
-                  font-inter 
-                  body-semibold 
-                  ${pathName === "/" ? "text-white" : "text-dark-100"}
-                  dark:text-light-900 
-                  max-sm:hidden`}
-            >
-              Login
-            </p>
+          <div className="flex gap-2 items-center relative">
+            {currentUser ? (
+              <>
+                <div onClick={toggleDropdown} className="cursor-pointer">
+                  <MyProfileAvatar img="/assets/images/avatar.JPG" />
+                </div>
+
+                {/* Tooltip / Dropdown */}
+                {isDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-2 bg-white shadow-lg border rounded-lg w-48 p-2 z-50">
+                    <p
+                      onClick={() => {
+                        router.push("/profile");
+                        setIsDropdownOpen(false);
+                      }}
+                      className="cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-md"
+                    >
+                      View Profile
+                    </p>
+                    <p
+                      onClick={handleLogout}
+                      className="cursor-pointer px-4 py-2 text-red-500 hover:bg-gray-100 rounded-md"
+                    >
+                      Logout
+                    </p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p
+                onClick={() => router.push("/login")}
+                className={`
+        cursor-pointer
+        font-inter 
+        body-semibold 
+        ${pathName === "/" ? "text-white" : "text-dark-100"}
+        dark:text-light-900 
+        max-sm:hidden`}
+              >
+                Login
+              </p>
+            )}
           </div>
         </div>
       </nav>

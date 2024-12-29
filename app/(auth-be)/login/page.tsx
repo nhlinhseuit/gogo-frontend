@@ -4,26 +4,57 @@ import One from "@/components/gallery/one";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import SocialIcon from "@/components/shared/SocialIcon";
+import { useToast } from "@/hooks/use-toast";
 import { authenticate } from "@/lib/actions/AuthenActions";
 import { validateEmail, validatePassword } from "@/utils/util";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 const Login = () => {
+  const searchParams = useSearchParams();
+  const prevRoute = searchParams.get('ref');
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isChecked, setisChecked] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleAuthen = () => {
-    authenticate({
-      email: email,
-      password: password,
-    }).then((data) => {
-      sessionStorage.setItem("authToken", data.token);
-      router.push("/");
-    });
+    if (email === "" && password === "") {
+      toast({
+        title: `Login failed!`,
+        variant: "error",
+        duration: 3000,
+      });
+    } else {
+      authenticate({
+        email: email,
+        password: password,
+      }).then((data) => {
+        if (!data) {
+          toast({
+            title: `Login failed!`,
+            variant: "error",
+            duration: 3000,
+          });
+        } else {
+          sessionStorage.setItem("authToken", data.token);
+          sessionStorage.setItem("currentUser", JSON.stringify(data.user));
+
+          if (prevRoute) router.push(`/${prevRoute}`);
+          else {
+            toast({
+              title: `Login successfully!`,
+              variant: "success",
+              duration: 3000,
+            });
+            router.push(`/`);
+          }
+        }
+      });
+    }
   };
 
   return (
