@@ -1,3 +1,5 @@
+import User from "./User";
+
 interface AuthenResult {
   token: string;
   message: string;
