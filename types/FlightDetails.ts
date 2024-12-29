@@ -4,6 +4,7 @@ import Airport from "@/types/Airport";
 
   interface FlightDetails {
   id: string;
+  name: string;
   airline: Airline;
   gate: string;
   timezone: string;
