@@ -30,7 +30,7 @@ export const fetchUserCards = async (userId: string): Promise<Card[]> => {
   }
 }
 
-export const fetchCard = async (cardId: string): Promise<Card> => {
+export const fetchCardWithId = async (cardId: string): Promise<Card> => {
   try {
     const response = await fetch(`${API_URL}/${cardId}`, {
       method: "GET",

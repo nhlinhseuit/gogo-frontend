@@ -192,3 +192,10 @@ export const extractDateAndTime = (
     return undefined; // Trả về undefined nếu xảy ra lỗi
   }
 };
+
+export const formatDateToMMYY = (dateString: string)=> {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
+  const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
+  return `${month}/${year}`;
+}

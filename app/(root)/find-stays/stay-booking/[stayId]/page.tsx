@@ -13,6 +13,9 @@ import CountriesDropdown from "@/components/shared/CountriesDropdown";
 import {useParams, useSearchParams} from "next/navigation";
 import {fetchRoom} from "@/lib/actions/RoomActions";
 import Price from "@/types/Price";
+import Card from "@/types/Card";
+import {fetchUserCards} from "@/lib/actions/CardActions";
+import {getCurrentUser} from "@/utils/util";
 
 interface PageParams {
   stayId: string;
@@ -35,6 +38,21 @@ const StayBookingPage: React.FC = () => {
   const [guestPhone, setGuestPhone] = useState<string>("");
   const [guestCountry, setGuestCountry] = useState<string>("United States");
 
+  const [cards, setCards] = useState<Card[]>([]);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+
+  const fetchCards = () => {
+    fetchUserCards(getCurrentUser().id).then((data) => {
+      setCards(data);
+      if (data.length > 0) {
+        setSelectedCard(data[0]);
+      }
+    }).catch((error) => {
+      console.error('Error fetching user cards:', error);
+    });
+  }
+
+
   useEffect(() => {
     fetchStay(stayId).then((data) => {
       setStayData(data);
@@ -46,13 +64,13 @@ const StayBookingPage: React.FC = () => {
     }).catch((error) => {
       console.error('Error fetching room:', error);
     })
-
+    fetchCards();
   }, []);
+
 
   const onSelectCountry = (country: string) => {
     setGuestCountry(country);
   }
-
   useEffect(() => {
     if (roomData) {
       setPrice({
@@ -95,6 +113,7 @@ const StayBookingPage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+
   return (
     <main className="flex w-full flex-col gap-4">
       <div
@@ -120,17 +139,17 @@ const StayBookingPage: React.FC = () => {
               <div className="flex flex-col">
                 <label htmlFor="lastName">Last Name</label>
                 <input id="lastName" type="text" placeholder="Last Name" className="border-2 rounded-md p-2"
-                value={guestLastName} onChange={(e) => setGuestLastName(e.target.value)}/>
+                       value={guestLastName} onChange={(e) => setGuestLastName(e.target.value)}/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="email">Email</label>
                 <input id="email" type="email" placeholder="Email" className="border-2 rounded-md p-2"
-                value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)}/>
+                       value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)}/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="phone">Phone</label>
                 <input id="phone" type="tel" placeholder="Phone" className="border-2 rounded-md p-2"
-                value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}/>
+                       value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}/>
               </div>
               <div className="flex flex-col col-span-2">
                 <label htmlFor="country">Country</label>
@@ -140,7 +159,8 @@ const StayBookingPage: React.FC = () => {
             </form>
           </div>
           <PaymentOptions total={price?.total ?? 0}/>
-          <PaymentCardSelection/>
+          <PaymentCardSelection cards={cards} fetchCards={fetchCards} onSelectCard={setSelectedCard}
+                                selectedCard={selectedCard}/>
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
