@@ -3,7 +3,7 @@
 import "@/app/globals.css";
 import React from 'react';
 import CountriesDropdown from "@/components/shared/CountriesDropdown";
-import {addCard} from "@/lib/actions/CardActions";
+import { addCard } from "@/lib/actions/CardActions";
 
 interface AddCardModalProps {
   closeModal: () => void;
@@ -16,10 +16,21 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
   const [nameOnCard, setNameOnCard] = React.useState('');
   const [country, setCountry] = React.useState('United States');
 
+  const formatCardNumber = (value: string) => {
+    const cleanValue = value.replace(/\D+/g, '').slice(0, 16); // Only digits, max length 16
+    return cleanValue.replace(/(.{4})/g, '$1 ').trim(); // Add space after every 4 digits
+  };
+
+  const formatExpDate = (value: string) => {
+    const cleanValue = value.replace(/\D+/g, '').slice(0, 4); // Only digits, max length 4
+    if (cleanValue.length <= 2) return cleanValue;
+    return `${cleanValue.slice(0, 2)}/${cleanValue.slice(2)}`; // Add '/' after MM
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Add Card", cardNumber, expDate, cvc, nameOnCard, country);
-    // validate inputs
+    // Validate inputs
     if (!cardNumber.match(/^\d{4} \d{4} \d{4} \d{4}$/)) {
       alert("Invalid card number format. Please use the format: 4321 4321 4321 4321");
       return;
@@ -36,7 +47,15 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
       alert("Name on card cannot be empty");
       return;
     }
-  }
+
+    addCard(cardNumber, expDate, cvc, nameOnCard, country).then((data) => {
+      alert("Card added successfully");
+      props.closeModal();
+    }).catch((error) => {
+      console.error('Error adding card:', error);
+      alert("Error adding card. Please try again later");
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-50">
@@ -61,7 +80,7 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
               placeholder="4321 4321 4321 4321"
               className="mt-1 w-full rounded border p-2"
               value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
+              onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
             />
           </div>
 
@@ -74,10 +93,10 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
                 type="text"
                 required
                 id="expDate"
-                placeholder="02/27"
+                placeholder="MM/YY"
                 className="mt-1 w-full rounded border p-2"
                 value={expDate}
-                onChange={(e) => setExpDate(e.target.value)}
+                onChange={(e) => setExpDate(formatExpDate(e.target.value))}
               />
             </div>
 
@@ -92,7 +111,7 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
                 placeholder="123"
                 className="mt-1 w-full rounded border p-2"
                 value={cvc}
-                onChange={(e) => setCvc(e.target.value)}
+                onChange={(e) => setCvc(e.target.value.replace(/\D+/g, '').slice(0, 3))} // Only digits, max length 3
               />
             </div>
           </div>
@@ -116,7 +135,7 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
             <label htmlFor="country" className="block text-sm font-medium">
               Country or Region
             </label>
-            <CountriesDropdown selectedCountry={country} onSelectCountry={setCountry}/>
+            <CountriesDropdown selectedCountry={country} onSelectCountry={setCountry} />
           </div>
 
           <button
@@ -127,11 +146,9 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
           </button>
         </form>
 
-        {/* Footer Note */}
         <p className="mt-4 text-center text-xs text-gray-600">
           By confirming your subscription, you allow Gogo Travel to charge your card for this payment and future
-          payments in
-          accordance with their terms. You can always cancel your subscription.
+          payments in accordance with their terms. You can always cancel your subscription.
         </p>
       </div>
     </div>

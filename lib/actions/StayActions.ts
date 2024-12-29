@@ -12,8 +12,10 @@ export const fetchStay = async (stayId: string): Promise<Stay> => {
     const response = await fetch(`${API_URL}/${stayId}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getCurrentUser().token}`,
+        // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
+        "Authorization": TEST_TOKEN,
+
       },
     });
 
@@ -33,8 +35,10 @@ export const fetchStays = async (): Promise<Stay[]> => {
     const response = await fetch(API_URL, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getCurrentUser().token}`,
+        // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
+        "Authorization": TEST_TOKEN,
+
       },
     });
 
