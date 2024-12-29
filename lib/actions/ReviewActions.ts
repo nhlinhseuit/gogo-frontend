@@ -4,7 +4,7 @@ import {BASE_URL} from "@/constants";
 import {getCurrentUser} from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/reviews`
-
+const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`
 interface ReviewResponse {
   data: Review[];
   page: number;
@@ -21,8 +21,10 @@ export const fetchServiceReview = async (serviceId: string, page: number = 0, si
     const response = await fetch(`${API_URL}?service_id=${serviceId}&page=${page}&page_size=${size}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getCurrentUser().token}`,
+        // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
+        "Authorization": TEST_TOKEN,
+
       },
     });
     if (!response.ok) {
@@ -41,8 +43,10 @@ export const postReview = async (serviceId: string, description: string, rating:
     const response = await fetch(`${API_URL}`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${getCurrentUser().token}`,
+        // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
+        "Authorization": TEST_TOKEN,
+
       },
       body: JSON.stringify({
         user_id: getCurrentUser().id,
