@@ -1,14 +1,16 @@
+"use client";
 import "@/app/globals.css";
 import Checkbox from "@/components/shared/Checkbox";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
 import LocationComponent from "@/components/shared/details/LocationComponent";
-import Ratings from "@/components/shared/details/Ratings";
-import ReviewsSection from "@/components/shared/details/ReviewsSection";
+import RatingSummaryComponent from "@/components/shared/details/RatingSummaryComponent";
+import type FlightDetails from "@/types/FlightDetails";
+import {useEffect, useState} from "react";
+import {fetchFlightDetails} from "@/lib/actions/FlightActions";
 
 interface FlightDetailProps {
   params: {
     flightId: string;
-    flightTitle: string;
   };
 }
 
@@ -26,17 +28,45 @@ export default function FlightDetail({params}: FlightDetailProps) {
     imageUrl: "/assets/images/flight.png",
   };
 
+  const [flightDetails, setFlightDetails] = useState<FlightDetails | null>(null);
+  const [lowestPrice, setLowestPrice] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchFlightDetails(params.flightId).then((data) => {
+      setFlightDetails(data);
+
+    }).catch((error) => {
+      console.error("Error fetching flight details:", error);
+    });
+  }, [])
+
+  useEffect(() => {
+    if (!flightDetails) {
+      return;
+    }
+    flightDetails.seats.forEach((seat) => {
+      if (lowestPrice === null || seat.base_fare < lowestPrice) {
+        console.log("Setting lowest price to", seat.base_fare);
+        setLowestPrice(seat.base_fare);
+      }
+    }, [flightDetails]);
+  })
+
+  if (!flightDetails) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <main className="flex flex-col w-full gap-4 py-4">
+    <main className="flex w-full flex-col gap-4 py-4">
       <div className="flex flex-row justify-between">
-        <span className="h2-bold">{mockFlightData.planeModel}</span>
+        <span className="h2-bold">{flightDetails.name}</span>
         <span className="h2-bold text-accent-orange">
-          ${mockFlightData.baseFare}
+         From ${lowestPrice}
         </span>
       </div>
-      <LocationComponent location={mockFlightData.departureAirportName}/>
+      <LocationComponent location={flightDetails.departure_airport.name}/>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <Ratings rating={4.5} numberOfReviews={100}/>
+        <RatingSummaryComponent rating={flightDetails.airline.rating} numberOfReviews={flightDetails.airline.review_count}/>
         <div className="flex flex-row gap-4">
           <button><img className="rounded-md p-4 border-primary-100 border-[1px]"
                        src="/assets/icons/favorite-outlined.svg" alt="Favorite"/></button>
@@ -68,23 +98,25 @@ export default function FlightDetail({params}: FlightDetailProps) {
       </div>
 
       <div className="flex flex-col rounded p-4 bg-primary-100">
-        <span className="h2-bold">Emirates Airline Policies</span>
+        <span className="h2-bold">{flightDetails.airline.name} Policies</span>
         <div className="flex flex-col gap-4 md:flex-row md:gap-8">
-          <div className="flex flex-row items-center gap-4">
-            <img src="/assets/icons/IC_CLOCK.svg" alt="Bullet point"/>
-            <span className="font-light">Pre-flight cleaning, installation of cabin HEPA filters.</span>
-          </div>
-          <div className="flex flex-row items-center gap-4">
-            <img src="/assets/icons/IC_CLOCK.svg" alt="Bullet point"/>
-            <span className="font-light">Pre-flight health screening questions.</span>
-          </div>
+          {
+            flightDetails.airline.policies.map((policy) => {
+              return (
+                <div key={policy.id} className="flex flex-row items-center gap-4">
+                  <img src="/assets/icons/attention.svg" alt="Checkmark"/>
+                  <span className="font-light">{policy.content}</span>
+                </div>
+              );
+            })
+          }
         </div>
       </div>
 
-      <FlightInformation flightId={1}
+      <FlightInformation flightDetails={flightDetails}
                          className="my-4"/>
 
-      <FlightInformation flightId={1}
+      <FlightInformation flightDetails={flightDetails}
                          className="my-4"/>
 
       {/*<ReviewsSection type={"flight"} id={1} />*/}

@@ -1,7 +1,7 @@
 "use client";
 import "@/app/globals.css";
 import LocationComponent from "@/components/shared/details/LocationComponent";
-import Ratings from "@/components/shared/details/Ratings";
+import RatingSummaryComponent from "@/components/shared/details/RatingSummaryComponent";
 import ReviewsSection from "@/components/shared/details/ReviewsSection";
 import HotelStars from "@/components/shared/details/stays/HotelStars";
 import AvailableRooms from "@/components/shared/details/stays/AvailableRooms";
@@ -100,7 +100,7 @@ export default function StayDetail({params}: StayDetailProp) {
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         {/*TODO: Replace with number of reviews*/}
-        <Ratings rating={stayData?.rating || 0} numberOfReviews={0} />
+        <RatingSummaryComponent rating={stayData?.rating || 0} numberOfReviews={0} />
         <div className="flex flex-row gap-4">
           <button>
             <img
@@ -167,9 +167,13 @@ export default function StayDetail({params}: StayDetailProp) {
         <span className="font-light">{stayData?.overview}</span>
       </div>
       <div className="flex flex-row gap-8">
-        <AdvantageComponent name={"Free Wi-Fi"} />
-        <AdvantageComponent name={"Free Wi-Fi"} />
-        <AdvantageComponent name={"Free Wi-Fi"} />
+        <RatingSummaryComponent rating={stayData?.rating} numberOfReviews={stayData?.review_count || 0} />
+        {stayData?.amenities.map((amenity) => {
+            if(amenity.is_featured) {
+              return <AdvantageComponent key={amenity.id} name={amenity.name} />
+            }
+          })
+        }
       </div>
 
       <div id="available-rooms">
