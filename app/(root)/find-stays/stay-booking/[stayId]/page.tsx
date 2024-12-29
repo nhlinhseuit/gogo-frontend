@@ -28,7 +28,12 @@ const StayBookingPage: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [stayData, setStayData] = useState<Stay | null>(null);
   const [roomData, setRoomData] = useState<Room | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string>("full"); // Default to 'full'
+
+  const [guestFirstName, setGuestFirstName] = useState<string>("");
+  const [guestLastName, setGuestLastName] = useState<string>("");
+  const [guestEmail, setGuestEmail] = useState<string>("");
+  const [guestPhone, setGuestPhone] = useState<string>("");
+  const [guestCountry, setGuestCountry] = useState<string>("United States");
 
   useEffect(() => {
     fetchStay(stayId).then((data) => {
@@ -43,6 +48,10 @@ const StayBookingPage: React.FC = () => {
     })
 
   }, []);
+
+  const onSelectCountry = (country: string) => {
+    setGuestCountry(country);
+  }
 
   useEffect(() => {
     if (roomData) {
@@ -103,27 +112,34 @@ const StayBookingPage: React.FC = () => {
             <form action="" className="grid grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <label htmlFor="firstName">First Name</label>
-                <input id="firstName" type="text" placeholder="First Name" className="border-2 rounded-md p-2"/>
+                <input id="firstName" type="text" placeholder="First Name" className="border-2 rounded-md p-2"
+                       value={guestFirstName} onChange={
+                  (e) => setGuestFirstName(e.target.value)
+                }/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="lastName">Last Name</label>
-                <input id="lastName" type="text" placeholder="Last Name" className="border-2 rounded-md p-2"/>
+                <input id="lastName" type="text" placeholder="Last Name" className="border-2 rounded-md p-2"
+                value={guestLastName} onChange={(e) => setGuestLastName(e.target.value)}/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="email">Email</label>
-                <input id="email" type="email" placeholder="Email" className="border-2 rounded-md p-2"/>
+                <input id="email" type="email" placeholder="Email" className="border-2 rounded-md p-2"
+                value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)}/>
               </div>
               <div className="flex flex-col">
                 <label htmlFor="phone">Phone</label>
-                <input id="phone" type="tel" placeholder="Phone" className="border-2 rounded-md p-2"/>
+                <input id="phone" type="tel" placeholder="Phone" className="border-2 rounded-md p-2"
+                value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}/>
               </div>
               <div className="flex flex-col col-span-2">
                 <label htmlFor="country">Country</label>
-                <CountriesDropdown/>
+                <CountriesDropdown onSelectCountry={() => onSelectCountry(guestCountry)}
+                                   selectedCountry={guestCountry}/>
               </div>
             </form>
           </div>
-          <PaymentOptions total={price?.total ?? 0} />
+          <PaymentOptions total={price?.total ?? 0}/>
           <PaymentCardSelection/>
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>

@@ -1,7 +1,7 @@
 import {BASE_URL} from "@/constants";
+import {getCurrentUser} from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/bank-card`
-const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`;
 
 class Card {
 }
@@ -11,7 +11,7 @@ export const fetchUserCards = async (userId: string): Promise<Card[]> => {
     const response = await fetch(`${API_URL}/user/${userId}`, {
       method: "GET",
       headers: {
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
       }
     });
@@ -35,7 +35,7 @@ export const fetchCard = async (cardId: string): Promise<Card> => {
     const response = await fetch(`${API_URL}/${cardId}`, {
       method: "GET",
       headers: {
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
       }
     });
@@ -51,16 +51,16 @@ export const fetchCard = async (cardId: string): Promise<Card> => {
   }
 }
 
-export const addCard = async (userId: string, number: string, expiryDate: string, cvc: string, nameOnCard: string, region: string): Promise<Card> => {
+export const addCard = async ( number: string, expiryDate: string, cvc: string, nameOnCard: string, region: string): Promise<Card> => {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId,
+        userId: getCurrentUser().id,
         number,
         expiryDate,
         cvc,
