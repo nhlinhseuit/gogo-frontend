@@ -55,7 +55,7 @@ const PaymentCard = () => {
         </div>
       </label>
 
-      {/* Add a New Cad */}
+      {/* Add a New Card */}
       <label
         htmlFor="add-new-card"
         className={`h-[180px] just w-[30%] block p-8 border-2 border-dashed rounded-xl text-center cursor-pointer ${

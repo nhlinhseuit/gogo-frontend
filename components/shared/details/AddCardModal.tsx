@@ -3,10 +3,11 @@
 import "@/app/globals.css";
 import React from 'react';
 import CountriesDropdown from "@/components/shared/CountriesDropdown";
-import { addCard } from "@/lib/actions/CardActions";
+import {addCard} from "@/lib/actions/CardActions";
 
 interface AddCardModalProps {
   closeModal: () => void;
+  fetchCards: () => void;
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = (props) => {
@@ -50,6 +51,7 @@ const AddCardModal: React.FC<AddCardModalProps> = (props) => {
 
     addCard(cardNumber, expDate, cvc, nameOnCard, country).then((data) => {
       alert("Card added successfully");
+      props.fetchCards();
       props.closeModal();
     }).catch((error) => {
       console.error('Error adding card:', error);
