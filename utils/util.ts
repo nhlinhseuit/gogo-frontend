@@ -40,12 +40,6 @@ export const getToken = () => {
   }
 };
 
-export const validateName = (firstName: string, lastName: string) => {
-  return firstName.trim() === "" && lastName.trim() === ""
-    ? "First name and last name cannot both be empty."
-    : null;
-};
-
 export const validateEmail = (value: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value) ? null : "Invalid email format.";
