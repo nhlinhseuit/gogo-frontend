@@ -4,9 +4,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**", // Cho phép tất cả domain
+        hostname: "**", // Chấp nhận tất cả các domain qua HTTPS
       },
     ],
+    domains: ["res.cloudinary.com"], // Cụ thể thêm res.cloudinary.com
   },
 };
 

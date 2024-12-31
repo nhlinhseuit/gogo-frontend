@@ -1,42 +1,19 @@
-import { fetchMyFlights } from "@/lib/actions/Search/FetchMyFlights";
+import { fetchMyFlights } from "@/lib/actions/MyBooking/FetchMyFlights";
+import { fetchMyStays } from "@/lib/actions/MyBooking/FetchMyStays";
+import BookingFlight from "@/types/BookingFlight";
+import BookingStay from "@/types/BookingStay";
 import { useEffect, useState } from "react";
 import AccountTab from "./AccountTab";
 import FlightsItem from "./FlightsItem";
-import BookingFlight from "@/types/BookingFlight";
-
-const MockFlightData = [
-  {
-    id: 1,
-    img: "/assets/images/emirates.svg",
-  },
-  {
-    id: 2,
-    img: "/assets/images/emirates.svg",
-  },
-  {
-    id: 3,
-    img: "/assets/images/emirates.svg",
-  },
-];
-
-const MockStayData = [
-  {
-    id: 1,
-    img: "/assets/images/favourite.svg",
-  },
-  {
-    id: 2,
-    img: "/assets/images/favourite.svg",
-  },
-  {
-    id: 3,
-    img: "/assets/images/favourite.svg",
-  },
-];
 
 const HistoryInfoSection = () => {
   const [bookingFlights, setBookingFlights] = useState<{
     data: BookingFlight[];
+  }>({
+    data: [],
+  });
+  const [bookingStays, setBookingStays] = useState<{
+    data: BookingStay[];
   }>({
     data: [],
   });
@@ -60,11 +37,13 @@ const HistoryInfoSection = () => {
 
   const renderData = () => {
     if (isSelected === "Flights") return bookingFlights.data;
-    else return MockStayData;
+    else return bookingStays.data;
   };
 
-  useEffect(() => {
-    fetchMyFlights("3")
+  const fetchFlights = async () => {
+    setIsLoading(true);
+    try {
+      fetchMyFlights()
       .then((data: any) => {
         setBookingFlights(data);
         // setIsLoading(false);
@@ -72,8 +51,43 @@ const HistoryInfoSection = () => {
       .catch((error) => {
         setError(error.message);
         // setIsLoading(false);
-      });
+      })
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchStays = async () => {
+    setIsLoading(true);
+    try {
+      fetchMyStays()
+      .then((data: any) => {
+        setBookingStays(data);
+        // setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        // setIsLoading(false);
+      })
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isSelected === "Flights") fetchFlights();
   }, []);
+
+  useEffect(() => {
+    if (isSelected === "Stays" && !bookingStays) fetchStays();
+  }, [isSelected]);
+
+  console.log('bookingFlights', bookingFlights)
+  console.log('bookingStays', bookingStays)
 
   return (
     <>
