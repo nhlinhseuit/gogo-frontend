@@ -2,16 +2,17 @@
 
 import Image from "next/image";
 import MyIcon from "./MyIcon";
+import BookingFlight from "@/types/BookingFlight";
 
-const FlightsItem = ({ item }: { item: FlightItemProfile }) => {
+const FlightsItem = ({ item }: { item: BookingFlight }) => {
   return (
     <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[10%] my-4 p-2 flex mr-1 px-3 border border-primary-100 rounded-md justify-center items-center">
         <Image
-          src={item.img}
+          src={item.seats[0].seat.flight.airline.image}
           alt="places"
-          width={0}
-          height={0}
+          width={200}
+          height={200}
           className="w-full"
         />
       </div>
@@ -21,19 +22,23 @@ const FlightsItem = ({ item }: { item: FlightItemProfile }) => {
         <div className="flex items-center">
           <>
             <div>
-              <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">
-                Newark (EWR)
+              <p className="title-medium text-[#112211]">
+                {item.seats[0].seat.flight.timezone}
               </p>
-              <p className="paragraph-semibold">12:00 pm</p>
+              <p className="paragraph-semibold">
+                {item.seats[0].seat.flight.departureTime}
+              </p>
             </div>
 
             <div className="mx-4">---</div>
 
             <div>
-              <p className="text-[13px] font-medium leading-[18.2px] text-[#112211]">
-                Newark (EWR)
+              <p className="title-medium text-[#112211]">
+                {item.seats[0].seat.flight.timezone}
               </p>
-              <p className="paragraph-semibold">6:00 pm</p>
+              <p className="paragraph-semibold">
+                {item.seats[0].seat.flight.arrivalTime}
+              </p>
             </div>
           </>
 
@@ -44,24 +49,24 @@ const FlightsItem = ({ item }: { item: FlightItemProfile }) => {
               <MyIcon
                 icon="/assets/icons/calendar_profile.svg"
                 title="Date"
-                desc="12-11-2024"
+                desc={["12-11-2024"]}
               />
               <MyIcon
                 icon="/assets/icons/time_profile.svg"
                 title="Flight time"
-                desc="Newark(EWR)"
+                desc={[item.seats[0].seat.flight.timezone]}
               />
             </div>
             <div className="flex flex-col gap-4">
               <MyIcon
                 icon="/assets/icons/door_profile.svg"
                 title="Gate"
-                desc="A12"
+                desc={[item.seats[0].seat.flight.gate]}
               />
               <MyIcon
                 icon="/assets/icons/seat_profile.svg"
                 title="Seat no."
-                desc="128"
+                desc={item.seats.map((item) => item.seat.number)}
               />
             </div>
           </div>

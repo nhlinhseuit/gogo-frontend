@@ -1,12 +1,12 @@
 import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
 import Location from "@/types/Location";
 import {
   convertDataNavigate,
   formatDayApi,
   isDateValid,
-  parseDayFromApi,
+  parseDayFromSearchParams,
 } from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -40,13 +40,13 @@ const StaysInput = ({
 
   const getCheckinDateParams = () => {
     return selectedCheckinDateParams
-      ? parseDayFromApi(selectedCheckinDateParams)
+      ? parseDayFromSearchParams(selectedCheckinDateParams)
       : undefined;
   };
 
   const getCheckoutDateParams = () => {
     return selectedCheckoutDateParams
-      ? parseDayFromApi(selectedCheckoutDateParams)
+      ? parseDayFromSearchParams(selectedCheckoutDateParams)
       : undefined;
   };
 

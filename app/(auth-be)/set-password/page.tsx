@@ -5,6 +5,7 @@ import BackToPrev from "@/components/shared/BackToPrev";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import SocialIcon from "@/components/shared/SocialIcon";
+import { toast } from "@/hooks/use-toast";
 import {
   validateConfirmPassword,
   validateEmail,
@@ -19,6 +20,34 @@ const page = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const router = useRouter();
 
+  const isValidForm = () => {
+    return (
+      password.trim() !== "" &&
+      passwordConfirm.trim() !== "" &&
+      password === passwordConfirm &&
+      password.length > 5 &&
+      passwordConfirm.length > 5
+    );
+  };
+
+  const handleSubmit = () => {
+    if (!isValidForm()) {
+      toast({
+        title: `Please enter valid information!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    } else {
+      toast({
+        title: `Set password successfully!`,
+        variant: "success",
+        duration: 3000,
+      });
+      router.push(`/login`);
+    }
+  };
+
   return (
     <main>
       <div className="w-full h-screen flex gap-12">
@@ -28,7 +57,6 @@ const page = () => {
             width={80}
             height={80}
             alt="DevFlow"
-            className="mb-6"
           />
           <div>
             <BackToPrev text={"Back to login"} linkPrev="/login" />
@@ -62,7 +90,10 @@ const page = () => {
           </div>
 
           <div className=" w-full flex flex-col gap-6">
-            <button className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 ">
+            <button
+              onClick={handleSubmit}
+              className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 "
+            >
               <p className="body-semibold text-black">Set password</p>
             </button>
           </div>
