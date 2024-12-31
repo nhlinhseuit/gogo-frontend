@@ -57,12 +57,12 @@ export default function StaysSearch() {
   useEffect(() => {
     searchStays(params)
       .then((data: any) => {
-        setIsLoading(false);
+        // setIsLoading(false);
         setStays(data.data);
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false);
+        // setIsLoading(false);
       });
   }, []);
 

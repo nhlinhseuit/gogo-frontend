@@ -1,20 +1,24 @@
 import { BASE_URL } from "@/constants";
 import UserInfo from "@/types/UserInfo";
+import { getToken, getCurrentUser } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/users/`;
 
-export const editUserCoverPicture = async (
-  userId: string,
+export const editUserAvatar = async (
   formData: FormData
 ): Promise<UserInfo[]> => {
   try {
-    console.log("formData", formData);
+    const token = getToken();
+    const userInfo = getCurrentUser();
+    const userId = userInfo?.["id"] ?? "";
 
-    const response = await fetch(API_URL + userId + "/cover", {
+
+    const response = await fetch(API_URL + userId + "/avatar", {
       method: "PUT",
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
+      headers: {
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
+      },
       body: formData,
     });
 

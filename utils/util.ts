@@ -23,7 +23,6 @@ export const extractDateAndTime = (isoString: string): { date: string; time: str
   }
 };
 
-
 export const getCurrentUser = () => {
   if (typeof window !== "undefined") {
     return sessionStorage.getItem("currentUser")
@@ -32,11 +31,13 @@ export const getCurrentUser = () => {
   } else return null;
 };
 export const getToken = () => {
-  if (typeof window !== "undefined") {
-    return sessionStorage.getItem("authToken")
-      ? JSON.parse(sessionStorage.getItem("authToken")!)
-      : null;
-  } else return null;
+  try {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("authToken") || null;
+    } else return null;
+  } catch (e) {
+    console.log("error", e);
+  }
 };
 
 export const validateName = (firstName: string, lastName: string) => {

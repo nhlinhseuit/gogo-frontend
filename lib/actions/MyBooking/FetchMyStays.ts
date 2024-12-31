@@ -1,14 +1,18 @@
 import { BASE_URL } from "@/constants";
 import Flight from "@/types/Flight";
+import { getToken } from "@/utils/util";
 
-const API_URL = `${BASE_URL}/api/v1/flight-booking/user/`;
+const API_URL = `${BASE_URL}/api/v1/stays/booking/all`;
 
-export const fetchMyFlights = async (userId: string): Promise<Flight[]> => {
+export const fetchMyStays = async (): Promise<Flight[]> => {
+  const token = getToken();
+
   try {
-    const response = await fetch(API_URL + userId, {
+    const response = await fetch(API_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
       },
     });
 
@@ -18,7 +22,7 @@ export const fetchMyFlights = async (userId: string): Promise<Flight[]> => {
 
     return (await response.json()) as Promise<Flight[]>;
   } catch (error) {
-    console.error("Error fetching Flights:", error);
+    console.error("Error fetching Stays:", error);
     throw error;
   }
 };

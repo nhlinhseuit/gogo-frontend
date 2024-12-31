@@ -5,7 +5,7 @@ import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import SocialIcon from "@/components/shared/SocialIcon";
 import { useToast } from "@/hooks/use-toast";
-import { authenticate } from "@/lib/actions/AuthenActions";
+import { authenticate } from "@/lib/actions/Authen/AuthenActions";
 import { validateEmail, validatePassword } from "@/utils/util";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";

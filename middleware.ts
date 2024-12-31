@@ -1,14 +1,16 @@
-// ! Middleware chạy trên server, nên sessionStorage (client-side API) không hoạt động ở đây.
-// ! Nếu bạn đã đăng nhập, token phải được lưu trong cookie (hoặc một nơi mà middleware có thể truy cập server-side). Nếu bạn chỉ lưu trong sessionStorage, middleware sẽ không thấy token này.
+import { NextResponse } from "next/server";
 
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+export function middleware(req: any) {
+  // Ví dụ: Middleware kiểm tra và điều hướng nếu cần
+  const { pathname } = req.nextUrl;
 
-const isProtectedRoute = createRouteMatcher(["/favourites(.*)", "/profile(.*)"]);
+  if (pathname === "/protected") {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect();
-});
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/protected"],
 };

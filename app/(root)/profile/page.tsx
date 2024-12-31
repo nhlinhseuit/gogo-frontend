@@ -5,8 +5,8 @@ import AccountInfoSection from "@/components/shared/Profile/AccountInfoSection";
 import AccountTab from "@/components/shared/Profile/AccountTab";
 import HistoryInfoSection from "@/components/shared/Profile/HistoryInfoSection";
 import PaymentInfoSection from "@/components/shared/Profile/PaymentInfoSection";
-import { editUserCoverPicture } from "@/lib/actions/Search/EditUserCoverPicture";
-import { getUserInfo } from "@/lib/actions/Search/GetUserInfo";
+import { editUserCoverPicture } from "@/lib/actions/Profile/EditUserCoverPicture";
+import { getUserInfo } from "@/lib/actions/Profile/GetUserInfo";
 import UserInfo from "@/types/UserInfo";
 import { getCurrentUser } from "@/utils/util";
 import Image from "next/image";
@@ -20,25 +20,28 @@ export default function Profile() {
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      router.replace(`/login?ref=profile`)
-    };
+      router.replace(`/login?ref=profile`);
+    }
   }, []);
 
-  const [isSelected, setIsSelected] = useState("Tickets/Bookings");
+  const [isSelected, setIsSelected] = useState("Account");
   const [userInfo, setUserInfo] = useState<UserInfo>();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
+  const [tempCoverImageURL, setTempCoverImageURL] = useState<string | null>(
+    null
+  );
+
   const [isEditingCover, setIsEditingCover] = useState(false);
 
   //! xem lại sd tempcoverimg
   //! sửa lại hiển thị image từ API, hiển thị được hình, sửa cho avatar
 
-
   useEffect(() => {
-    getUserInfo("3")
+    getUserInfo()
       .then((data: any) => {
         setUserInfo(data.data);
         // setIsLoading(false);
@@ -49,31 +52,15 @@ export default function Profile() {
       });
   }, []);
 
-  const [coverImage, setCoverImage] = useState(
-    userInfo?.cover_url
-      ? userInfo.cover_url
-      : "/assets/images/background_avatar.svg"
-  );
+  const [coverImage, setCoverImage] = useState("/assets/images/bg.png");
 
-  // const handleSaveCoverPictureAPI = async () => {
-  //   if (!tempCoverImage) {
-  //     alert("No new cover image to save.");
-  //     return;
-  //   }
-
-  //   try {
-  //     await editUserCoverPicture("1", tempCoverImage);
-  //     alert("Avatar updated successfully!");
-  //   } catch (error) {
-  //     console.error("Error updating cover picture:", error);
-  //     alert("Failed to update cover.");
-  //     setCoverImage("/assets/images/background_avatar.svg");
-  //   }
-  // };
+  useEffect(() => {
+    if (userInfo?.cover_url) {
+      setCoverImage(userInfo.cover_url);
+    }
+  }, [userInfo]);
 
   const handleSaveCoverPictureAPI = async () => {
-    const userId = "3";
-
     if (!tempCoverImage) {
       alert("No new cover image to save.");
       return;
@@ -85,9 +72,7 @@ export default function Profile() {
 
       console.log("File in FormData:", formData.get("file"));
 
-
-
-      await editUserCoverPicture(userId, formData); // Gửi form data qua API
+      await editUserCoverPicture(formData); // Gửi form data qua API
       alert("Avatar updated successfully!");
     } catch (error) {
       console.error("Error updating cover picture:", error);
@@ -96,41 +81,41 @@ export default function Profile() {
     }
   };
 
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files?.[0];
-  //   if (file && file.type.startsWith("image/")) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       if (typeof reader.result === "string") {
-  //         setTempCoverImage(reader.result);
-  //       }
-  //       setIsEditingCover(true);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   } else {
-  //     alert("Please select a valid image file.");
-  //   }
-  // };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      setTempCoverImage(file); // Lưu trực tiếp file vào state
+      const blobURL = URL.createObjectURL(file); // Tạo URL tạm thời từ File
+      setTempCoverImage(file); // Lưu file để gửi API
+      setTempCoverImageURL(blobURL); // Lưu URL để hiển thị ảnh
       setIsEditingCover(true);
     } else {
       alert("Please select a valid image file.");
     }
   };
 
-  const saveCoverImage = () => {
-    if (tempCoverImage) {
-      //!HERE
-      // setCoverImage(tempCoverImage);
-      setTempCoverImage(null);
-      setIsEditingCover(false);
-    }
+  useEffect(() => {
+    return () => {
+      if (tempCoverImageURL) {
+        URL.revokeObjectURL(tempCoverImageURL);
+      }
+    };
+  }, [tempCoverImageURL]);
 
-    handleSaveCoverPictureAPI();
+  const saveCoverImage = () => {
+    if (tempCoverImage && tempCoverImageURL) {
+      // Cập nhật hình ảnh hiển thị từ blob URL
+      setCoverImage(tempCoverImageURL);
+
+      // Reset trạng thái chỉnh sửa
+      setTempCoverImage(null);
+      setTempCoverImageURL(null);
+      setIsEditingCover(false);
+
+      // Gửi API để lưu ảnh
+      handleSaveCoverPictureAPI();
+    } else {
+      alert("No new cover image to save.");
+    }
   };
 
   const renderComponent = () => {
@@ -141,10 +126,10 @@ export default function Profile() {
   };
 
   const tabs = [
-    // {
-    //   type: "Account",
-    //   title: "Account",
-    // },
+    {
+      type: "Account",
+      title: "Account",
+    },
     {
       type: "Tickets/Bookings",
       title: "Tickets/Bookings",
@@ -167,8 +152,8 @@ export default function Profile() {
               }}
             >
               {/* //!HERE */}
-              {/* <Image
-                src={tempCoverImage || coverImage}
+              <Image
+                src={tempCoverImageURL || coverImage} // URL tạm thời hoặc ảnh từ API
                 alt="Cover"
                 layout="fill"
                 objectFit="cover"
@@ -176,7 +161,7 @@ export default function Profile() {
                 onError={() =>
                   setCoverImage("/assets/images/background_avatar.svg")
                 }
-              /> */}
+              />
             </div>
 
             <div className="cursor-pointer flex gap-2 items-center absolute right-6 bottom-6  rounded-md">
@@ -246,31 +231,8 @@ export default function Profile() {
       </div>
 
       <div className="mt-[230px] flex justify-evenly h-18 bg-white rounded-lg shadow-full shadow-primary-400">
-        <div className="w-full flex">
-          <div className="w-1/2">
-            <AccountTab
-              key={1}
-              title={tabs[0].title}
-              isSelected={isSelected}
-              onClick={() => {
-                setIsSelected(tabs[0].title);
-              }}
-            />
-          </div>
-          <div className="w-[1px] my-4 bg-gray-300"></div>
-          <div className="w-1/2">
-            <AccountTab
-              title={tabs[1].title}
-              isSelected={isSelected}
-              onClick={() => {
-                setIsSelected(tabs[1].title);
-              }}
-            />
-          </div>
-        </div>
-
-        {/* {tabs.map((item, index) => {
-          return item.type === "Tickets/Bookings" ? (
+        {tabs.map((item, index) => {
+          return item.type === "Account" ? (
             <AccountTab
               key={index}
               title={item.title}
@@ -291,7 +253,7 @@ export default function Profile() {
               />
             </div>
           );
-        })} */}
+        })}
       </div>
 
       {renderComponent()}

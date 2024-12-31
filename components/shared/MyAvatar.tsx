@@ -1,22 +1,28 @@
-import { editUserAvatar } from "@/lib/actions/Search/EditUserAvatar";
+import { editUserAvatar } from "@/lib/actions/Profile/EditUserAvatar";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const MyAvatar = ({ img }: { img: string | undefined }) => {
-  const [avatarSrc, setAvatarSrc] = useState(
-    img ? img : "/assets/images/avatar.JPG"
-  );
-  const [tempAvatarSrc, setTempAvatarSrc] = useState<string | null>(null);
+  const [avatarSrc, setAvatarSrc] = useState("/assets/images/avt.png");
+  const [tempAvatarFile, setTempAvatarFile] = useState<File | null>(null);
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
+
+  // Cập nhật avatarSrc khi `img` thay đổi
+  useEffect(() => {
+    if (img) {
+      setAvatarSrc(img);
+    }
+  }, [img]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
+      setTempAvatarFile(file);
+      setIsEditingAvatar(true);
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === "string") {
-          setTempAvatarSrc(reader.result);
-          setIsEditingAvatar(true);
+          setAvatarSrc(reader.result); // Hiển thị ảnh tạm thời
         }
       };
       reader.readAsDataURL(file);
@@ -28,20 +34,22 @@ const MyAvatar = ({ img }: { img: string | undefined }) => {
   const handleSaveAvatarPictureAPI = async () => {
     setIsEditingAvatar(false);
 
-    if (!tempAvatarSrc) {
+    if (!tempAvatarFile) {
       alert("No new avatar image to save.");
       return;
     }
 
     try {
-      await editUserAvatar("1", tempAvatarSrc);
-      setAvatarSrc(tempAvatarSrc);
-      setTempAvatarSrc(null);
+      const formData = new FormData();
+      formData.append("file", tempAvatarFile);
+
+      await editUserAvatar(formData); // Gửi form data chứa file avatar
+      setTempAvatarFile(null);
       alert("Avatar updated successfully!");
     } catch (error) {
       console.error("Error updating avatar picture:", error);
       alert("Failed to update avatar.");
-      setAvatarSrc("/assets/images/avatar.JPG");
+      setAvatarSrc("/assets/images/avt.png");
     }
   };
 
@@ -70,11 +78,11 @@ const MyAvatar = ({ img }: { img: string | undefined }) => {
         }}
       >
         <Image
-          src={tempAvatarSrc || avatarSrc}
+          src={avatarSrc}
           alt="avatar"
           layout="fill"
           objectFit="cover"
-          onError={() => setAvatarSrc("/assets/images/avatar.JPG")}
+          onError={() => setAvatarSrc("/assets/images/avt.png")}
         />
       </div>
 

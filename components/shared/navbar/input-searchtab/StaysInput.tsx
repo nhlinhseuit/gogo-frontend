@@ -1,6 +1,6 @@
 import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
 import Location from "@/types/Location";
 import {
   convertDataNavigate,
