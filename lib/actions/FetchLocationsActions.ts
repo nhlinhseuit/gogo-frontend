@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants";
 import Location from "@/types/Location";
+import { getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/locations`;
 

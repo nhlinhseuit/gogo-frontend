@@ -1,5 +1,28 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const extractDateAndTime = (isoString: string): { date: string; time: string } | undefined => {
+  if (!isoString) return undefined;
+
+  const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
+  if (!dateTimeRegex.test(isoString)) return undefined;
+
+  try {
+    const dateObj = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO 8601
+    const year = dateObj.getUTCFullYear();
+    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getUTCDate()).padStart(2, "0");
+    const hours = String(dateObj.getUTCHours()).padStart(2, "0");
+    const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
+
+    return {
+      date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
+      time: `${hours}:${minutes}`,    // Giờ theo định dạng HH:mm
+    };
+  } catch (error) {
+    return undefined; // Trả về undefined nếu xảy ra lỗi
+  }
+};
+
 export const getCurrentUser = () => {
   if (typeof window !== "undefined") {
     return sessionStorage.getItem("currentUser")
@@ -8,17 +31,13 @@ export const getCurrentUser = () => {
   } else return null;
 };
 export const getToken = () => {
-  if (typeof window !== "undefined") {
-    return sessionStorage.getItem("authToken")
-      ? JSON.parse(sessionStorage.getItem("authToken")!)
-      : null;
-  } else return null;
-};
-
-export const validateName = (firstName: string, lastName: string) => {
-  return firstName.trim() === "" && lastName.trim() === ""
-    ? "First name and last name cannot both be empty."
-    : null;
+  try {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("authToken") || null;
+    } else return null;
+  } catch (e) {
+    console.log("error", e);
+  }
 };
 
 export const validateEmail = (value: string) => {
@@ -103,7 +122,9 @@ export const formatDayApi = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const parseDayFromApi = (dateString: string): Date | undefined => {
+export const parseDayFromSearchParams = (
+  dateString: string
+): Date | undefined => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
 
   if (!dateRegex.test(dateString)) {
@@ -166,31 +187,6 @@ export const formatCurrency = ({ price }: { price: number }) => {
   }
 
   return formattedPrice;
-};
-
-export const extractDateAndTime = (
-  isoString: string
-): { date: string; time: string } | undefined => {
-  if (!isoString) return undefined;
-
-  const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
-  if (!dateTimeRegex.test(isoString)) return undefined;
-
-  try {
-    const dateObj = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO 8601
-    const year = dateObj.getUTCFullYear();
-    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(dateObj.getUTCDate()).padStart(2, "0");
-    const hours = String(dateObj.getUTCHours()).padStart(2, "0");
-    const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
-
-    return {
-      date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
-      time: `${hours}:${minutes}`, // Giờ theo định dạng HH:mm
-    };
-  } catch (error) {
-    return undefined; // Trả về undefined nếu xảy ra lỗi
-  }
 };
 
 export const formatDateToMMYY = (dateString: string)=> {

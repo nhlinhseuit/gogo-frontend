@@ -1,7 +1,4 @@
-interface FlightItemProfile {
-  id: number;
-  img: string;
-}
+
 interface FlightData {
   id: number;
   isFavourited: boolean;

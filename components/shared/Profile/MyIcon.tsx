@@ -2,7 +2,7 @@ import Image from "next/image";
 
 interface Props {
   title: string;
-  desc: string;
+  desc: string[];
   icon: string;
 }
 
@@ -14,7 +14,7 @@ const MyIcon = (params: Props) => {
       </div>
       <div>
         <div className="small-semibold text-[#112211]">{params.title}</div>
-        <div className="mt-1 body-medium">{params.desc}</div>
+        <div className="mt-1 body-medium">{params.desc.join(', ')}</div>
       </div>
     </div>
   );

@@ -91,7 +91,11 @@ export default function FlightsSearch() {
           <div className="w-[70%] ml-4">
             <div>
               {flights?.map((flight) => (
-                <FlightsComp item={flight} />
+                <FlightsComp
+                  item={flight}
+                  departure_time_from={params["departure_time_from"] ?? ""}
+                  departure_time_to={params["departure_time_to"] ?? ""}
+                />
               ))}
             </div>
 
