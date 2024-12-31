@@ -7,11 +7,15 @@ import { formatCurrency, getReviewComment } from "@/utils/util";
 import Flight from "@/types/Flight";
 import FavouriteFlights from "@/types/FavouriteFlight";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import { useRouter } from "next/navigation";
 
-const FlightsComp = ({ item }: { item: Flight }) => {
+const FlightsComp = ({ item,departure_time_from, departure_time_to }: { item: Flight, departure_time_from: string;
+  departure_time_to: string }) => {
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
   const userId = "3";
+
+  const router = useRouter();
 
   useEffect(() => {
     fetchFavouriteFlights(userId)
@@ -34,6 +38,17 @@ const FlightsComp = ({ item }: { item: Flight }) => {
   };
 
   console.log("favFlights", favFlights);
+
+  const handleClickFlightItem = (
+    flightId: string,
+    departure_time_from: string,
+    departure_time_to: string
+  ) => {
+    router.push(
+      `/find-flights/${flightId}?departure_time_from=${departure_time_from}&departure_time_to=${departure_time_to}`
+    );
+  };
+
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[40%] p-3">
@@ -60,7 +75,7 @@ const FlightsComp = ({ item }: { item: Flight }) => {
                 </p>
                 <p>
                   <span className="paragraph-regular mr-1">
-                    {item?.outbound_flight.airline.reviews[0].rating}
+                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
                   </span>
                   reviews
                 </p>
@@ -107,7 +122,11 @@ const FlightsComp = ({ item }: { item: Flight }) => {
               />
             )}
           </div>
-          <button className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
+          <button 
+           onClick={() => {
+            handleClickFlightItem(item.outbound_flight.id, departure_time_from, departure_time_to);
+          }}
+          className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
             View Deals
           </button>
         </div>
