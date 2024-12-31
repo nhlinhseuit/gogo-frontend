@@ -164,7 +164,11 @@ export default function StaysSearch() {
               ?.filter((item) => item.stay_type === isSelected)
 
               .map((stay) => (
-                <FavouriteStayComp item={stay} />
+                <FavouriteStayComp
+                  item={stay}
+                  checkin={params["checkin_date"] ?? ""}
+                  checkout={params["checkout_date"] ?? ""}
+                />
               ))}
           </div>
           <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
