@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { text } from "stream/consumers";
 
 interface MyInputProps {
   type: string;
@@ -7,6 +8,7 @@ interface MyInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   validate?: (value: string) => string | null; // Hàm kiểm tra, trả về lỗi nếu không hợp lệ
+  isNameEmpty?: boolean; // Hàm kiểm tra, trả về lỗi nếu không hợp lệ
 }
 
 const MyInput: React.FC<MyInputProps> = ({
@@ -16,6 +18,7 @@ const MyInput: React.FC<MyInputProps> = ({
   value,
   onChange,
   validate,
+  isNameEmpty,
 }) => {
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +33,9 @@ const MyInput: React.FC<MyInputProps> = ({
     <div className="relative w-full">
       {/* Label */}
       <div className="bg-white absolute mb-1 translate-y-[-50%] ml-2 px-2">
-        <label className="small-medium">{label}</label>
+        <label className={`small-medium ${isNameEmpty ? "text-red-500" : ""}`}>
+          {label}
+        </label>
       </div>
 
       {/* Input */}
@@ -55,7 +60,11 @@ const MyInput: React.FC<MyInputProps> = ({
           focus:ring-primary-500
           focus:border-primary-500
           w-full
-          ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
+          ${
+            error || isNameEmpty
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300"
+          }
         `}
       />
 
