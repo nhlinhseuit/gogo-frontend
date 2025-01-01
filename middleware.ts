@@ -1,11 +1,16 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-const isProtectedRoute = createRouteMatcher(["/favourites(.*)", "/profile(.*)"]);
+export function middleware(req: any) {
+  // Ví dụ: Middleware kiểm tra và điều hướng nếu cần
+  const { pathname } = req.nextUrl;
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect();
-});
+  if (pathname === "/protected") {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/protected"],
 };

@@ -1,21 +1,22 @@
 import { BASE_URL } from "@/constants";
 import FavouriteStay from "@/types/FavouriteStay";
+import { getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
 
 
 export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]> => {
   try {
-    console.log('params:',params)
     const queryString = new URLSearchParams(params).toString();
-    console.log("query string", queryString)
     const urlWithParams = `${API_URL}?${queryString}`;
-    console.log("urlWithParams", urlWithParams)
+
+    const token = getToken()
 
     const response = await fetch(urlWithParams, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
       },
     });
     console.log('response: ', response)

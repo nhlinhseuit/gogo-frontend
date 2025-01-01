@@ -6,11 +6,10 @@ import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import StayInformation from "@/components/shared/details/stays/StayInformationComponent";
 
-interface FlightPaymentProps {
-  flightId: number;
+interface StayPaymentPageProps {
 }
 
-const FlightPayment: React.FC<FlightPaymentProps> = ({flightId}) => {
+const StayPaymentPage: React.FC<StayPaymentPageProps> = (props) => {
   return (
     <main className="flex flex-col w-full gap-4 py-4">
       <div className="w-full mt- grid grid-cols-5 gap-8">
@@ -28,5 +27,5 @@ const FlightPayment: React.FC<FlightPaymentProps> = ({flightId}) => {
   );
 }
 
-export default FlightPayment
+export default StayPaymentPage
 

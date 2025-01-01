@@ -1,19 +1,18 @@
 import CustomButton from "@/components/CustomButton";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import SearchDropdown from "../../SearchDropdown";
-import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
-import Location from "@/types/Location";
-import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
+import Location from "@/types/Location";
 import {
   convertDataNavigate,
   formatDayApi,
   isDateValid,
-  parseDayFromApi,
+  parseDayFromSearchParams,
 } from "@/utils/util";
-import { searchStays } from "@/lib/actions/Search/SearchStayActions";
+import { format } from "date-fns";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import SearchDropdown from "../../SearchDropdown";
 
 const StaysInput = ({
   isSearchStay,
@@ -41,13 +40,13 @@ const StaysInput = ({
 
   const getCheckinDateParams = () => {
     return selectedCheckinDateParams
-      ? parseDayFromApi(selectedCheckinDateParams)
+      ? parseDayFromSearchParams(selectedCheckinDateParams)
       : undefined;
   };
 
   const getCheckoutDateParams = () => {
     return selectedCheckoutDateParams
-      ? parseDayFromApi(selectedCheckoutDateParams)
+      ? parseDayFromSearchParams(selectedCheckoutDateParams)
       : undefined;
   };
 

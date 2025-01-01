@@ -1,43 +1,59 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import CheckFlight from "./CheckFlight";
-import { formatCurrency } from "@/utils/util";
+import { formatCurrency, getReviewComment } from "@/utils/util";
 import Flight from "@/types/Flight";
+import FavouriteFlights from "@/types/FavouriteFlight";
+import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import { useRouter } from "next/navigation";
 
-const MockCheckFlight = [
-  {
-    startTime: "12:00 pm",
-    endTime: "01:28 pm",
-    duration: "2h 28m",
-    airline:
-      "Emirates Emirates Emirates Emir Emirates Emirates EmiratesEmiratesEmirates",
-    flightPath: "EWR-BNA EWR-BNA",
-  },
-  {
-    startTime: "12:00 pm",
-    endTime: "01:28 pm",
-    duration: "2h 28m",
-    airline: "Emirates",
-    flightPath: "EWR-BNA",
-  },
-];
+const FlightsComp = ({ item,departure_time_from, departure_time_to }: { item: Flight, departure_time_from: string;
+  departure_time_to: string }) => {
+  const [favFlights, setFavFlights] = useState<FavouriteFlights>();
+  const [error, setError] = useState<string | null>(null);
+  const userId = "3";
 
-const FlightsComp = ({
-  item,
-  item2,
-  handleClick,
-}: {
-  item: FlightData;
-  item2: Flight | undefined;
-  handleClick: (id: number) => void;
-}) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchFavouriteFlights(userId)
+      .then((data: any) => {
+        setFavFlights(data.data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  }, []);
+
+  const getIsFavoriteItem = () => {
+    console.log("item.outbound_flight.id", item.outbound_flight.id);
+
+    const result = favFlights?.flight_favorites.find(
+      (flight) => flight.outbound_flight.id === item.outbound_flight.id
+    );
+    if (result != undefined) return true;
+    return false;
+  };
+
+  console.log("favFlights", favFlights);
+
+  const handleClickFlightItem = (
+    flightId: string,
+    departure_time_from: string,
+    departure_time_to: string
+  ) => {
+    router.push(
+      `/find-flights/${flightId}?departure_time_from=${departure_time_from}&departure_time_to=${departure_time_to}`
+    );
+  };
+
   return (
-    <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
-      <div className="w-[20%] p-3">
+    <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
+      <div className="w-[40%] p-3">
         <Image
-          src={item2?.outbound_flight.airline.image ?? ""}
+          src={item?.outbound_flight.airline.image ?? ""}
           alt="places"
           width={200}
           height={200}
@@ -45,33 +61,29 @@ const FlightsComp = ({
         />
       </div>
 
-      <div className="w-[80%] mx-4 my-2">
+      <div className="w-[60%] mx-4 my-2">
         <div className="flex justify-between">
-          <div>
+          <div className="w-[80%]">
             <div className="flex mt-2">
               <div className="flex mr-1 px-3 border border-primary-100 rounded-md justify-center items-center">
-                {item.rating}
+                {item?.outbound_flight.airline.rating}
               </div>
 
-              <div className="py-2">
+              <div className="py-2 flex gap-2">
+                <p className="font-bold">
+                  {getReviewComment(item?.outbound_flight.airline.rating)}
+                </p>
                 <p>
-                  <span className="body-semibold mr-1">{item.reviews}</span>
-                  {item.countReview} reviews
+                  <span className="paragraph-regular mr-1">
+                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
+                  </span>
+                  reviews
                 </p>
               </div>
             </div>
 
             <div className="w-full mb-4">
-              {MockCheckFlight.map((item, index) => (
-                <CheckFlight
-                  key={index}
-                  startTime={item.startTime}
-                  endTime={item.endTime}
-                  duration={item.duration}
-                  airline={item.airline}
-                  flightPath={item.flightPath}
-                />
-              ))}
+              <CheckFlight item={item} />
             </div>
           </div>
           <div className="pt-1 pr-2">
@@ -80,7 +92,8 @@ const FlightsComp = ({
             </div>
             <div className="flex justify-end text-[#FF8682] text-right">
               <h1 className="h2-bold">
-                ${formatCurrency({ price: item.price })}
+                $
+                {formatCurrency({ price: item?.outbound_flight.min_base_fare })}
               </h1>
             </div>
           </div>
@@ -89,11 +102,11 @@ const FlightsComp = ({
         <div className="flex w-full pt-5 border-t-[1px]">
           <div
             onClick={() => {
-              handleClick(item.id);
+              // handleClick(item.id);
             }}
             className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer"
           >
-            {item.isFavourited ? (
+            {getIsFavoriteItem() ? (
               <Image
                 src="/assets/icons/Heart.svg"
                 alt="Anh heart"
@@ -109,7 +122,11 @@ const FlightsComp = ({
               />
             )}
           </div>
-          <button className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
+          <button 
+           onClick={() => {
+            handleClickFlightItem(item.outbound_flight.id, departure_time_from, departure_time_to);
+          }}
+          className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
             View Deals
           </button>
         </div>

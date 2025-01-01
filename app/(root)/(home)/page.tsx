@@ -123,7 +123,7 @@ export default function Home() {
 
   return (
     <main>
-      <div className="mt-16">
+      <div className="mt-32">
         <div>
           <div className="flex justify-between items-center">
             <div>

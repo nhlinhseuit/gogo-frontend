@@ -1,5 +1,79 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const extractDateAndTime = (isoString: string): { date: string; time: string } | undefined => {
+  if (!isoString) return undefined;
+
+  const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
+  if (!dateTimeRegex.test(isoString)) return undefined;
+
+  try {
+    const dateObj = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO 8601
+    const year = dateObj.getUTCFullYear();
+    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getUTCDate()).padStart(2, "0");
+    const hours = String(dateObj.getUTCHours()).padStart(2, "0");
+    const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
+
+    return {
+      date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
+      time: `${hours}:${minutes}`,    // Giờ theo định dạng HH:mm
+    };
+  } catch (error) {
+    return undefined; // Trả về undefined nếu xảy ra lỗi
+  }
+};
+
+export const getCurrentUser = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("currentUser")
+      ? JSON.parse(sessionStorage.getItem("currentUser")!)
+      : null;
+  } else return null;
+};
+export const getToken = () => {
+  try {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("authToken") || null;
+    } else return null;
+  } catch (e) {
+    console.log("error", e);
+  }
+};
+
+export const validateEmail = (value: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value) ? null : "Invalid email format.";
+};
+
+export const validatePassword = (value: string) => {
+  return value.length >= 6
+    ? null
+    : "Password must be at least 6 characters long.";
+};
+
+export const validateConfirmPassword = (
+  password: string,
+  confirmPassword: string
+) => {
+  return password === confirmPassword
+    ? null
+    : "Confirm password is not correct.";
+};
+
+export const validatePhoneNumber = (value: string): string | null => {
+  const phoneRegex = /^[0-9]{9,11}$/;
+
+  if (!value) {
+    return "Phone number is required.";
+  }
+
+  if (!phoneRegex.test(value)) {
+    return "Invalid phone number.";
+  }
+
+  return null;
+};
+
 export const getReviewComment = (rating: number) => {
   if (rating >= 4) {
     return "Very good";
@@ -48,13 +122,15 @@ export const formatDayApi = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const parseDayFromApi = (dateString: string): Date | undefined => {
+export const parseDayFromSearchParams = (
+  dateString: string
+): Date | undefined => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
-  
+
   if (!dateRegex.test(dateString)) {
     return undefined; // Chuỗi không hợp lệ
   }
-  
+
   const [year, month, day] = dateString.split("-").map(Number);
 
   // Tạo đối tượng Date (chú ý month - 1 vì tháng trong JS bắt đầu từ 0)
@@ -71,7 +147,6 @@ export const parseDayFromApi = (dateString: string): Date | undefined => {
 
   return parsedDate;
 };
-
 
 // export const formatStartDayToISO = (date: Date): string => {
 //   date.setHours(0, 0, 0, 0);
@@ -113,3 +188,19 @@ export const formatCurrency = ({ price }: { price: number }) => {
 
   return formattedPrice;
 };
+
+
+export const formatDateToMMYY = (dateString: string)=> {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
+  const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
+  return `${month}/${year}`;
+}
+
+export const formatDateToYYYYMMDD = (dateString: string)=> {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
