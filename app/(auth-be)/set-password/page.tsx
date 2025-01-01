@@ -2,22 +2,58 @@
 
 import One from "@/components/gallery/one";
 import BackToPrev from "@/components/shared/BackToPrev";
-import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
-import SocialIcon from "@/components/shared/SocialIcon";
+import { toast } from "@/hooks/use-toast";
+import { updatePassword } from "@/lib/actions/Authen/UpdatePassword";
 import {
   validateConfirmPassword,
-  validateEmail,
-  validatePassword,
+  validatePassword
 } from "@/utils/util";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 const page = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  const [otpId, setOtpId] = useState(searchParams.get("otp_id"));
+
+  const isValidForm = () => {
+    return (
+      password.trim() !== "" &&
+      passwordConfirm.trim() !== "" &&
+      password === passwordConfirm &&
+      password.length > 5 &&
+      passwordConfirm.length > 5
+    );
+  };
+
+  const handleSubmit = () => {
+    if (!isValidForm()) {
+      toast({
+        title: `Please enter valid information!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    } else {
+      updatePassword({
+        email: email,
+        otp_id: otpId,
+        new_password: password,
+      });
+      toast({
+        title: `Set password successfully!`,
+        variant: "success",
+        duration: 3000,
+      });
+      router.push(`/login`);
+    }
+  };
 
   return (
     <main>
@@ -28,7 +64,6 @@ const page = () => {
             width={80}
             height={80}
             alt="DevFlow"
-            className="mb-6"
           />
           <div>
             <BackToPrev text={"Back to login"} linkPrev="/login" />
@@ -62,7 +97,10 @@ const page = () => {
           </div>
 
           <div className=" w-full flex flex-col gap-6">
-            <button className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 ">
+            <button
+              onClick={handleSubmit}
+              className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 "
+            >
               <p className="body-semibold text-black">Set password</p>
             </button>
           </div>

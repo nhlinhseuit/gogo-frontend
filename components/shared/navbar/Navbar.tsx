@@ -26,7 +26,7 @@ const Navbar = () => {
   const handleLogout = () => {
     setIsDropdownOpen(false);
     toast({
-      title: `Đăng xuất thành công.`,
+      title: `Logout successfully.`,
       variant: "success",
       duration: 3000,
     });

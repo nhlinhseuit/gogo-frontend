@@ -8,7 +8,17 @@ import { formatCurrency, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const FavouriteStayComp = ({ item }: { item: Stay }) => {
+import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
+import FavouriteStay from "@/types/FavouriteStay";
+import Stay from "@/types/Stay";
+import { formatCurrency, getReviewComment } from "@/utils/util";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const FavouriteStayComp = ({ item,checkin,
+                                    checkout, }: { item: Stay,checkin: string;
+                                                                checkout: string; }) => {
   const [error, setError] = useState<string | null>(null);
 
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
@@ -63,6 +73,16 @@ const FavouriteStayComp = ({ item }: { item: Stay }) => {
   };
 
   console.log("favStays 2", favStays);
+
+  const handleClickStayItem = (
+    stayId: string,
+    checkin: string,
+    checkout: string
+  ) => {
+    router.push(
+      `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
+    );
+  };
 
   return (
     <div className="flex w-[100%] mb-6 rounded-lg shadow-full shadow-primary-400">
@@ -179,7 +199,9 @@ const FavouriteStayComp = ({ item }: { item: Stay }) => {
               />
             )}
           </div>
-          <button className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold transform transition-transform hover:scale-95 duration-300">
+          <button onClick={() => {
+                                handleClickStayItem(item.id, checkin, checkout);
+                              }} className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold transform transition-transform hover:scale-95 duration-300">
             View Place
           </button>
         </div>

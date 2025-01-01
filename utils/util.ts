@@ -1,5 +1,87 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const defaultSearchFlightParams = (
+  locationName: string,
+  locationId: string
+) => {
+  return {
+    roundTrip: false,
+    departure_location: "Hồ Chí Minh",
+    departure_location_id: 2,
+    arrival_location: locationName,
+    arrival_location_id: locationId,
+    departure_time_from: formatDayFromInputToISODateApi(new Date()).startTime,
+    departure_time_to: formatDayFromInputToISODateApi(new Date()).endTime,
+    return_time_from: "",
+    return_time_to: "",
+    seat_classes: ["FIRST_CLASS"],
+    passenger_count: 1,
+  };
+};
+
+export const defaultSearchStayParams = (
+  locationName: string,
+  locationId: string
+) => {
+  return {
+    location_id: locationId,
+    location: locationName,
+    checkin_date: formatDayFromInputToNormalDateApi(new Date()),
+    checkout_date: formatDayFromInputToNormalDateApi(new Date()),
+    rooms: 1,
+    guests: 1,
+  };
+};
+
+const images = [
+  "/assets/images/Turkey.svg",
+  "/assets/images/Australia.svg",
+  "/assets/images/Azerbaijan.svg",
+  "/assets/images/Maldives.svg",
+  "/assets/images/France.svg",
+  "/assets/images/US.svg",
+  "/assets/images/UK.svg",
+  "/assets/images/Japan.svg",
+  "/assets/images/UAE.svg",
+];
+
+export function getRandomImgUrl() {
+  const randomIndex = Math.floor(Math.random() * images.length);
+  return images[randomIndex];
+}
+
+export const imagesBookComponent = [
+  "/assets/images/Melbourne.svg",
+  "/assets/images/Columbia.svg",
+  "/assets/images/London.svg",
+  "/assets/images/Paris.svg",
+];
+
+export const extractDateAndTime = (
+  isoString: string
+): { date: string; time: string } | undefined => {
+  if (!isoString) return undefined;
+
+  const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
+  if (!dateTimeRegex.test(isoString)) return undefined;
+
+  try {
+    const dateObj = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO 8601
+    const year = dateObj.getUTCFullYear();
+    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getUTCDate()).padStart(2, "0");
+    const hours = String(dateObj.getUTCHours()).padStart(2, "0");
+    const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
+
+    return {
+      date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
+      time: `${hours}:${minutes}`, // Giờ theo định dạng HH:mm
+    };
+  } catch (error) {
+    return undefined; // Trả về undefined nếu xảy ra lỗi
+  }
+};
+
 export const getCurrentUser = () => {
   if (typeof window !== "undefined") {
     return sessionStorage.getItem("currentUser")
@@ -15,12 +97,13 @@ export const getToken = () => {
   } catch (e) {
     console.log("error", e);
   }
-};
-
-export const validateName = (firstName: string, lastName: string) => {
-  return firstName.trim() === "" && lastName.trim() === ""
-    ? "First name and last name cannot both be empty."
-    : null;
+  try {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("authToken") || null;
+    } else return null;
+  } catch (e) {
+    console.log("error", e);
+  }
 };
 
 export const validateEmail = (value: string) => {
@@ -97,33 +180,68 @@ export const isDateValid = (selectedDate: Date): boolean => {
   return selectedDate >= today;
 };
 
-export const formatDayApi = (date: Date): string => {
+//? KHI CHỌN GIÁ TRỊ TRONG FLIGHTSINPUT VÀ STAYSINPUT, CONVERT ĐỂ TRUYỀN ĐI PARAMS
+export const formatDayFromInputToNormalDateApi = (date: Date): string => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 };
+export const formatDayFromInputToISODateApi = (
+  date: Date
+): { startTime: string; endTime: string } => {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
 
-export const parseDayFromApi = (dateString: string): Date | undefined => {
+  // (6h sáng)
+  const startTime = `${year}-${month}-${day}T06:00:00Z`;
+
+  // (10h tối)
+  const endTime = `${year}-${month}-${day}T22:00:00Z`;
+
+  return { startTime, endTime };
+};
+
+//? KHI NHẬN GIÁ TRỊ TỪ PARAMS, CONVERT ĐỂ HIỂN THỊ TRÊN FLIGHTSINPUT VÀ STAYSINPUT
+export const parseNormalDateFromSearchParamsToDayOfInput = (
+  dateString: string
+): Date | undefined => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
 
   if (!dateRegex.test(dateString)) {
-    return undefined; // Chuỗi không hợp lệ
+    return undefined;
   }
 
   const [year, month, day] = dateString.split("-").map(Number);
 
-  // Tạo đối tượng Date (chú ý month - 1 vì tháng trong JS bắt đầu từ 0)
   const parsedDate = new Date(year, month - 1, day);
 
-  // Kiểm tra tính hợp lệ của ngày (JS tự động sửa ngày không hợp lệ, cần kiểm tra lại)
   if (
     parsedDate.getFullYear() !== year ||
     parsedDate.getMonth() !== month - 1 ||
     parsedDate.getDate() !== day
   ) {
-    return undefined; // Ngày không hợp lệ
+    return undefined;
+  }
+
+  return parsedDate;
+};
+export const parseISODateFromSearchParamsToDayOfInput = (
+  dateString: string
+): Date | undefined => {
+  const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng "yyyy-MM-ddTHH:mm:ssZ"
+
+  if (!isoDateRegex.test(dateString)) {
+    return undefined;
+  }
+
+  const parsedDate = new Date(dateString);
+
+  // Kiểm tra tính hợp lệ của đối tượng Date
+  if (isNaN(parsedDate.getTime())) {
+    return undefined;
   }
 
   return parsedDate;
@@ -168,29 +286,4 @@ export const formatCurrency = ({ price }: { price: number }) => {
   }
 
   return formattedPrice;
-};
-
-export const extractDateAndTime = (
-  isoString: string
-): { date: string; time: string } | undefined => {
-  if (!isoString) return undefined;
-
-  const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
-  if (!dateTimeRegex.test(isoString)) return undefined;
-
-  try {
-    const dateObj = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO 8601
-    const year = dateObj.getUTCFullYear();
-    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(dateObj.getUTCDate()).padStart(2, "0");
-    const hours = String(dateObj.getUTCHours()).padStart(2, "0");
-    const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
-
-    return {
-      date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
-      time: `${hours}:${minutes}`, // Giờ theo định dạng HH:mm
-    };
-  } catch (error) {
-    return undefined; // Trả về undefined nếu xảy ra lỗi
-  }
 };

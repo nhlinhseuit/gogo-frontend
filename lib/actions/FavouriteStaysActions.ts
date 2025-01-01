@@ -3,15 +3,17 @@ import FavoriteAStayResult from "@/types/FavoriteAStayResult";
 import FavouriteFlights from "@/types/FavouriteFlights";
 import FavouriteStay from "@/types/FavouriteStay";
 import { getCurrentUser, getToken } from "@/utils/util";
+import { getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
 
 
 export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]> => {
-  const token = getToken()
   try {
     const queryString = new URLSearchParams(params).toString();
     const urlWithParams = `${API_URL}?${queryString}`;
+
+    const token = getToken()
 
     const response = await fetch(urlWithParams, {
       method: "GET",

@@ -5,17 +5,33 @@ import Image from "next/image";
 import CheckFlight from "./CheckFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Flight from "@/types/Flight";
+import FavouriteFlights from "@/types/FavouriteFlight";
+import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import { useRouter } from "next/navigation";
 import FavouriteFlights from "@/types/FavouriteFlights";
 import {
   changeFavouriteFlightStatus,
   fetchFavouriteFlights,
 } from "@/lib/actions/FavouriteFlightsActions";
 
+const FlightsComp = ({
+  item,
+  departure_time_from,
+  departure_time_to,
+  passenger_count,
+}: {
+  item: Flight;
+  departure_time_from: string;
+  departure_time_to: string;
+  passenger_count: string;
+}) => {
 const FlightsComp = ({ item }: { item: Flight }) => {
   console.log("Flight Item", item);
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
   const userId = "3";
+
+  const router = useRouter();
 
   useEffect(() => {
     fetchFavouriteFlights(userId)
@@ -35,6 +51,16 @@ const FlightsComp = ({ item }: { item: Flight }) => {
     );
     if (result != undefined) return true;
     return false;
+  };
+
+  const handleClickFlightItem = (flightId: string) => {
+    const queryString = new URLSearchParams({
+      departure_time_from,
+      departure_time_to,
+      passenger_count,
+    }).toString();
+
+    router.push(`/find-flights/${flightId}?${queryString}`);
   };
 
   const handleFavAFlight = () => {
@@ -112,9 +138,9 @@ const FlightsComp = ({ item }: { item: Flight }) => {
                   {getReviewComment(item?.outbound_flight.airline.rating)}
                 </p>
                 <p>
-                  {/* <span className="paragraph-regular mr-1">
-                    {item?.outbound_flight.airline.reviews[0].rating}
-                  </span> */}
+                  <span className="paragraph-regular mr-1">
+                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
+                  </span>
                   reviews
                 </p>
               </div>
@@ -158,7 +184,12 @@ const FlightsComp = ({ item }: { item: Flight }) => {
               />
             )}
           </div>
-          <button className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
+          <button
+            onClick={() => {
+              handleClickFlightItem(item.outbound_flight.id);
+            }}
+            className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold"
+          >
             View Deals
           </button>
         </div>

@@ -1,70 +1,35 @@
-import PlacesComponent from "@/components/shared/home/PlaceComponent";
-import "../../globals.css";
+"use client";
+
 import OrderComponent from "@/components/shared/home/OrderComponent";
+import PlacesComponent from "@/components/shared/home/PlaceComponent";
 import ReviewsComponent from "@/components/shared/home/ReviewsComponent";
-import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import "../../globals.css";
+import { useEffect, useState } from "react";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
+import Location from "@/types/Location";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
+import {
+  convertDataNavigate,
+  defaultSearchFlightParams,
+  getRandomImgUrl,
+} from "@/utils/util";
 
 export default function Home() {
-  const MockPlacesData = [
-    {
-      id: 1,
-      imgUrl: "/assets/images/Turkey.svg",
-      placeTitle: "Istanbul, Turkey",
-    },
-    {
-      id: 2,
-      imgUrl: "/assets/images/Australia.svg",
-      placeTitle: "Sydney, Australia",
-    },
-    {
-      id: 3,
-      imgUrl: "/assets/images/Azerbaijan.svg",
-      placeTitle: "Baku, Azerbaijan",
-    },
-    {
-      id: 4,
-      imgUrl: "/assets/images/Maldives.svg",
-      placeTitle: "Malé, Maldives",
-    },
-    {
-      id: 5,
-      imgUrl: "/assets/images/France.svg",
-      placeTitle: "Paris, France",
-    },
-    {
-      id: 6,
-      imgUrl: "/assets/images/US.svg",
-      placeTitle: "New York, US",
-    },
-    {
-      id: 7,
-      imgUrl: "/assets/images/UK.svg",
-      placeTitle: "London, UK",
-    },
-    {
-      id: 8,
-      imgUrl: "/assets/images/Japan.svg",
-      placeTitle: "Tokyo, Japan",
-    },
-    {
-      id: 9,
-      imgUrl: "/assets/images/UAE.svg",
-      placeTitle: "Dubai, UAE",
-    },
-  ];
-
-  const MockOrderData = [
+  const orderData = [
     {
       id: 1,
       imgUrl: "/assets/images/Flights.svg",
       title: "Flights",
       buttonTitle: "Show Flights",
+      route: "/flight-places",
     },
     {
       id: 2,
       imgUrl: "/assets/images/Hotels.svg",
       title: "Hotels",
       buttonTitle: "Show Hotels",
+      route: "/stay-places",
     },
   ];
 
@@ -121,6 +86,41 @@ export default function Home() {
     },
   ];
 
+  const router = useRouter();
+
+  const handleSeeAll = () => {
+    router.push("/flight-places");
+  };
+
+  // TODO: locations
+
+  const [locations, setLocations] = useState<{ data: Location[] }>({
+    data: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    fetchLocations()
+      .then((data: any) => {
+        setLocations(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const handleNavigateFlight = (locationId: string, locationName: string) => {
+    const params = defaultSearchFlightParams(locationName, locationId);
+
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-flights/flights-search?${queryString}`);
+  };
+
   return (
     <main>
       <div className="mt-32">
@@ -135,30 +135,41 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <button className="py-2 px-3 border-[1px] border-primary-100 rounded-md body-medium  hover:bg-primary-100 transition duration-300">
+              <button
+                onClick={handleSeeAll}
+                className="py-2 px-3 border-[1px] border-primary-100 rounded-md body-medium  hover:bg-primary-100 transition duration-300"
+              >
                 See more places
               </button>
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-between gap-y-6 mt-8">
-            {MockPlacesData.map((item) => (
-              <PlacesComponent
-                key={item.id}
-                imgUrl={item.imgUrl}
-                placeTitle={item.placeTitle}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <BigLoadingSpinner />
+          ) : locations.data.length > 0 ? (
+            <div className="flex flex-wrap justify-start gap-x-10 gap-y-6 mt-8">
+              {locations.data.splice(0, 9).map((item) => (
+                <PlacesComponent
+                  key={item.id}
+                  imgUrl={item.imageUrl ?? getRandomImgUrl()}
+                  placeTitle={`${item.city}, ${item.country}`}
+                  onClick={() => {
+                    handleNavigateFlight(item.id, item.city);
+                  }}
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-16 flex gap-x-4">
-          {MockOrderData.map((item) => (
+          {orderData.map((item) => (
             <OrderComponent
               key={item.id}
               imgUrl={item.imgUrl}
               title={item.title}
               buttonTitle={item.buttonTitle}
+              route={item.route}
             />
           ))}
         </div>
@@ -170,12 +181,6 @@ export default function Home() {
               <p className="mt-2 paragraph-regular">
                 What people says about Golobe facilities
               </p>
-            </div>
-
-            <div>
-              <button className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular hover:bg-primary-100 transition duration-300">
-                See All
-              </button>
             </div>
           </div>
 

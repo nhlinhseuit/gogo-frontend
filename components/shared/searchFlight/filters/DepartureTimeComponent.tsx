@@ -1,40 +1,39 @@
 "use client";
+
 import { Slider, SliderSingleProps } from "antd";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef } from "react";
 
-const DepartureTimeComponent = () => {
-  const [isToggled, setIsToggled] = useState(true);
-
-  //! SLIDER
+const DepartureTimeComponent = ({
+  onTimeRangeChange,
+}: {
+  onTimeRangeChange: (timeRange: [string, string]) => void;
+}) => {
+  const rangeValueRef = useRef<[number, number]>([0, 100]); // Lưu giá trị slider bằng ref
+  const isToggledRef = useRef(true); // Quản lý trạng thái mở/đóng slider bằng ref
 
   const marks: SliderSingleProps["marks"] = {
     0: "00:00",
     100: "23:59",
   };
 
-  const [rangeValue, setRangeValue] = useState<number[]>([0, 100]);
-
   const handleChange = (value: number[]) => {
-    setRangeValue(value);
+    rangeValueRef.current = value as [number, number]; // Ép kiểu thành tuple
+    const realTimes = getRealTimes(value as [number, number]); // Tính toán thời gian thực
+    onTimeRangeChange(realTimes); // Gửi giá trị lên parent component
   };
 
-  const getRealTimes = () => {
+  const getRealTimes = (values: [number, number]): [string, string] => {
     const totalMinutes = 24 * 60 - 1; // Tổng số phút trong ngày: 1439 phút (23:59)
-    return rangeValue.map((v) => {
-      const minutes = (totalMinutes * v) / 100; // Chuyển đổi từ giá trị slider (0-100) sang phút
+    return values.map((v) => {
+      const minutes = (totalMinutes * v) / 100; // Chuyển đổi từ slider (0-100) sang phút
       const hours = Math.floor(minutes / 60); // Tính giờ
       const mins = Math.round(minutes % 60); // Tính phút còn lại
       return `${hours.toString().padStart(2, "0")}:${mins
         .toString()
         .padStart(2, "0")}`; // Format thành hh:mm
-    });
+    }) as [string, string];
   };
-
-  const [startTime, endTime] = getRealTimes();
-
-  // startTime
-  // endTime
 
   return (
     <div>
@@ -43,11 +42,8 @@ const DepartureTimeComponent = () => {
           <h6 className="paragraph-semibold ">Departure Time</h6>
           <button
             onClick={() => {
-              if (isToggled === true) {
-                setIsToggled(false);
-              } else {
-                setIsToggled(true);
-              }
+              isToggledRef.current = !isToggledRef.current; // Thay đổi trạng thái toggle
+              console.log("Toggled:", isToggledRef.current);
             }}
           >
             <Image
@@ -59,12 +55,12 @@ const DepartureTimeComponent = () => {
           </button>
         </div>
 
-        {isToggled && (
+        {isToggledRef.current && (
           <div className="mt-10 pb-6">
             <Slider
               range
               marks={marks}
-              defaultValue={[20, 50]}
+              defaultValue={[20, 70]}
               onChange={handleChange}
               tooltip={{
                 formatter: (value) => {
