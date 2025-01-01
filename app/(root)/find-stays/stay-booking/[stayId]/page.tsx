@@ -67,12 +67,14 @@ const StayBookingPage: React.FC = () => {
     }).catch((error) => {
       console.error('Error fetching room:', error);
     })
-    requestStayBooking(stayId, roomId!, checkin, checkout).then((data) => {
-      console.log(data)
-      setTargetTimeLeft(new Date(data.lock_expiration));
-    }).catch((error) => {
-      console.error('Error requesting booking:', error);
-    });
+    if (checkin != null && checkout != null) {
+      requestStayBooking(stayId, roomId!, checkin, checkout).then((data) => {
+        console.log(data)
+        setTargetTimeLeft(new Date(data.lock_expiration));
+      }).catch((error) => {
+        console.error('Error requesting booking:', error);
+      });
+    }
 
     fetchCards();
 

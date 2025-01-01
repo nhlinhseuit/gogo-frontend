@@ -6,23 +6,24 @@ import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import StayInformation from "@/components/shared/details/stays/StayInformationComponent";
 
-interface StayPaymentPageProps {
-}
+// interface StayPaymentPageProps {
+// }
 
-const StayPaymentPage: React.FC<StayPaymentPageProps> = (props) => {
+const StayPaymentPage: React.FC = (props) => {
   return (
     <main className="flex flex-col w-full gap-4 py-4">
-      <div className="w-full mt- grid grid-cols-5 gap-8">
-        <div className="flex flex-col gap-8 col-span-3">
-          <StayInformation flightId={1} showPrice={true}/>
-          <PaymentOptions/>
-          <PaymentCardSelection/>
-          <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
-        </div>
-        <div className="col-span-2">
-          <PriceDetailsComponent type="room" id={1}/>
-        </div>
-      </div>
+      {/*<div className="w-full mt- grid grid-cols-5 gap-8">*/}
+      {/*  <div className="flex flex-col gap-8 col-span-3">*/}
+      {/*    <StayInformation flightId={1} showPrice={true}/>*/}
+      {/*    <PaymentOptions/>*/}
+      {/*    <PaymentCardSelection/>*/}
+      {/*    <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>*/}
+      {/*  </div>*/}
+      {/*  <div className="col-span-2">*/}
+      {/*    <PriceDetailsComponent type="room" id={1}/>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
+    <h1>stay payment</h1>
     </main>
   );
 }

@@ -15,7 +15,7 @@ const ShowRoomPage: React.FC = () => {
     <div>
       <h1>Show Room</h1>
       <RoomFormComponent onSave={onSave}/>
-      <RoomAvailabilityComponent roomId={"1"}/>
+      {/*<RoomAvailabilityComponent roomId={"1"}/>*/}
     </div>
   );
 }
