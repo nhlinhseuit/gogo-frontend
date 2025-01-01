@@ -164,6 +164,7 @@ const StayBookingPage: React.FC = () => {
                 <input id="phone" type="tel" placeholder="Phone" className="border-2 rounded-md p-2"
                        value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}/>
               </div>
+
               <div className="flex flex-col col-span-2">
                 <label htmlFor="country">Country</label>
                 <CountriesDropdown onSelectCountry={() => onSelectCountry(guestCountry)}
@@ -177,7 +178,7 @@ const StayBookingPage: React.FC = () => {
           <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
-          <PriceDetailsComponent room={roomData} stay={stayData} seat={null} flight={null} price={price!}/>
+          <PriceDetailsComponent room={roomData} stay={stayData} seats={[]} flight={null} price={price!}/>
         </div>
       </div>
     </main>

@@ -1,7 +1,7 @@
 import type Seat from "@/types/Seat";
 import {getCurrentUser, getToken} from "@/utils/util";
 
-const API_URL = `http://52.64.172.62:8080/api/v1/seats`
+const API_URL = `http://52.64.172.62:8080/api/v1/flights/seats`
 const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`
 
 export const fetchSeat = async (seatId: string): Promise<Seat> => {
