@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import "../../globals.css";
-import PlaceComponent from "@/components/shared/details/findStays/PlaceComponent";
-import FindHeader from "@/components/shared/details/findComponents/FindHeader";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import BookComponent from "@/components/shared/details/findComponents/BookComponent";
 import FindHeader from "@/components/shared/details/findComponents/FindHeader";
 import SriLanka from "@/components/shared/details/findComponents/SriLanka";
@@ -13,10 +10,6 @@ import Location from "@/types/Location";
 import { imagesBookComponent } from "@/utils/util";
 import { useEffect, useState } from "react";
 import "../../globals.css";
-import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
-import { useEffect, useState } from "react";
-import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
-import Location from "@/types/Location";
 
 export default function FindStays() {
   const MockRecentSearches = [

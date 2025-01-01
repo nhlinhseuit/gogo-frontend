@@ -5,14 +5,10 @@ import Image from "next/image";
 import CheckFlight from "./CheckFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Flight from "@/types/Flight";
-import FavouriteFlights from "@/types/FavouriteFlight";
+import FavouriteFlights from "@/types/FavouriteFlights";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 import { useRouter } from "next/navigation";
-import FavouriteFlights from "@/types/FavouriteFlights";
-import {
-  changeFavouriteFlightStatus,
-  fetchFavouriteFlights,
-} from "@/lib/actions/FavouriteFlightsActions";
+import { changeFavouriteFlightStatus } from "@/lib/actions/FavouriteFlightsActions";
 
 const FlightsComp = ({
   item,
@@ -25,7 +21,6 @@ const FlightsComp = ({
   departure_time_to: string;
   passenger_count: string;
 }) => {
-const FlightsComp = ({ item }: { item: Flight }) => {
   console.log("Flight Item", item);
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
@@ -157,7 +152,9 @@ const FlightsComp = ({ item }: { item: Flight }) => {
             <div className="flex justify-end text-[#FF8682] text-right">
               <h1 className="h2-bold">
                 $
-                {formatCurrency({ price: item?.outbound_flight.min_base_fare })}
+                {formatCurrency({
+                  price: item?.outbound_flight.min_base_fare,
+                })}
               </h1>
             </div>
           </div>
