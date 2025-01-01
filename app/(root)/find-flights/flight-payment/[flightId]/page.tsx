@@ -29,4 +29,3 @@ const FlightPayment: React.FC = () => {
 }
 
 export default FlightPayment
-

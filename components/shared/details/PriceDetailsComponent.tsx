@@ -8,6 +8,7 @@ import Stay from "@/types/Stay";
 import Flight from "@/types/Flight";
 import Price from "@/types/Price";
 import FlightDetails from "@/types/FlightDetails";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface PriceDetailsProps {
   room: Room | null;
@@ -19,11 +20,11 @@ interface PriceDetailsProps {
 
 const PriceDetailsComponent: React.FC<PriceDetailsProps> = (props) => {
   if (!props.room && props.seats.length === 0) {
-    return <div>Loading...</div>;
+    return <BigLoadingSpinner/>
   }
 
   if (!props.stay && !props.flight) {
-    return <div>Loading...</div>;
+    return <BigLoadingSpinner/>
   }
 
   const price = props.room ? {

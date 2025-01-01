@@ -16,6 +16,7 @@ import {fetchFlightDetails} from "@/lib/actions/FlightActions";
 import Seat from "@/types/Seat";
 import {fetchSeat} from "@/lib/actions/SeatActions";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface PageParams {
   flightId: string;
@@ -156,7 +157,7 @@ const FlightBookingPage: React.FC = () => {
   }
 
   if (!flightDetails || seats.length === 0 || !price) {
-    return <div>Loading...</div>;
+    return <BigLoadingSpinner/>
   }
 
   return (

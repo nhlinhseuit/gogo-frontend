@@ -20,6 +20,7 @@ import {fetchServiceReview, postReview} from "@/lib/actions/ReviewActions";
 import AddReviewModal from "@/components/shared/AddReviewModal";
 import stay from "@/types/Stay";
 import {useSearchParams} from "next/navigation";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface StayDetailProp {
   params: {
@@ -125,7 +126,7 @@ export default function StayDetail({params}: StayDetailProp) {
   }
 
     if (isLoading) {
-      return <div className="py-16 text-center">Loading...</div>;
+      return <BigLoadingSpinner/>;
     }
 
     if (error) {

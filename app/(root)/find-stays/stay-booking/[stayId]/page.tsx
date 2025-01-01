@@ -17,6 +17,7 @@ import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
 import {getCurrentUser} from "@/utils/util";
 import {requestStayBooking} from "@/lib/actions/BookingActions";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface PageParams {
   stayId: string;
@@ -123,7 +124,7 @@ const StayBookingPage: React.FC = () => {
   }
 
   if (!stayData || !roomData) {
-    return <div>Loading...</div>;
+    return <BigLoadingSpinner/>
   }
 
 

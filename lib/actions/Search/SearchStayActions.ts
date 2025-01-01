@@ -8,7 +8,7 @@ export const searchStays = async (params: any): Promise<Stay[]> => {
     const queryString = new URLSearchParams(params).toString();
     const urlWithParams = `${API_URL}?${queryString}`;
 
-    const response = await fetch(urlWithParams, {
+    const response = await fetch(urlWithParams, { 
       method: "GET",
       headers: {
         "Content-Type": "application/json",

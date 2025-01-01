@@ -4,7 +4,7 @@ import One from "@/components/gallery/one";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import { toast } from "@/hooks/use-toast";
-import { registerAccount } from "@/lib/actions/RegisterActions";
+import { registerAccount } from "@/lib/actions/Authen/RegisterActions";
 import {
   validateConfirmPassword,
   validateEmail,

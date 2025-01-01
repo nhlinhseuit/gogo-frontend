@@ -29,4 +29,3 @@ const StayPaymentPage: React.FC = (props) => {
 }
 
 export default StayPaymentPage
-

@@ -1,8 +1,10 @@
 "use client";
 
 import "@/app/globals.css";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
 import StaysInput from "@/components/shared/navbar/input-searchtab/StaysInput";
+import NoResult from "@/components/shared/NoResult";
 import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
@@ -55,16 +57,18 @@ export default function StaysSearch() {
   const params = convertDataReceive(searchParams);
 
   useEffect(() => {
+    setIsLoading(true);
+
     searchStays(params)
       .then((data: any) => {
-        // setIsLoading(false);
         setStays(data.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         setError(error.message);
-        // setIsLoading(false);
+        setIsLoading(false);
       });
-  }, []);
+  }, [searchParams]);
 
   if (error) {
     return <div className="py-16 text-center text-red-500">{error}</div>;
@@ -103,28 +107,35 @@ export default function StaysSearch() {
         selectedCheckoutDateParams={params.checkout_date}
       />
 
-      <div className="flex w-full mt-8">
-        <div className="w-[30%] px-4 border-r-[1px]">
-          <div className="mx-2">
-            <h3 className="h3-semibold">Filters</h3>
-            <PriceComponent />
-            <RatingComponent />
-            <CheckComponent
-              type={MockFreebiesData.type}
-              data={MockFreebiesData.data}
-            />
-            <CheckComponent
-              type={MockAmenitiesData.type}
-              data={MockAmenitiesData.data}
-            />
+      {isLoading ? (
+        <BigLoadingSpinner />
+      ) : !stays || stays.length === 0 ? (
+        <NoResult
+          title="No Stays Found!"
+          description="🔍 Sorry, we couldn't find any stays matching your search. Please try adjusting your filters or search criteria."
+        />
+      ) : (
+        <div className="flex w-full mt-8">
+          <div className="w-[30%] px-4 border-r-[1px]">
+            <div className="mx-2">
+              <h3 className="h3-semibold">Filters</h3>
+              <PriceComponent />
+              <RatingComponent />
+              <CheckComponent
+                type={MockFreebiesData.type}
+                data={MockFreebiesData.data}
+              />
+              <CheckComponent
+                type={MockAmenitiesData.type}
+                data={MockAmenitiesData.data}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="w-[70%] ml-4">
-          <div className="w-full flex h-20 bg-white rounded-lg shadow-full shadow-primary-400 mb-10">
-            {tabs.map((item, index) => {
-              return item.type === "HOTEL" ? (
-                <>
+          <div className="w-[70%] ml-4">
+            <div className="w-full flex h-20 bg-white rounded-lg shadow-full shadow-primary-400 mb-10">
+              {tabs.map((item, index) => {
+                return item.type === "HOTEL" ? (
                   <Tab
                     key={index}
                     type={item.type}
@@ -136,46 +147,46 @@ export default function StaysSearch() {
                       setIsSelected(item.title);
                     }}
                   />
-                </>
-              ) : (
-                <div className="flex">
-                  <div className="w-[1px] my-4 bg-gray-300"></div>
-                  <Tab
-                    key={index}
-                    type={item.type}
-                    title={item.title}
-                    countPlace={getCountPlace(item.title)}
-                    isSearchStay
-                    isSelected={isSelected}
-                    onClick={() => {
-                      setIsSelected(item.title);
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
+                ) : (
+                  <div key={index} className="flex">
+                    <div className="w-[1px] my-4 bg-gray-300"></div>
+                    <Tab
+                      key={index}
+                      type={item.type}
+                      title={item.title}
+                      countPlace={getCountPlace(item.title)}
+                      isSearchStay
+                      isSelected={isSelected}
+                      onClick={() => {
+                        setIsSelected(item.title);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-          {/* <div>
+            {/* <div>
             <Reccomended />
           </div> */}
-          <div>
-            {stays
-              ?.filter((item) => item.stay_type === isSelected)
-
-              .map((stay) => (
-                <FavouriteStayComp
-                  item={stay}
-                  checkin={params["checkin_date"] ?? ""}
-                  checkout={params["checkout_date"] ?? ""}
-                />
-              ))}
-          </div>
-          <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
-            <p className="paragraph-semibold text-white">Show more result</p>
+            <div>
+              {stays
+                ?.filter((item) => item.stay_type === isSelected)
+                .map((stay, index) => (
+                  <FavouriteStayComp
+                    key={index}
+                    item={stay}
+                    checkin={params["checkin_date"] ?? ""}
+                    checkout={params["checkout_date"] ?? ""}
+                  />
+                ))}
+            </div>
+            <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
+              <p className="paragraph-semibold text-white">Show more result</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }
