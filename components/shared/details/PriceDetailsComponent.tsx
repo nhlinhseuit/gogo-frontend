@@ -3,7 +3,7 @@ import Room from "@/types/Room";
 import type Seat from "@/types/Seat";
 
 import React from "react";
-import Ratings from "@/components/shared/details/Ratings";
+import RatingSummaryComponent from "@/components/shared/details/RatingSummaryComponent";
 import Stay from "@/types/Stay";
 import Flight from "@/types/Flight";
 import Price from "@/types/Price";
@@ -50,7 +50,7 @@ const PriceDetailsComponent: React.FC<PriceDetailsProps> = (props) => {
             className="w-full overflow-ellipsis">{props.room ? props.room.name : props.seat?.seat_class}</span>
           <span
             className="overflow-ellipsis text-xl font-semibold">{props.room ? props.room.type : props.flight?.airline.name}</span>
-          <Ratings rating={props.room ? props.stay?.rating ?? 0 : props.flight?.airline.rating ?? 0} numberOfReviews={54}/>
+          <RatingSummaryComponent rating={props.room ? props.stay?.rating ?? 0 : props.flight?.airline.rating ?? 0} numberOfReviews={props.room ? props.stay?.review_count ?? 0 : props.flight?.airline.review_count ?? 0}/>
         </div>
       </div>
       <div className="border-y-2 py-4">

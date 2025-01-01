@@ -1,9 +1,17 @@
 import React from 'react';
 
-const CountriesDropdown: React.FC = () => {
+interface CountriesDropdownProps {
+    selectedCountry: string;
+    onSelectCountry: (country: string) => void;
+}
+
+const CountriesDropdown: React.FC<CountriesDropdownProps> = (props) => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        props.onSelectCountry(e.target.value);
+    };
 
   return (
-    <select className="border-2 rounded-md p-2">
+    <select className="border-2 rounded-md p-2" onChange={handleChange} value={props.selectedCountry}>
       <option value="United States">United States</option>
       <option value="Afghanistan">Afghanistan</option>
       <option value="Albania">Albania</option>
