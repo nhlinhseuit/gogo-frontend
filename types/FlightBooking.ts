@@ -1,11 +1,11 @@
 import User from "@/types/User";
-import Seat from "@/types/Seat";
+import BookingSeat from "@/types/BookingSeat";
 
 interface FlightBooking {
   id: string;
+  seats: BookingSeat[];
   user: User;
   status: string;
-  seats: Seat[];
   booking_date: string;
   update_date: string;
   total_discount: number;

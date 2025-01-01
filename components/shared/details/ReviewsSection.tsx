@@ -38,7 +38,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = (props) => {
         </div>
       </div>
       <div className="flex flex-col">
-        {props.reviews.map((review) => (
+        {props.reviews.map((review: Review) => (
           <ReviewComponent review={review} key={review.id} />
         ))}
       </div>

@@ -11,25 +11,14 @@ import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 
 interface FlightTicketProps {
-  bookingId: string;
+  booking: FlightBooking;
 }
 
 const FlightTicket: React.FC<FlightTicketProps> = (props) => {
   const barcodeRef = useRef<SVGSVGElement | null>(null);
-  const [flightBookingData, setFlightBookingData] = useState<FlightBooking | null>(null);
-  useEffect(() => {
-    fetchFlightBooking(props.bookingId).then((data) => {}).catch((error) => {
-      console.error('Error fetching flight booking:', error);
-      toast({
-        title: `Error fetching Booking: ${error}`,
-        variant: "error",
-        duration: 3000,
-      });
-    });
-  }, [])
+  const flightBookingData = props.booking;
 
-  if(!props.bookingId) return <div>Invalid Flight ID</div>;
-  if(!flightBookingData) return <BigLoadingSpinner/>;
+  if (props.booking === null) return <BigLoadingSpinner />;
 
   useEffect(() => {
     if (barcodeRef.current) {
@@ -46,22 +35,22 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
     <div className="flex h-auto flex-row border-2 overflow-hidden rounded-lg w-[900px]">
       <div className="flex flex-col justify-between gap-2 p-8 pr-16 bg-primary-500">
         <div className="flex flex-col">
-          <span className="h2-bold">{flightBookingData.seats[0].flight.departure_time}</span>
-          <span>{flightBookingData.seats[0].flight.departure_airport.code}</span>
+          <span className="h2-bold">{flightBookingData.seats[0].seat.flight.departure_time}</span>
+          <span>{flightBookingData.seats[0].seat.flight.departure_airport.code}</span>
         </div>
         <img src="/assets/icons/flight-ticker-icon.svg" alt="" className="h-24 w-fit" />
         <div className="flex flex-col">
-          <span className="h2-bold">{flightBookingData.seats[0].flight.arrival_time}</span>
-          <span>{flightBookingData.seats[0].flight.arrival_airport.code}</span>
+          <span className="h2-bold">{flightBookingData.seats[0].seat.flight.arrival_time}</span>
+          <span>{flightBookingData.seats[0].seat.flight.arrival_airport.code}</span>
         </div>
       </div>
       <div className="flex flex-grow flex-col">
         <div className="flex flex-row items-center justify-between px-8 py-4 bg-primary-100">
           <div className="flex flex-col">
-            <span className="h2-bold">{mockFlightData.passengerName}</span>
-            <span>Boarding Pass N'{mockFlightData.code}</span>
+            <span className="h2-bold">{flightBookingData.seats[0].citizen_name}</span>
+            <span>Boarding Pass N'{flightBookingData.id}</span>
           </div>
-          <span className="font-bold">{mockFlightData.class}</span>
+          <span className="font-bold">{flightBookingData.seats[0].seat.seat_class}</span>
         </div>
         <div className="flex flex-col gap-16 h-full justify-between p-8">
           <div className="flex flex-row justify-between items-center">
@@ -69,7 +58,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
               <img src="/assets/icons/calendar-icon.svg" alt="date" className="flex-grow size-12" />
               <div className="flex flex-col">
                 <span className="text-gray-500">Date</span>
-                <span>{new Date(flightBookingData.seats[0].flight.departure_time).toLocaleDateString()}</span>
+                <span>{new Date(flightBookingData.seats[0].seat.flight.departure_time).toLocaleDateString()}</span>
               </div>
             </div>
 
@@ -77,7 +66,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
               <img src="/assets/icons/time-icon.svg" alt="time" className="flex-grow size-12" />
               <div className="flex flex-col">
                 <span className="text-gray-500">Flight time</span>
-                <span>{new Date(flightBookingData.seats[0].flight.departure_time).toLocaleDateString()}</span>
+                <span>{new Date(flightBookingData.seats[0].seat.flight.departure_time).toLocaleDateString()}</span>
               </div>
             </div>
 
@@ -85,7 +74,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
               <img src="/assets/icons/gate-icon.svg" alt="gate" className="flex-grow size-12" />
               <div className="flex flex-col">
                 <span className="text-gray-500">Gate</span>
-                <span>{flightBookingData.seats[0].flight.gate}</span>
+                <span>{flightBookingData.seats[0].seat.flight.gate}</span>
               </div>
             </div>
 
@@ -93,7 +82,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
               <img src="/assets/icons/seat-icon.svg" alt="seat" className="flex-grow size-12" />
               <div className="flex flex-col">
                 <span className="text-gray-500">Seat</span>
-                <span>{flightBookingData.seats[0].number}</span>
+                <span>{flightBookingData.seats[0].seat.number}</span>
               </div>
             </div>
           </div>
