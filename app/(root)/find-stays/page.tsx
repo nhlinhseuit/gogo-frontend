@@ -1,9 +1,15 @@
-import Link from "next/link";
-import "../../globals.css";
-import PlaceComponent from "@/components/shared/details/findStays/PlaceComponent";
-import FindHeader from "@/components/shared/details/findComponents/FindHeader";
+"use client";
+
 import BookComponent from "@/components/shared/details/findComponents/BookComponent";
+import FindHeader from "@/components/shared/details/findComponents/FindHeader";
 import SriLanka from "@/components/shared/details/findComponents/SriLanka";
+import PlaceComponent from "@/components/shared/details/findStays/PlaceComponent";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
+import Location from "@/types/Location";
+import { imagesBookComponent } from "@/utils/util";
+import { useEffect, useState } from "react";
+import "../../globals.css";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 export default function FindStays() {
   const MockRecentSearches = [
@@ -65,6 +71,25 @@ export default function FindStays() {
     },
   ];
 
+  //TODO: locations
+  const [locations, setLocations] = useState<{ data: Location[] }>({
+    data: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    fetchLocations()
+      .then((data: any) => {
+        setLocations(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, []);
+
   return (
     <main className="p-4">
       <div className="mt-8">
@@ -83,23 +108,31 @@ export default function FindStays() {
 
       <div className="mt-16">
         <FindHeader />
-        <div className="mt-6 flex justify-between gap-x-4">
-          {MockBookHotel.map((item, index) => (
-            <BookComponent
-              key={index}
-              type={item.type}
-              imgUrl={item.imgUrl}
-              country={item.country}
-              description={item.description}
-              price={item.price}
-            />
-          ))}
+
+        <div className="flex justify-between gap-x-4">
+          {isLoading ? (
+            <BigLoadingSpinner />
+          ) : locations.data.length > 0 ? (
+            locations.data
+              .slice(0, 4)
+              .map((item, index) => (
+                <BookComponent
+                  key={index}
+                  locationName={item.country}
+                  locationId={item.id}
+                  type={"Hotel"}
+                  imgUrl={item.imageUrl ?? imagesBookComponent[index]}
+                  country={item.city}
+                  description={item.description}
+                />
+              ))
+          ) : null}
         </div>
       </div>
 
       <div className="mt-16">
         <FindHeader />
-        <SriLanka type="Hotel"/>
+        <SriLanka type="Hotel" />
       </div>
     </main>
   );

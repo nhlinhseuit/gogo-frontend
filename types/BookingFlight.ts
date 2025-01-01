@@ -1,3 +1,5 @@
+import Location from "./Location";
+
 interface BookingFlight {
   id: string;
   user: User;
@@ -23,14 +25,6 @@ interface AirlinePolicy {
   id: string;
   content: string;
   airline: string;
-}
-
-interface Location {
-  id: string;
-  city: string;
-  country: string;
-  description: string;
-  imageUrl: string;
 }
 
 interface Airport {

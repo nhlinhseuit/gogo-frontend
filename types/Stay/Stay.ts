@@ -1,3 +1,4 @@
+import Location from "../Location";
 
 type StayType = "HOTEL" | "HOSTEL" | "RESORT" | "VILLA"; // Example types
 type ServiceType = "AIRLINE" | "TRAIN" | "CAR_RENTAL"; // Example types
@@ -23,13 +24,6 @@ interface Amenity {
   name: string;
   icon: string; // E.g., "IC_WIFI"
   isFeatured: boolean;
-}
-
-interface Location {
-  id: string;
-  city: string;
-  country: string;
-  description: string;
 }
 
 interface Advantage {

@@ -1,42 +1,42 @@
-import Link from "next/link";
-import "../../globals.css";
-import Image from "next/image";
+"use client";
+
 import BookFlightComponent from "@/components/shared/details/findComponents/BookComponent";
 import FindHeader from "@/components/shared/details/findComponents/FindHeader";
 import SriLanka from "@/components/shared/details/findComponents/SriLanka";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
+import Location from "@/types/Location";
+import { imagesBookComponent } from "@/utils/util";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import "../../globals.css";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 export default function FindFlights() {
-  const MockBookFlight = [
-    {
-      type: "Flight",
-      imgUrl: "/assets/images/Melbourne.svg",
-      country: "Đà Nẵng",
-      description: "Thành phố biển đẹp với bãi biển Mỹ Khê nổi tiếng",
-      price: 60,
-    },
-    {
-      type: "Flight",
-      imgUrl: "/assets/images/Columbia.svg",
-      country: "Nha Trang",
-      description: "Địa điểm du lịch biển hàng đầu với nhiều khu nghỉ dưỡng.",
-      price: 1500000,
-    },
-    {
-      type: "Flight",
-      imgUrl: "/assets/images/London.svg",
-      country: "Paris",
-      description: "Thủ đô của Pháp, nổi tiếng với tháp Eiffel và nghệ thuật",
-      price: 800000,
-    },
-    {
-      type: "Flight",
-      imgUrl: "/assets/images/Paris.svg",
-      country: "London",
-      description:
-        "Thành phố nổi tiếng với lịch sử lâu đời và đa dạng văn hóa.",
-      price: 700,
-    },
-  ];
+  const router = useRouter();
+
+  const handleSeeAll = () => {
+    router.push("/flight-places");
+  };
+
+  //TODO: locations
+  const [locations, setLocations] = useState<{ data: Location[] }>({
+    data: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    fetchLocations()
+      .then((data: any) => {
+        setLocations(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, []);
 
   return (
     <main>
@@ -53,7 +53,10 @@ export default function FindFlights() {
           </div>
 
           <div>
-            <button className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular hover:bg-primary-100 transition duration-300">
+            <button
+              onClick={handleSeeAll}
+              className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular hover:bg-primary-100 transition duration-300"
+            >
               See All
             </button>
           </div>
@@ -74,16 +77,23 @@ export default function FindFlights() {
         <FindHeader />
 
         <div className="flex justify-between gap-x-4">
-          {MockBookFlight.map((item, index) => (
-            <BookFlightComponent
-              key={index}
-              type={item.type}
-              imgUrl={item.imgUrl}
-              country={item.country}
-              description={item.description}
-              price={item.price}
-            />
-          ))}
+          {isLoading ? (
+            <BigLoadingSpinner />
+          ) : locations.data.length > 0 ? (
+            locations.data
+              .slice(0, 4)
+              .map((item, index) => (
+                <BookFlightComponent
+                  key={index}
+                  locationName=""
+                  locationId={item.id}
+                  type={"Flight"}
+                  imgUrl={item.imageUrl ?? imagesBookComponent[index]}
+                  country={item.city}
+                  description={item.description}
+                />
+              ))
+          ) : null}
         </div>
       </div>
 

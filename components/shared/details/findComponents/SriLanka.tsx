@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { convertDataNavigate } from "@/utils/util";
+import { convertDataNavigate, defaultSearchFlightParams } from "@/utils/util";
 
 const SriLanka = ({ type }: { type: string }) => {
   const router = useRouter();
@@ -16,23 +16,7 @@ const SriLanka = ({ type }: { type: string }) => {
   };
 
   const validateAndNavigateWithParamsFlight = () => {
-    const params = {
-      // page: 0,
-      roundTrip: false,
-      departure_location_id: "2",
-      arrival_location_id: "3",
-      departure_time_from: "2024-12-25",
-      departure_time_to: "2024-12-25",
-      return_time_from: "",
-      return_time_to: "",
-      seat_classes: ["FIRST_CLASS"],
-      // min_price: 0,
-      // max_price: 0,
-      // order_by: "CHEAPEST",
-      passenger_count: 1,
-      // page_size: 10,
-    };
-
+    const params = defaultSearchFlightParams("Sysney", "15");
     handleNavigateFlight(params);
   };
 
@@ -64,9 +48,9 @@ const SriLanka = ({ type }: { type: string }) => {
 
   const handleBook = () => {
     if (type === "Hotel") {
-      validateAndNavigateWithParamsFlight();
-    } else {
       validateAndNavigateWithParamsHotel();
+    } else {
+      validateAndNavigateWithParamsFlight();
     }
   };
   return (
@@ -91,7 +75,10 @@ const SriLanka = ({ type }: { type: string }) => {
           cuisines, traditions, and ways of living.
         </p>
 
-        <button onClick={handleBook} className="w-full bg-white py-3 rounded-lg">
+        <button
+          onClick={handleBook}
+          className="w-full bg-white py-3 rounded-lg"
+        >
           <p className="paragraph-regular">Book Flight</p>
         </button>
       </div>
