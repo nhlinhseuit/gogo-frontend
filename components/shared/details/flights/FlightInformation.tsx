@@ -62,7 +62,7 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
       <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
         <div
           className="flex flex-col items-center gap-8 rounded-md px-8 py-4 border-[1px] border-primary-100 md:flex-row">
-          <img src="/assets/icons/emirates-logo.svg" alt="Emirates Logo"/>
+          <img src={props.flightDetails.airline.image} className="w-16 h-12 object-contain" alt="Emirates Logo"/>
           <div className="flex flex-col justify-between gap-1">
             <span className="h3-semibold">Emirates</span>
             <span className="text-sm font-light">Airbus A320</span>
