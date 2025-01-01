@@ -1,5 +1,62 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export const defaultSearchFlightParams = (
+  locationName: string,
+  locationId: string
+) => {
+  return {
+    roundTrip: false,
+    departure_location: "Hồ Chí Minh",
+    departure_location_id: 2,
+    arrival_location: locationName,
+    arrival_location_id: locationId,
+    departure_time_from: formatDayFromInputToISODateApi(new Date()).startTime,
+    departure_time_to: formatDayFromInputToISODateApi(new Date()).endTime,
+    return_time_from: "",
+    return_time_to: "",
+    seat_classes: ["FIRST_CLASS"],
+    passenger_count: 1,
+  };
+};
+
+export const defaultSearchStayParams = (
+  locationName: string,
+  locationId: string
+) => {
+  return {
+    location_id: locationId,
+    location: locationName,
+    checkin_date: formatDayFromInputToNormalDateApi(new Date()),
+    checkout_date: formatDayFromInputToNormalDateApi(new Date()),
+    rooms: 1,
+    guests: 1,
+  };
+};
+
+const images = [
+  "/assets/images/Turkey.svg",
+  "/assets/images/Australia.svg",
+  "/assets/images/Azerbaijan.svg",
+  "/assets/images/Maldives.svg",
+  "/assets/images/France.svg",
+  "/assets/images/US.svg",
+  "/assets/images/UK.svg",
+  "/assets/images/Japan.svg",
+  "/assets/images/UAE.svg",
+];
+
+export function getRandomImgUrl() {
+  const randomIndex = Math.floor(Math.random() * images.length);
+  return images[randomIndex];
+}
+
+export const imagesBookComponent = [
+  "/assets/images/Melbourne.svg",
+  "/assets/images/Columbia.svg",
+  "/assets/images/London.svg",
+  "/assets/images/Paris.svg",
+];
+
 export const extractDateAndTime = (
   isoString: string
 ): { date: string; time: string } | undefined => {

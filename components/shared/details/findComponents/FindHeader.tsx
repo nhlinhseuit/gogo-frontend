@@ -1,6 +1,14 @@
-import React from "react";
+"use client"
+
+import { useRouter } from "next/navigation";
 
 const FindHeader = () => {
+  const router = useRouter();
+
+  const handleSeeAll = () => {
+    router.push("/flight-places");
+  };
+
   return (
     <div className="mb-8 flex justify-center items-center">
       <div className="flex-grow">
@@ -13,7 +21,10 @@ const FindHeader = () => {
       </div>
 
       <div className="w-[500px] text-end">
-        <button className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular hover:bg-primary-100 transition duration-300">
+        <button
+          onClick={handleSeeAll}
+          className="py-2 px-3 border-[1px] border-primary-100 rounded-md paragraph-regular hover:bg-primary-100 transition duration-300"
+        >
           See All
         </button>
       </div>
