@@ -1,6 +1,8 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
-export const extractDateAndTime = (isoString: string): { date: string; time: string } | undefined => {
+export const extractDateAndTime = (
+  isoString: string
+): { date: string; time: string } | undefined => {
   if (!isoString) return undefined;
 
   const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng ISO 8601
@@ -16,7 +18,7 @@ export const extractDateAndTime = (isoString: string): { date: string; time: str
 
     return {
       date: `${year}-${month}-${day}`, // Ngày theo định dạng yyyy-MM-dd
-      time: `${hours}:${minutes}`,    // Giờ theo định dạng HH:mm
+      time: `${hours}:${minutes}`, // Giờ theo định dạng HH:mm
     };
   } catch (error) {
     return undefined; // Trả về undefined nếu xảy ra lỗi
@@ -114,35 +116,68 @@ export const isDateValid = (selectedDate: Date): boolean => {
   return selectedDate >= today;
 };
 
-export const formatDayApi = (date: Date): string => {
+//? KHI CHỌN GIÁ TRỊ TRONG FLIGHTSINPUT VÀ STAYSINPUT, CONVERT ĐỂ TRUYỀN ĐI PARAMS
+export const formatDayFromInputToNormalDateApi = (date: Date): string => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 };
+export const formatDayFromInputToISODateApi = (
+  date: Date
+): { startTime: string; endTime: string } => {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
 
-export const parseDayFromSearchParams = (
+  // (6h sáng)
+  const startTime = `${year}-${month}-${day}T06:00:00Z`;
+
+  // (10h tối)
+  const endTime = `${year}-${month}-${day}T22:00:00Z`;
+
+  return { startTime, endTime };
+};
+
+//? KHI NHẬN GIÁ TRỊ TỪ PARAMS, CONVERT ĐỂ HIỂN THỊ TRÊN FLIGHTSINPUT VÀ STAYSINPUT
+export const parseNormalDateFromSearchParamsToDayOfInput = (
   dateString: string
 ): Date | undefined => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Kiểm tra định dạng "yyyy-MM-dd"
 
   if (!dateRegex.test(dateString)) {
-    return undefined; // Chuỗi không hợp lệ
+    return undefined;
   }
 
   const [year, month, day] = dateString.split("-").map(Number);
 
-  // Tạo đối tượng Date (chú ý month - 1 vì tháng trong JS bắt đầu từ 0)
   const parsedDate = new Date(year, month - 1, day);
 
-  // Kiểm tra tính hợp lệ của ngày (JS tự động sửa ngày không hợp lệ, cần kiểm tra lại)
   if (
     parsedDate.getFullYear() !== year ||
     parsedDate.getMonth() !== month - 1 ||
     parsedDate.getDate() !== day
   ) {
-    return undefined; // Ngày không hợp lệ
+    return undefined;
+  }
+
+  return parsedDate;
+};
+export const parseISODateFromSearchParamsToDayOfInput = (
+  dateString: string
+): Date | undefined => {
+  const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // Kiểm tra định dạng "yyyy-MM-ddTHH:mm:ssZ"
+
+  if (!isoDateRegex.test(dateString)) {
+    return undefined;
+  }
+
+  const parsedDate = new Date(dateString);
+
+  // Kiểm tra tính hợp lệ của đối tượng Date
+  if (isNaN(parsedDate.getTime())) {
+    return undefined;
   }
 
   return parsedDate;

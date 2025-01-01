@@ -4,9 +4,9 @@ import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
 import Location from "@/types/Location";
 import {
   convertDataNavigate,
-  formatDayApi,
+  formatDayFromInputToISODateApi,
   isDateValid,
-  parseDayFromSearchParams,
+  parseISODateFromSearchParamsToDayOfInput,
 } from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -61,13 +61,13 @@ const FlightsInput = ({
 
   const getDateDepartParams = () => {
     return selectedDateDepartParams
-      ? parseDayFromSearchParams(selectedDateDepartParams)
+      ? parseISODateFromSearchParamsToDayOfInput(selectedDateDepartParams)
       : undefined;
   };
 
   const getDateReturnParams = () => {
     return selectedDateReturnParams
-      ? parseDayFromSearchParams(selectedDateReturnParams)
+      ? parseISODateFromSearchParamsToDayOfInput(selectedDateReturnParams)
       : undefined;
   };
 
@@ -217,16 +217,16 @@ const FlightsInput = ({
       arrival_location_id:
         locations.data.find((item) => item.city === searchQueryTo)?.id ?? "",
       departure_time_from: selectedDateDepart
-        ? formatDayApi(selectedDateDepart)
+        ? formatDayFromInputToISODateApi(selectedDateDepart).startTime
         : "",
       departure_time_to: selectedDateDepart
-        ? formatDayApi(selectedDateDepart)
+        ? formatDayFromInputToISODateApi(selectedDateDepart).endTime
         : "",
       return_time_from: selectedDateReturn
-        ? formatDayApi(selectedDateReturn)
+        ? formatDayFromInputToISODateApi(selectedDateReturn).startTime
         : "",
       return_time_to: selectedDateReturn
-        ? formatDayApi(selectedDateReturn)
+        ? formatDayFromInputToISODateApi(selectedDateReturn).endTime
         : "",
       seat_classes: [getClassTypeReq()],
       // min_price: 0,

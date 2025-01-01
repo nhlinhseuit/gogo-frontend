@@ -12,7 +12,6 @@ export const forgotPassword = async (body: any): Promise<ForgotPasswordResult | 
       },
       body: body ? JSON.stringify(body) : null,
     });
-    console.log("response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
