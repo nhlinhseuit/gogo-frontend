@@ -1,33 +1,20 @@
 "use client";
 
 import "@/app/globals.css";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
 import StaysInput from "@/components/shared/navbar/input-searchtab/StaysInput";
-import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
+import NoResult from "@/components/shared/NoResult";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
+import StayCheckComponent from "@/components/shared/searchFlight/filters/StayCheckComponent";
 import Tab from "@/components/shared/searchFlight/flightComponent/Tab";
 import { searchStays } from "@/lib/actions/Search/SearchStayActions";
+import Amenity from "@/types/Amenity";
 import Stay from "@/types/Stay";
 import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-const MockFreebiesData = {
-  type: "Freebies",
-  data: [
-    "Free breakfast",
-    "Free parking",
-    "Free internet",
-    "Free airport shuttle",
-    "Free cancellation",
-  ],
-};
-
-const MockAmenitiesData = {
-  type: "Amenities",
-  data: ["24hr font desk", "Air-conditioned", "Fitness", "Pool"],
-};
+import { useEffect, useRef, useState } from "react";
 
 const tabs = [
   {
@@ -48,7 +35,10 @@ export default function StaysSearch() {
   const [isSelected, setIsSelected] = useState("HOTEL");
   const [stays, setStays] = useState<Stay[]>();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isUsingFilter, setIsUsingFilter] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
@@ -80,16 +70,26 @@ export default function StaysSearch() {
   useEffect(() => {
     handleRecentSearch();
 
+  const searchStaysFunc = (params: any, isFilter?: boolean) => {
+    if (isFilter) setIsLoadingFilter(true);
+    else setIsLoading(true);
+
     searchStays(params)
       .then((data: any) => {
-        setIsLoading(false);
         setStays(data.data);
+        if (isFilter) setIsLoadingFilter(false);
+        else setIsLoading(false);
       })
       .catch((error) => {
         setError(error.message);
-        setIsLoading(false);
+        if (isFilter) setIsLoadingFilter(false);
+        else setIsLoading(false);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    searchStaysFunc(params);
+  }, [searchParams]);
 
   if (error) {
     return <div className="py-16 text-center text-red-500">{error}</div>;
@@ -116,6 +116,68 @@ export default function StaysSearch() {
     return stays?.filter((item) => item.stay_type === title).length;
   };
 
+  const getMinMaxFare = (): { minFare: number; maxFare: number } => {
+    if (!stays) return { minFare: 0, maxFare: 0 };
+    const fares = stays.map((stay) => {
+      const price = stay.min_price;
+      return price;
+    });
+
+    const minFare = Math.min(...fares);
+    const maxFare = Math.max(...fares);
+
+    return { minFare, maxFare };
+  };
+
+  const getSetAminities = () => {
+    const allAminities = stays?.reduce((acc, item) => {
+      if (item.amenities) {
+        item.amenities.forEach((amenity: Amenity) => acc.add(amenity.name));
+      }
+      return acc;
+    }, new Set<string>());
+
+    // Chuyển đổi Set thành mảng
+    return Array.from(allAminities ?? []);
+  };
+
+  //! PRICE COMPONENT
+  const selectedPriceRangeRef = useRef<[number, number]>([0, 100]);
+
+  const handlePriceChange = (priceRange: [number, number]) => {
+    selectedPriceRangeRef.current = priceRange;
+  };
+
+  //! RATING COMPONENT
+  const [selectedRating, setSelectedRating] = useState<number>(0);
+
+  const handleRatingChange = (ratingId: number) => {
+    setSelectedRating(ratingId);
+  };
+
+  //TODO: FILTER
+  const handleFilter = () => {
+    setIsUsingFilter(true);
+
+    const paramsFilter = {
+      ...params,
+      min_price: selectedPriceRangeRef.current[0],
+      max_price: selectedPriceRangeRef.current[1],
+      rating: selectedRating,
+    };
+
+    handleFetchFilter(paramsFilter);
+  };
+
+  const handleFetchFilter = (paramsFilter: any) => {
+    searchStaysFunc(paramsFilter, true);
+  };
+
+  const handleCancelFilter = () => {
+    setIsUsingFilter(false);
+    searchStaysFunc(params);
+  };
+
   return (
     <main className="w-full">
       <StaysInput
@@ -128,74 +190,115 @@ export default function StaysSearch() {
         selectedCheckoutDateParams={params.checkout_date}
       />
 
-      <div className="flex w-full mt-8">
-        <div className="w-[30%] px-4 border-r-[1px]">
-          <div className="mx-2">
-            <h3 className="h3-semibold">Filters</h3>
-            <PriceComponent />
-            <RatingComponent />
-            <CheckComponent
-              type={MockFreebiesData.type}
-              data={MockFreebiesData.data}
-            />
-            <CheckComponent
-              type={MockAmenitiesData.type}
-              data={MockAmenitiesData.data}
-            />
-          </div>
-        </div>
+      {isLoading ? (
+        <BigLoadingSpinner />
+      ) : !isUsingFilter && (!stays || stays.length === 0) ? (
+        <NoResult
+          title="No Stays Found!"
+          description="🔍 Sorry, we couldn't find any stays matching your search. Please try adjusting your filters and search criteria."
+        />
+      ) : (
+        <div className="flex w-full mt-8">
+          <div className="w-[30%] px-4 border-r-[1px]">
+            <div className="mx-2">
+              <h3 className="h3-semibold">Filters</h3>
+              <PriceComponent
+                minBaseFare={getMinMaxFare().minFare}
+                maxBaseFare={getMinMaxFare().maxFare}
+                onPriceChange={handlePriceChange}
+              />
+              <RatingComponent onRatingChange={handleRatingChange} />
 
-        <div className="w-[70%] ml-4">
-          <div className="w-full flex h-20 bg-white rounded-lg shadow-full shadow-primary-400 mb-10">
-            {tabs.map((item, index) => {
-              return item.type === "HOTEL" ? (
-                <>
-                  <Tab
-                    key={index}
-                    type={item.type}
-                    title={item.title}
-                    countPlace={getCountPlace(item.title)}
-                    isSelected={isSelected}
-                    isSearchStay
-                    onClick={() => {
-                      setIsSelected(item.title);
-                    }}
-                  />
-                </>
-              ) : (
-                <div className="flex">
-                  <div className="w-[1px] my-4 bg-gray-300"></div>
-                  <Tab
-                    key={index}
-                    type={item.type}
-                    title={item.title}
-                    countPlace={getCountPlace(item.title)}
-                    isSearchStay
-                    isSelected={isSelected}
-                    onClick={() => {
-                      setIsSelected(item.title);
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
+              {getSetAminities().length === 0 ? null : (
+                <StayCheckComponent
+                  type={"Amenities"}
+                  data={getSetAminities()}
+                />
+              )}
+            </div>
 
-          {/* <div>
+            {isUsingFilter ? (
+              <button
+                onClick={handleCancelFilter}
+                className="mt-8 w-full py-3 rounded-md bg-primary-100 font-semibold"
+              >
+                Close Filter
+              </button>
+            ) : (
+              <button
+                onClick={handleFilter}
+                className="mt-8 w-full py-3 rounded-md bg-primary-100 font-semibold"
+              >
+                Submit
+              </button>
+            )}
+          </div>
+          {isLoadingFilter ? (
+            <BigLoadingSpinner />
+          ) : isUsingFilter && (!stays || stays.length === 0) ? (
+            <NoResult
+              title="No Stays Found!"
+              description="🔍 Sorry, we couldn't find any stays matching your search. Please try adjusting your filters and search criteria."
+            />
+          ) : (
+            <div className="w-[70%] ml-4">
+              <div className="w-full flex h-20 bg-white rounded-lg shadow-full shadow-primary-400 mb-10">
+                {tabs.map((item, index) => {
+                  return item.type === "HOTEL" ? (
+                    <Tab
+                      key={index}
+                      type={item.type}
+                      title={item.title}
+                      countPlace={getCountPlace(item.title)}
+                      isSelected={isSelected}
+                      isSearchStay
+                      onClick={() => {
+                        setIsSelected(item.title);
+                      }}
+                    />
+                  ) : (
+                    <div key={index} className="flex">
+                      <div className="w-[1px] my-4 bg-gray-300"></div>
+                      <Tab
+                        key={index}
+                        type={item.type}
+                        title={item.title}
+                        countPlace={getCountPlace(item.title)}
+                        isSearchStay
+                        isSelected={isSelected}
+                        onClick={() => {
+                          setIsSelected(item.title);
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* <div>
             <Reccomended />
           </div> */}
-          <div>
-            {stays
-              ?.filter((item) => item.stay_type === isSelected)
-              .map((stay) => (
-                <FavouriteStayComp item={stay} />
-              ))}
-          </div>
-          <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
-            <p className="paragraph-semibold text-white">Show more result</p>
-          </div>
+              <div>
+                {stays
+                  ?.filter((item) => item.stay_type === isSelected)
+                  .map((stay, index) => (
+                    <FavouriteStayComp
+                      key={index}
+                      item={stay}
+                      checkin={params["checkin_date"] ?? ""}
+                      checkout={params["checkout_date"] ?? ""}
+                    />
+                  ))}
+              </div>
+              <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
+                <p className="paragraph-semibold text-white">
+                  Show more result
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </main>
   );
 }

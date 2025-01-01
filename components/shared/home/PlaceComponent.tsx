@@ -4,12 +4,16 @@ import Image from "next/image";
 const PlacesComponent = ({
   imgUrl,
   placeTitle,
+  onClick
 }: {
   imgUrl: string;
   placeTitle: string;
+  onClick: () => void;
 }) => {
   return (
-    <div className="cursor-pointer flex justify-center items-center gap-x-4 rounded-2xl shadow-full pl-4 pr-16 py-4 transition-transform transform hover:scale-105 duration-300">
+    <div
+      onClick={onClick}
+    className="w-[31%] cursor-pointer flex justify-center items-center gap-x-4 rounded-2xl shadow-full pl-4 pr-16 py-4 transition-transform transform hover:scale-105 duration-300">
       <div>
         <Image src={imgUrl} alt={placeTitle} width={90} height={90} />
       </div>

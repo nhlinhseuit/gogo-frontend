@@ -3,17 +3,45 @@
 import One from "@/components/gallery/one";
 import BackToPrev from "@/components/shared/BackToPrev";
 import MyInput from "@/components/shared/MyInput";
-import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import SocialIcon from "@/components/shared/SocialIcon";
+import { toast } from "@/hooks/use-toast";
+import { forgotPassword } from "@/lib/actions/Authen/ForgotPassword";
 import { validateEmail } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const page = () => {
   const [email, setEmail] = useState("");
-  const [isChecked, setisChecked] = useState(false);
   const router = useRouter();
+
+  const isValidForm = () => {
+    return email.trim() !== "";
+  };
+
+  const handleSubmit = async () => {
+    if (!isValidForm()) {
+      toast({
+        title: `Please enter your email!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    } else if (validateEmail(email)) {
+      toast({
+        title: `Invalid email format!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    } else {
+      const res = await forgotPassword({ email: email });
+      if (!res) return;
+
+      const otp_id = res.otp_id;
+      router.push(`/verify-code?otp_id=${otp_id}&email=${email}`);
+    }
+  };
 
   return (
     <main>
@@ -24,7 +52,6 @@ const page = () => {
             width={80}
             height={80}
             alt="DevFlow"
-            className="mb-6"
           />
           <div>
             <BackToPrev text={"Back to login"} linkPrev="/login" />
@@ -49,12 +76,15 @@ const page = () => {
           </div>
 
           <div className="w-full flex flex-col gap-6">
-            <button className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 ">
+            <button
+              onClick={handleSubmit}
+              className="w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100 "
+            >
               <p className="body-semibold text-black">Submit</p>
             </button>
           </div>
 
-          <div className="w-full flex items-center">
+          {/* <div className="w-full flex items-center">
             <div className="flex-grow bg-gray-300 h-[1px]"></div>
 
             <p className="mx-4 bg-white px-2 text-[14px] text-gray-500 font-medium leading-[24px]">
@@ -68,7 +98,7 @@ const page = () => {
             <SocialIcon icon={"/assets/icons/facebook-color.svg"} />
             <SocialIcon icon={"/assets/icons/google-color.svg"} />
             <SocialIcon icon={"/assets/icons/apple-color.svg"} />
-          </div>
+          </div> */}
         </div>
 
         {/* //TODO: RIGHT */}

@@ -3,19 +3,17 @@
 import One from "@/components/gallery/one";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
-import SocialIcon from "@/components/shared/SocialIcon";
 import { toast } from "@/hooks/use-toast";
-import { registerAccount } from "@/lib/actions/RegisterActions";
+import { registerAccount } from "@/lib/actions/Authen/RegisterActions";
 import {
   validateConfirmPassword,
   validateEmail,
-  validateName,
   validatePassword,
   validatePhoneNumber,
 } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -32,7 +30,6 @@ const Signup = () => {
 
   const isValidForm = () => {
     return (
-      !(firstName === "" && lastName === "") &&
       email != "" &&
       phone != "" &&
       password != "" &&
@@ -42,6 +39,25 @@ const Signup = () => {
   };
 
   const handleRegister = () => {
+    if (!isValidForm()) {
+      toast({
+        title: `Please enter valid information!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    if (firstName.trim() === "" && lastName.trim() === "") {
+      setIsNameEmpty(true);
+      toast({
+        title: `First name and last name cannot both be empty!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
     registerAccount({
       email: email,
       password: password,
@@ -92,11 +108,7 @@ const Signup = () => {
                 placeholder="Nguyen"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                validate={
-                  isNameEmpty
-                    ? (value) => validateName(value, lastName)
-                    : undefined
-                }
+                isNameEmpty={isNameEmpty}
               />
 
               <MyInput
@@ -105,11 +117,8 @@ const Signup = () => {
                 placeholder="Linh"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                validate={
-                  isNameEmpty
-                    ? (value) => validateName(value, lastName)
-                    : undefined
-                }
+                isNameEmpty={isNameEmpty}
+                
               />
             </div>
 
@@ -176,18 +185,8 @@ const Signup = () => {
 
           <div className="w-full flex flex-col gap-6">
             <button
-              onClick={
-                isValidForm()
-                  ? () => {
-                      if (validateName(firstName, lastName))
-                        setIsNameEmpty(true);
-                      handleRegister();
-                    }
-                  : () => {}
-              }
-              className={`w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 ${
-                isValidForm() ? "bg-primary-100" : "bg-primary-100/30"
-              } `}
+              onClick={handleRegister}
+              className={`w-full flex justify-center items-center rounded-md gap-x-1 px-4 py-3 bg-primary-100`}
             >
               <p className="body-semibold text-black">Create account</p>
             </button>
@@ -205,7 +204,7 @@ const Signup = () => {
             </p>
           </div>
 
-          <div className="w-full flex items-center">
+          {/* <div className="w-full flex items-center">
             <div className="flex-grow bg-gray-300 h-[1px]"></div>
 
             <p className="mx-4 bg-white px-2 text-[14px] text-gray-500 font-medium leading-[24px]">
@@ -219,7 +218,7 @@ const Signup = () => {
             <SocialIcon icon={"/assets/icons/facebook-color.svg"} />
             <SocialIcon icon={"/assets/icons/google-color.svg"} />
             <SocialIcon icon={"/assets/icons/apple-color.svg"} />
-          </div>
+          </div> */}
         </div>
 
         {/* //TODO: RIGHT */}

@@ -1,12 +1,12 @@
 import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLocations } from "@/lib/actions/Search/FetchLocationsActions";
+import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
 import Location from "@/types/Location";
 import {
   convertDataNavigate,
-  formatDayApi,
+  formatDayFromInputToNormalDateApi,
   isDateValid,
-  parseDayFromApi,
+  parseNormalDateFromSearchParamsToDayOfInput,
 } from "@/utils/util";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -40,13 +40,13 @@ const StaysInput = ({
 
   const getCheckinDateParams = () => {
     return selectedCheckinDateParams
-      ? parseDayFromApi(selectedCheckinDateParams)
+      ? parseNormalDateFromSearchParamsToDayOfInput(selectedCheckinDateParams)
       : undefined;
   };
 
   const getCheckoutDateParams = () => {
     return selectedCheckoutDateParams
-      ? parseDayFromApi(selectedCheckoutDateParams)
+      ? parseNormalDateFromSearchParamsToDayOfInput(selectedCheckoutDateParams)
       : undefined;
   };
 
@@ -93,6 +93,10 @@ const StaysInput = ({
   const onValueDecrementGuests = () => {
     if (guests > 0) setGuests((prev) => prev - 1);
   };
+
+  // const getDestination = (data: Location[]) => {
+  //   return data.find((item) => item.id === destination!.toString())?.city ?? "";
+  // };
 
   useEffect(() => {
     fetchLocations()
@@ -172,7 +176,7 @@ const StaysInput = ({
     return true;
   };
 
-  const validateAndNavigateWithParams = () => {
+  const validateAndNavigateWithParams = ({ replace }: { replace: boolean }) => {
     if (!handleValid()) return;
 
     const params = {
@@ -182,10 +186,10 @@ const StaysInput = ({
         "",
       location: searchDestination,
       checkin_date: selectedDateCheckin
-        ? formatDayApi(selectedDateCheckin)
+        ? formatDayFromInputToNormalDateApi(selectedDateCheckin)
         : "",
       checkout_date: selectedDateCheckout
-        ? formatDayApi(selectedDateCheckout)
+        ? formatDayFromInputToNormalDateApi(selectedDateCheckout)
         : "",
       rooms: rooms,
       guests: guests,
@@ -197,7 +201,8 @@ const StaysInput = ({
       // page_size
     };
 
-    handleNavigate(params);
+    if (replace) handleReplace(params);
+    else handleNavigate(params);
   };
 
   const handleNavigate = (params: Record<string, any>) => {
@@ -205,6 +210,12 @@ const StaysInput = ({
 
     const queryString = new URLSearchParams(formattedParams).toString();
     router.push(`/find-stays/stays-search?${queryString}`);
+  };
+  const handleReplace = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.replace(`/find-stays/stays-search?${queryString}`);
   };
 
   return (
@@ -291,7 +302,12 @@ const StaysInput = ({
         </div>
 
         {isSearchStay ? (
-          <div className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
+          <div
+            onClick={() => {
+              validateAndNavigateWithParams({ replace: true });
+            }}
+            className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold"
+          >
             <Image
               src="/assets/icons/searchFlight.svg"
               alt="Search"
@@ -333,7 +349,9 @@ const StaysInput = ({
           <CustomButton
             srcUrl="/assets/icons/show_places.svg"
             text="Show Places"
-            onClick={validateAndNavigateWithParams}
+            onClick={() => {
+              validateAndNavigateWithParams({ replace: false });
+            }}
           />
         </div>
       )}

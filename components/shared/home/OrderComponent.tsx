@@ -1,15 +1,23 @@
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const OrderComponent = ({
   imgUrl,
   title,
   buttonTitle,
+  route,
 }: {
   imgUrl: string;
   title: string;
   buttonTitle: string;
+  route: string;
 }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(route);
+  };
   return (
     <div>
       <div className="relative">
@@ -28,7 +36,10 @@ const OrderComponent = ({
           <p className="mt-2 h3-regular text-white text-center">
             Search Flights & Places Hire to our most popular destinations
           </p>
-          <button className="flex justify-center items-center rounded-md gap-x-1 px-4 py-3 mt-2 bg-primary-100 transform transition-transform hover:scale-110 duration-500">
+          <button
+            onClick={handleClick}
+            className="flex justify-center items-center rounded-md gap-x-1 px-4 py-3 mt-2 bg-primary-100 transform transition-transform hover:scale-110 duration-500"
+          >
             <span>
               <Image
                 src="/assets/icons/Paper-Plane.svg"

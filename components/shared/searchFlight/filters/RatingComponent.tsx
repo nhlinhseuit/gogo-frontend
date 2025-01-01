@@ -3,9 +3,18 @@
 import { useState } from "react";
 import Image from "next/image";
 
-const ratingComponent = () => {
+const ratingComponent = ({
+  onRatingChange,
+}: {
+  onRatingChange: (ratingId: number) => void;
+}) => {
   const [isSelected, setIsSelected] = useState(-1);
   const [isToggled, setIsToggled] = useState(true);
+
+  const handleClick = (index: number) => {
+    setIsSelected(index);
+    onRatingChange(index); // This will call the parent's function and pass the rating id
+  };
 
   return (
     <div>
@@ -34,12 +43,11 @@ const ratingComponent = () => {
           <div className="flex gap-3 pb-6">
             {Array.from({ length: 5 }, (_, index) => (
               <button
-                onClick={() => {
-                  setIsSelected(index);
-                }}
+                key={index}
+                onClick={() => handleClick(index)}
                 className={`px-3 py-2 border-[1px] border-primary-100 rounded-md ${
                   index === isSelected ? "bg-primary-100 text-white" : ""
-                } `}
+                }`}
               >
                 <p className="body-regular">{index}+</p>
               </button>

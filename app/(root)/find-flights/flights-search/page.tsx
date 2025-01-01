@@ -1,105 +1,275 @@
 "use client";
 
 import "@/app/globals.css";
-import CheckComponent from "@/components/shared/searchFlight/filters/CheckComponent";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
+import FlightsInput from "@/components/shared/navbar/input-searchtab/FlightsInput";
+import NoResult from "@/components/shared/NoResult";
 import DepartureTimeComponent from "@/components/shared/searchFlight/filters/DepartureTimeComponent";
+import FlightCheckComponent from "@/components/shared/searchFlight/filters/FlightCheckComponent";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
 import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
+import { fetchAirlines } from "@/lib/actions/Search/FetchAirlines";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
+import Airline from "@/types/Airline";
 import Flight from "@/types/Flight";
+import { convertDataNavigate, convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import router from "next/router";
+import { useEffect, useRef, useState } from "react";
 
-const MockAirlines = {
-  type: "Airlines",
-  data: ["Emirated", "Fly Dubai", "Qatar", "Etihad"],
-};
-const MockTrips = {
-  type: "Trips",
-  data: ["Round trip", "On Way", "Multi-City"],
-};
+const trips = ["Round trip", "On Way", "Multi-City"];
 
 export default function FlightsSearch() {
   const [isSelected, setIsSelected] = useState("Best");
   const [flights, setFlights] = useState<Flight[]>();
+  const [airlines, setAirlines] = useState<Airline[]>();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isUsingFilter, setIsUsingFilter] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
 
-  // const params = convertDataReceive(searchParams);
+  const paramsData = convertDataReceive(searchParams);
   const params = {
-    roundTrip: false,
-    departure_location_id: "1",
-    arrival_location_id: "2",
-    departure_time_from: "2024-12-25T06:00:00Z",
-    departure_time_to: "2024-12-25T10:00:00Z",
-    return_time_from: "",
-    return_time_to: "",
-    seat_classes: ["ECONOMY"],
-    passenger_count: 1,
+    roundTrip: paramsData.roundTrip,
+    departure_location_id: paramsData.departure_location_id,
+    arrival_location_id: paramsData.arrival_location_id,
+    departure_time_from: paramsData.departure_time_from,
+    departure_time_to: paramsData.departure_time_from,
+    return_time_from: paramsData.return_time_from,
+    return_time_to: paramsData.return_time_to,
+    seat_classes: paramsData.seat_classes,
+    passenger_count: paramsData.passenger_count,
   };
-  useEffect(() => {
+
+  const searchFlightsFunc = (params: any, isFilter?: boolean) => {
+    if (isFilter) setIsLoadingFilter(true);
+    else setIsLoading(true);
+
     searchFlights(params)
       .then((data: any) => {
-        console.log("data", data);
+        console.log("data flights", data);
         setFlights(data.data);
+        if (isFilter) setIsLoadingFilter(false);
+        else setIsLoading(false);
       })
       .catch((error) => {
         setError(error.message);
+        if (isFilter) setIsLoadingFilter(false);
+        else setIsLoading(false);
       });
+  };
+
+  const searchAirlinesFunc = () => {
+    setIsLoading(true);
+    fetchAirlines()
+      .then((data: any) => {
+        console.log("data airlines", data);
+        setAirlines(data.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    searchFlightsFunc(params);
+  }, [searchParams]);
+
+  useEffect(() => {
+    searchAirlinesFunc();
   }, []);
 
   if (error) {
     return <div className="py-16 text-center text-red-500">{error}</div>;
   }
 
-  console.log("Flight", flights);
+  const getMinMaxFare = (): { minFare: number; maxFare: number } => {
+    if (!flights) return { minFare: 0, maxFare: 0 };
+    const fares = flights.map((flight) => {
+      const outboundFare = flight.outbound_flight.min_base_fare;
+      const returnFare = flight.round_trip
+        ? flight.return_flight.min_base_fare
+        : 0;
+      return outboundFare + returnFare;
+    });
+
+    const minFare = Math.min(...fares);
+    const maxFare = Math.max(...fares);
+
+    // return { minFare, maxFare };
+    return { minFare: 0, maxFare: 200 };
+  };
+
+  //! PRICE COMPONENT
+  const selectedPriceRangeRef = useRef<[number, number]>([0, 100]);
+
+  const handlePriceChange = (priceRange: [number, number]) => {
+    selectedPriceRangeRef.current = priceRange;
+  };
+
+  //! TIME COMPONENT
+  const timeRangeRef = useRef<[string, string]>(["00:00", "23:59"]);
+
+  const handleTimeRangeChange = (timeRange: [string, string]) => {
+    timeRangeRef.current = timeRange;
+    console.log("Selected Time Range:", timeRange);
+  };
+
+  //! RATING COMPONENT
+  const [selectedRating, setSelectedRating] = useState<number>(0);
+
+  const handleRatingChange = (ratingId: number) => {
+    setSelectedRating(ratingId);
+  };
+
+  //! Airlines, trips COMPONENT
+  const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
+  const [selectedTrips, setSelectedTrips] = useState<string[]>([]);
+
+  const handleAirlinesChange = (selected: string[]) => {
+    setSelectedAirlines(selected);
+  };
+
+  const handleTripsChange = (selected: string[]) => {
+    setSelectedTrips(selected);
+  };
+
+  //TODO: FILTER
+  const handleFilter = () => {
+    setIsUsingFilter(true);
+
+    const paramsFilter = {
+      // page: 0,
+
+      roundTrip: paramsData.roundTrip,
+      departure_location_id: paramsData.departure_location_id,
+      arrival_location_id: paramsData.arrival_location_id,
+      departure_time_from: paramsData.departure_time_from,
+      departure_time_to: paramsData.departure_time_from,
+      return_time_from: paramsData.return_time_from,
+      return_time_to: paramsData.return_time_to,
+      seat_classes: paramsData.seat_classes,
+      passenger_count: paramsData.passenger_count,
+
+      min_price: selectedPriceRangeRef.current[0],
+      max_price: selectedPriceRangeRef.current[1],
+      // order_by: "CHEAPEST",
+      // page_size: 10,
+    };
+
+    handleFetchFilter(paramsFilter);
+  };
+
+  const handleFetchFilter = (paramsFilter: Record<string, any>) => {
+    searchFlightsFunc(paramsFilter, true);
+  };
+
+  const handleCancelFilter = () => {
+    setIsUsingFilter(false);
+    searchFlightsFunc(params);
+  };
 
   return (
     <main className="w-full">
       <div>
-        {/* <FlightsInput
+        <FlightsInput
           isSearchFlight
           otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
-          departure_location={params.departure_location}
-          arrival_location={params.arrival_location}
-          tripTypeParams={params.roundTrip}
-          classTypeParams={params.seat_classes}
-          passegersParams={params.passenger_count}
-          selectedDateDepartParams={params.departure_time_from}
-          selectedDateReturnParams={params.return_time_from}
-        /> */}
+          departure_location={paramsData.departure_location}
+          arrival_location={paramsData.arrival_location}
+          tripTypeParams={paramsData.roundTrip}
+          classTypeParams={paramsData.seat_classes}
+          passegersParams={paramsData.passenger_count}
+          selectedDateDepartParams={paramsData.departure_time_from}
+          selectedDateReturnParams={paramsData.return_time_from}
+        />
 
-        <div className="flex w-full mt-8">
-          <div className="w-[30%] px-4 border-r-[1px]">
-            <div className="mx-2">
-              <h3 className="h3-semibold">Filters</h3>
-              <PriceComponent />
-              <DepartureTimeComponent />
-              <RatingComponent />
-              <CheckComponent
-                type={MockAirlines.type}
-                data={MockAirlines.data}
+        {isLoading ? (
+          <BigLoadingSpinner />
+        ) : !isUsingFilter && (!flights || flights.length === 0) ? (
+          <NoResult
+            title="No Flights Found!"
+            description="🔍 Sorry, we couldn't find any flights matching your search. Please try adjusting your search criteria."
+          />
+        ) : (
+          <div className="flex w-full mt-8">
+            <div className="w-[30%] px-4 border-r-[1px]">
+              <div className="mx-2">
+                <h3 className="h3-semibold">Filters</h3>
+                <PriceComponent
+                  minBaseFare={getMinMaxFare().minFare}
+                  maxBaseFare={getMinMaxFare().maxFare}
+                  onPriceChange={handlePriceChange}
+                />
+                <DepartureTimeComponent
+                  onTimeRangeChange={handleTimeRangeChange}
+                />
+                <RatingComponent onRatingChange={handleRatingChange} />
+                <FlightCheckComponent
+                  type="Airlines"
+                  data={airlines}
+                  onSelectionChange={handleAirlinesChange}
+                />
+                <FlightCheckComponent
+                  type="Trips"
+                  data={trips}
+                  onSelectionChange={handleTripsChange}
+                />
+              </div>
+
+              {isUsingFilter ? (
+                <button
+                  onClick={handleCancelFilter}
+                  className="mt-8 w-full py-3 rounded-md bg-primary-100 font-semibold"
+                >
+                  Close Filter
+                </button>
+              ) : (
+                <button
+                  onClick={handleFilter}
+                  className="mt-8 w-full py-3 rounded-md bg-primary-100 font-semibold"
+                >
+                  Submit
+                </button>
+              )}
+            </div>
+
+            {isLoadingFilter ? (
+              <BigLoadingSpinner />
+            ) : isUsingFilter && (!flights || flights.length === 0) ? (
+              <NoResult
+                title="No Flights Found!"
+                description="🔍 Sorry, we couldn't find any flights matching your search. Please try adjusting your filters search criteria."
               />
-              <CheckComponent type={MockTrips.type} data={MockTrips.data} />
-            </div>
-          </div>
+            ) : (
+              <div className="w-[70%] ml-4">
+                <div>
+                  {flights?.map((flight) => (
+                    <FlightsComp
+                      item={flight}
+                      departure_time_from={params["departure_time_from"] ?? ""}
+                      departure_time_to={params["departure_time_to"] ?? ""}
+                      passenger_count={params["passenger_count"] ?? ""}
+                    />
+                  ))}
+                </div>
 
-          <div className="w-[70%] ml-4">
-            <div>
-              {flights?.map((flight) => (
-                <FlightsComp item={flight} />
-              ))}
-            </div>
-
-            <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
-              <p className="paragraph-semibold text-white">Show more result</p>
-            </div>
+                <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
+                  <p className="paragraph-semibold text-white">
+                    Show more result
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </main>
   );
