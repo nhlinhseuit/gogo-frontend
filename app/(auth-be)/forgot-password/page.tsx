@@ -5,6 +5,7 @@ import BackToPrev from "@/components/shared/BackToPrev";
 import MyInput from "@/components/shared/MyInput";
 import SocialIcon from "@/components/shared/SocialIcon";
 import { toast } from "@/hooks/use-toast";
+import { forgotPassword } from "@/lib/actions/Authen/ForgotPassword";
 import { validateEmail } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,7 +19,7 @@ const page = () => {
     return email.trim() !== "";
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isValidForm()) {
       toast({
         title: `Please enter your email!`,
@@ -34,7 +35,11 @@ const page = () => {
       });
       return;
     } else {
-      router.push("verify-code");
+      const res = await forgotPassword({ email: email });
+      if (!res) return;
+
+      const otp_id = res.otp_id;
+      router.push(`/verify-code?otp_id=${otp_id}&email=${email}`);
     }
   };
 

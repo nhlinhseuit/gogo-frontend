@@ -2,23 +2,25 @@
 
 import One from "@/components/gallery/one";
 import BackToPrev from "@/components/shared/BackToPrev";
-import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
-import SocialIcon from "@/components/shared/SocialIcon";
 import { toast } from "@/hooks/use-toast";
+import { updatePassword } from "@/lib/actions/Authen/UpdatePassword";
 import {
   validateConfirmPassword,
-  validateEmail,
-  validatePassword,
+  validatePassword
 } from "@/utils/util";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 const page = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  const [otpId, setOtpId] = useState(searchParams.get("otp_id"));
 
   const isValidForm = () => {
     return (
@@ -39,6 +41,11 @@ const page = () => {
       });
       return;
     } else {
+      updatePassword({
+        email: email,
+        otp_id: otpId,
+        new_password: password,
+      });
       toast({
         title: `Set password successfully!`,
         variant: "success",

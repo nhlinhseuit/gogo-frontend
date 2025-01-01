@@ -6,19 +6,41 @@ import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import MyInput from "@/components/shared/MyInput";
 import SocialIcon from "@/components/shared/SocialIcon";
 import { toast } from "@/hooks/use-toast";
+import { forgotPassword } from "@/lib/actions/Authen/ForgotPassword";
+import { verifyCode } from "@/lib/actions/Authen/VerifyCode";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 const page = () => {
   const [code, setCode] = useState("");
   const router = useRouter();
+  
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  const [otpId, setOtpId] = useState(searchParams.get("otp_id"));
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleResend = async () => {
+    console.log("here");
+    setIsLoading(true);
+
+    const res = await forgotPassword({ email: email });
+
+    if (!res) return;
+    const newOtpId = res.otp_id;
+    router.replace(`/verify-code?otp_id=${newOtpId}&email=${email}`);
+
+    setOtpId(newOtpId);
+    setIsLoading(false);
+  };
 
   const isValidForm = () => {
     return code.trim() !== "";
-  };  
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isValidForm()) {
       toast({
         title: `Please enter code!`,
@@ -28,7 +50,13 @@ const page = () => {
       return;
     }
 
-    router.push("/set-password");
+    const res = await verifyCode({
+      email: email,
+      otp_id: otpId,
+      code: "abcxyz",
+    });
+
+    router.push(`/set-password?otp_id=${otpId}&email=${email}`);
   };
 
   return (
@@ -60,13 +88,17 @@ const page = () => {
               onChange={(e) => setCode(e.target.value)}
             />
 
-            <div className="flex gap-2">
-              <p className="mt-6 body-regular -translate-y-[1px] text-dark200_light900 line-clamp-2 flex-1 m-0">
+            <div className="flex gap-2 items-center">
+              <p className="mt-6 body-regular -translate-y-[1px] text-dark200_light900 line-clamp-2 m-0">
                 Didn't receive the code?{" "}
-                <span className="text-[#FF8682] cursor-pointer ">Resend</span>
+                <span
+                  onClick={handleResend}
+                  className="text-[#FF8682] cursor-pointer "
+                >
+                  Resend
+                </span>
               </p>
-              <LoadingSpinner />
-              //! còn 3s hiện, api forgor pw
+              {isLoading && <LoadingSpinner />}
             </div>
           </div>
 
