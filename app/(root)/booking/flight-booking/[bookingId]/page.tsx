@@ -15,8 +15,9 @@ import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 interface FlightBookingInfoPageParams {
   bookingId: string;
 }
+
 const FlightBookingInfoPage = () => {
-  const { toPDF, targetRef } = usePDF({filename: "boarding-pass.pdf"});
+  const {toPDF, targetRef} = usePDF({filename: "boarding-pass.pdf"});
   const {bookingId} = useParams() as unknown as FlightBookingInfoPageParams;
 
 
@@ -25,6 +26,7 @@ const FlightBookingInfoPage = () => {
   useEffect(() => {
     fetchFlightBooking(bookingId).then((data) => {
       setFlightBookingData(data);
+      console.log(flightBookingData)
     }).catch((error) => {
       console.error('Error fetching flight booking:', error);
       toast({
@@ -35,15 +37,20 @@ const FlightBookingInfoPage = () => {
     });
   }, []);
 
-  if(!bookingId) return <div>Invalid Flight ID</div>;
+  useEffect(() => {
+    console.log(flightBookingData);  // This will log the updated data after state change.
+  }, [flightBookingData]);
 
-  if(!flightBookingData) return <BigLoadingSpinner/>;
+
+  if (!bookingId) return <div>Invalid Flight ID</div>;
+
+  if (!flightBookingData) return <BigLoadingSpinner/>;
 
   return (
     <div className="flex flex-col my-4 gap-8">
       <div className="flex flex-col justify-between md:flex-row">
         <span
-          className="h2-bold">{flightBookingData.seats[0].flight.name}</span>
+          className="h2-bold">{flightBookingData.seats[0].seat.flight.name}</span>
       </div>
 
       <div className="flex flex-col justify-between md:flex-row">
@@ -55,9 +62,8 @@ const FlightBookingInfoPage = () => {
 
         </div>
       </div>
-
       <div ref={targetRef}>
-        <FlightTicket bookingId={bookingId}/>
+        {flightBookingData && <FlightTicket booking={flightBookingData}/>}
       </div>
 
       <div className="h2-bold">Terms and Conditions</div>
