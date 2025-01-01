@@ -4,49 +4,53 @@ import "@/app/globals.css";
 
 import FlightTicket from "@/components/FlightTicket";
 import {usePDF} from "react-to-pdf";
+import FlightBooking from "@/types/FlightBooking";
+import {useEffect, useState} from "react";
+import {useParams} from "next/navigation";
+import {fetchFlightBooking} from "@/lib/actions/BookingActions";
+import {toast} from "@/hooks/use-toast";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
-const BookingPage = () => {
-  const { toPDF, targetRef } = usePDF({filename: "boarding-pass.pdf"});
+
+interface FlightBookingInfoPageParams {
+  bookingId: string;
+}
+
+const FlightBookingInfoPage = () => {
+  const {toPDF, targetRef} = usePDF({filename: "boarding-pass.pdf"});
+  const {bookingId} = useParams() as unknown as FlightBookingInfoPageParams;
 
 
-  const mockFlightBookingData = {
-    bookingId: "123456",
-    type: "flight",
-    planeModel: "Boeing 737",
-    class: "Economy",
-    departureAirport: "JFK",
-    arrivalAirport: "LAX",
-    departureTime: "2022-12-31T23:59:59",
-    arrivalTime: "2023-01-01T03:00:00",
-    price: 100.00,
-    gate: "A1",
-    seat: "23A",
-    departureAirportName: "John F. Kennedy International Airport",
-    arrivalAirportName: "Los Angeles International Airport",
-    passengerName: "John Doe",
-    code: "ABC12345",
-  }
+  const [flightBookingData, setFlightBookingData] = useState<FlightBooking | null>(null);
 
-  const mockHotelBookingData = {
-    bookingId: "123456",
-    type: "hotel",
-    hotelName: "Hilton",
-    roomType: "Standard",
-    checkIn: "2022-12-31T15:00:00",
-    checkOut: "2023-01-01T11:00:00",
-    price: 100.00,
-    roomNumber: "123",
-    address: "123 Main St, New York, NY 10001",
-    guestName: "John Doe",
-    code: "ABC12345",
-  }
+  useEffect(() => {
+    fetchFlightBooking(bookingId).then((data) => {
+      setFlightBookingData(data);
+      console.log(flightBookingData)
+    }).catch((error) => {
+      console.error('Error fetching flight booking:', error);
+      toast({
+        title: `Error fetching Booking: ${error}`,
+        variant: "error",
+        duration: 3000,
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(flightBookingData);  // This will log the updated data after state change.
+  }, [flightBookingData]);
+
+
+  if (!bookingId) return <div>Invalid Flight ID</div>;
+
+  if (!flightBookingData) return <BigLoadingSpinner/>;
 
   return (
     <div className="flex flex-col my-4 gap-8">
       <div className="flex flex-col justify-between md:flex-row">
         <span
-          className="h2-bold">{mockFlightBookingData.type === "flight" ? mockFlightBookingData.planeModel : mockHotelBookingData.hotelName}</span>
-        <span className="h2-bold text-accent-orange">${mockFlightBookingData.price}</span>
+          className="h2-bold">{flightBookingData.seats[0].seat.flight.name}</span>
       </div>
 
       <div className="flex flex-col justify-between md:flex-row">
@@ -58,9 +62,8 @@ const BookingPage = () => {
 
         </div>
       </div>
-
       <div ref={targetRef}>
-        <FlightTicket bookingId={1}/>
+        {flightBookingData && <FlightTicket booking={flightBookingData}/>}
       </div>
 
       <div className="h2-bold">Terms and Conditions</div>
@@ -105,4 +108,4 @@ const BookingPage = () => {
   )
 };
 
-export default BookingPage;
+export default FlightBookingInfoPage;
