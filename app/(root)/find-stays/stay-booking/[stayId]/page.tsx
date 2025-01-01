@@ -16,6 +16,7 @@ import Price from "@/types/Price";
 import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
 import {getCurrentUser} from "@/utils/util";
+import {requestStayBooking} from "@/lib/actions/BookingActions";
 
 interface PageParams {
   stayId: string;
@@ -25,12 +26,15 @@ const StayBookingPage: React.FC = () => {
   const {stayId} = useParams() as unknown as PageParams;
   const searchParams = useSearchParams();
   const roomId = searchParams.get("room_id");
+  const checkin = searchParams.get("checkin");
+  const checkout = searchParams.get("checkout");
 
-  const targetTime = new Date("2024-12-30T00:00:00").getTime();
+  const [targetTimeLeft, setTargetTimeLeft] = useState<Date>(new Date());
   const [price, setPrice] = useState<Price | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [stayData, setStayData] = useState<Stay | null>(null);
   const [roomData, setRoomData] = useState<Room | null>(null);
+  const [bookingId, setBookingId] = useState<string>("");
 
   const [guestFirstName, setGuestFirstName] = useState<string>("");
   const [guestLastName, setGuestLastName] = useState<string>("");
@@ -52,7 +56,6 @@ const StayBookingPage: React.FC = () => {
     });
   }
 
-
   useEffect(() => {
     fetchStay(stayId).then((data) => {
       setStayData(data);
@@ -64,7 +67,15 @@ const StayBookingPage: React.FC = () => {
     }).catch((error) => {
       console.error('Error fetching room:', error);
     })
+    requestStayBooking(stayId, roomId!, checkin, checkout).then((data) => {
+      console.log(data)
+      setTargetTimeLeft(new Date(data.lock_expiration));
+    }).catch((error) => {
+      console.error('Error requesting booking:', error);
+    });
+
     fetchCards();
+
   }, []);
 
 
@@ -90,7 +101,7 @@ const StayBookingPage: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const distance = targetTime - now;
+      const distance = targetTimeLeft.getTime() - now;
 
       if (distance < 0) {
         clearInterval(interval);
@@ -103,7 +114,7 @@ const StayBookingPage: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [targetTime]);
+  }, [targetTimeLeft]);
 
   if (!stayId || !roomId) {
     return <div>Missing required parameters</div>;

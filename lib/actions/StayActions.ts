@@ -1,7 +1,7 @@
 import type Stay from "@/types/Stay";
 import type Room from "@/types/Room";
 import {BASE_URL} from "@/constants";
-import {getCurrentUser} from "@/utils/util";
+import {getCurrentUser, getToken} from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/stays`
 const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`
@@ -14,7 +14,7 @@ export const fetchStay = async (stayId: string): Promise<Stay> => {
       headers: {
         // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getToken()}`,
 
       },
     });
@@ -37,7 +37,7 @@ export const fetchStays = async (): Promise<Stay[]> => {
       headers: {
         // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getToken()}`,
 
       },
     });
@@ -69,7 +69,7 @@ export const fetchAvailableRooms = async (stayId: string): Promise<Room[]> => {
     const response = await fetch(testUrl, {
       method: "GET",
       headers: {
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
     });
@@ -85,3 +85,4 @@ export const fetchAvailableRooms = async (stayId: string): Promise<Room[]> => {
     throw error;
   }
 }
+

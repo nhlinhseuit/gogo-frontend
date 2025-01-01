@@ -189,9 +189,18 @@ export const formatCurrency = ({ price }: { price: number }) => {
   return formattedPrice;
 };
 
+
 export const formatDateToMMYY = (dateString: string)=> {
   const date = new Date(dateString);
   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
   const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
   return `${month}/${year}`;
+}
+
+export const formatDateToYYYYMMDD = (dateString: string)=> {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
