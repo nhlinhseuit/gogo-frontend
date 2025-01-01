@@ -1,13 +1,13 @@
 import "@/app/globals.css";
 import React from 'react';
 
-interface RatingsProps {
+interface RatingSummaryComponentProps {
   rating: number;
   className?: string;
   numberOfReviews: number;
 }
 
-const Ratings: React.FC<RatingsProps> = (props) => {
+const RatingSummaryComponent: React.FC<RatingSummaryComponentProps> = (props) => {
   return (
     <div className={props.className}>
       <div className="flex items-center flex-col md:flex-row gap-2">
@@ -20,4 +20,4 @@ const Ratings: React.FC<RatingsProps> = (props) => {
   );
 };
 
-export default Ratings;
+export default RatingSummaryComponent;

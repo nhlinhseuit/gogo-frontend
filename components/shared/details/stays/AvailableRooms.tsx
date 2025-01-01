@@ -5,16 +5,19 @@ import React, {useEffect, useState} from "react";
 import type Room from "@/types/Room";
 import RoomComponent from "@/components/shared/details/stays/RoomComponent";
 import {fetchAvailableRooms} from "@/lib/actions/StayActions";
+import {startTypeChecking} from "next/dist/build/type-check";
 
 interface AvailableRoomsProps {
   stayId: string;
+  checkin: string;
+  checkout: string;
 }
 
-const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
+const AvailableRooms: React.FC<AvailableRoomsProps> = (props) => {
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
   useEffect(() => {
-    fetchAvailableRooms(stayId)
+    fetchAvailableRooms(props.stayId, props.checkin, props.checkout)
       .then((data) => {
         setAvailableRooms(data);
       })
@@ -29,7 +32,7 @@ const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
       <div>
         {availableRooms.map((room) => {
           return (
-            <RoomComponent stayId={stayId} room={room} key={room.id}/>
+            <RoomComponent stayId={props.stayId} room={room} key={room.id} checkin={props.checkin} checkout={props.checkout}/>
           )
         })}
       </div>

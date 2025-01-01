@@ -5,10 +5,14 @@ import type Stay from "@/types/Stay";
 import Room from "@/types/Room";
 import {fetchStay} from "@/lib/actions/StayActions";
 import {fetchRoom} from "@/lib/actions/RoomActions";
+import {formatDateInWords} from "@/utils/util";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface StayInformationComponentProps {
   stayId: string
   roomId: string
+  checkin: string
+  checkout: string
   className?: string
 }
 
@@ -35,7 +39,7 @@ const StayInformationComponent: React.FC<StayInformationComponentProps> = (props
   const monthsOfYear = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   if (!stayData || !roomData) {
-    return <div>Loading...</div>;
+  return <BigLoadingSpinner/>
   }
 
   return (
@@ -52,7 +56,9 @@ const StayInformationComponent: React.FC<StayInformationComponentProps> = (props
 
       <div
         className="flex w-full flex-col items-center gap-8 rounded-md px-4 py-2 border-[1px] border-primary-100 md:flex-row">
-        <img className="h-20 w-24 rounded" src={stayData.featured_images[0].url} alt="Emirates Logo"/>
+        <img className="h-20 w-24 rounded"
+             src={typeof stayData.featured_images[0] === 'string' ? stayData.featured_images[0] : "/assets/images/image_not_available.png"}
+             alt="Logo"/>
         <div className="flex flex-col justify-between gap-1">
           <span className="h3-semibold">{stayData.name}</span>
           <span className="text-sm font-light flex flex-row items-center"><img src="/assets/icons/location.svg"
@@ -62,18 +68,21 @@ const StayInformationComponent: React.FC<StayInformationComponentProps> = (props
 
       <div className="flex w-full flex-col items-center justify-between gap-8 self-center md:flex-row md:gap-16">
         <div className="flex flex-col justify-between">
-          {/*<span*/}
-          {/*  className="h2-semibold">{*/}
-          {/*  `${daysOfWeek[new Date(roomData.checkIn).getDay()]}, ${monthsOfYear[new Date(roomData.checkIn).getMonth()]} ${new Date(roomData.checkIn).getDate()}`*/}
-          {/*}</span>*/}
+          <span
+            className="font-bold">{
+            formatDateInWords(props.checkin)
+          }</span>
           <span className="font-light">Check In</span>
         </div>
         <img src="/assets/icons/stay-duration.svg" alt="Flight Duration"/>
         <div className="flex flex-col justify-between">
-          {/*<span*/}
-          {/*  className="h2-semibold">{*/}
-          {/*  `${daysOfWeek[new Date(roomData.checkOut).getDay()]}, ${monthsOfYear[new Date(roomData.checkOut).getMonth()]} ${new Date(roomData.checkOut).getDate()}`*/}
-          {/*}</span>*/}
+          <span
+            className="font-bold">
+            {
+              formatDateInWords(props.checkout)
+
+            }
+          </span>
           <span className="font-light">Check Out</span>
         </div>
       </div>
