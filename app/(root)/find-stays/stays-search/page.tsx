@@ -54,7 +54,32 @@ export default function StaysSearch() {
   const searchParams = useSearchParams();
   const params = convertDataReceive(searchParams);
 
+  const handleRecentSearch = () => {
+    const recentLocalStorage = localStorage.getItem("recentSearchs") || "[]";
+
+    let recents: string[];
+
+    try {
+      recents = JSON.parse(recentLocalStorage);
+      if (!Array.isArray(recents)) {
+        throw new Error("Parsed data is not an array");
+      }
+    } catch (error) {
+      console.error("Error parsing recentSearchs:", error);
+      recents = [];
+    }
+
+    const locationId = params.location_id.toString();
+    if (!recents.includes(locationId)) {
+      recents.push(locationId);
+    }
+
+    localStorage.setItem("recentSearchs", JSON.stringify(recents));
+  };
+
   useEffect(() => {
+    handleRecentSearch();
+
     searchStays(params)
       .then((data: any) => {
         setIsLoading(false);
@@ -162,7 +187,6 @@ export default function StaysSearch() {
           <div>
             {stays
               ?.filter((item) => item.stay_type === isSelected)
-
               .map((stay) => (
                 <FavouriteStayComp item={stay} />
               ))}
