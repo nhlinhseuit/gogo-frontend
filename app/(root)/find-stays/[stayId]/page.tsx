@@ -19,6 +19,7 @@ import type Review from "@/types/Review";
 import {fetchServiceReview, postReview} from "@/lib/actions/ReviewActions";
 import AddReviewModal from "@/components/shared/AddReviewModal";
 import stay from "@/types/Stay";
+import {useSearchParams} from "next/navigation";
 
 interface StayDetailProp {
   params: {
@@ -40,6 +41,9 @@ export default function StayDetail({params}: StayDetailProp) {
     total: 1,
     total_page: 1,
   });
+  const searchParams = useSearchParams();
+  const checkin = searchParams.get("checkin");
+  const checkout = searchParams.get("checkout");
 
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -222,7 +226,7 @@ export default function StayDetail({params}: StayDetailProp) {
         </div>
 
         <div id="available-rooms">
-          <AvailableRooms stayId={stayData!.id}/>
+          <AvailableRooms stayId={stayData!.id} checkin={checkin ?? ""} checkout={checkout ?? ""}/>
         </div>
 
         <div className="mt-8 flex flex-col gap-8">

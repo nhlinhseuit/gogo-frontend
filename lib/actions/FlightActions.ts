@@ -1,6 +1,7 @@
 import type FlightDetails from "@/types/FlightDetails";
 
 import {BASE_URL} from "@/constants";
+import {getToken} from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/flights`
 const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`;
@@ -11,7 +12,8 @@ export const fetchFlightDetails = async (flightId: string): Promise<FlightDetail
     const response = await fetch(`${API_URL}/${flightId}`, {
       method: "GET",
       headers: {
-        "Authorization": TEST_TOKEN,
+        "Authorization": `Bearer ${getToken()}`,
+
         "Content-Type": "application/json",
       },
     });

@@ -1,10 +1,12 @@
 import type Review from "@/types/Review";
 
 import {BASE_URL} from "@/constants";
-import {getCurrentUser} from "@/utils/util";
+import {getCurrentUser, getToken} from "@/utils/util";
+import {fetchUser} from "@/lib/actions/UserActions";
+import User from "@/types/User";
 
 const API_URL = `${BASE_URL}/api/v1/reviews`
-const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`
+
 interface ReviewResponse {
   data: Review[];
   page: number;
@@ -14,47 +16,65 @@ interface ReviewResponse {
 }
 
 export const fetchServiceReview = async (serviceId: string, page: number = 0, size: number = 10): Promise<ReviewResponse> => {
-
-  console.log(getCurrentUser().token)
-
   try {
     const response = await fetch(`${API_URL}?service_id=${serviceId}&page=${page}&page_size=${size}`, {
       method: "GET",
       headers: {
-        // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
-        "Authorization": TEST_TOKEN,
-
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
     const data = await response.json();
-    return data as ReviewResponse;
+
+    const reviews: Review[] = await Promise.all(
+      data.data.map(async (reviewData: any): Promise<Review> => {
+        const user: User = await fetchUser(reviewData.user_id); // Fetch user details
+        return {
+          id: reviewData.id,
+          user,
+          rating: reviewData.rating,
+          description: reviewData.description,
+          service_type: reviewData.service_type,
+        };
+      })
+    );
+
+    return {
+      data: reviews,
+      page: data.page,
+      size: data.size,
+      total: data.total,
+      total_page: data.total_page,
+    };
   } catch (error) {
     console.error('Error fetching service reviews:', error);
     throw error;
   }
-}
+};
 
 export const postReview = async (serviceId: string, description: string, rating: number, serviceType: string): Promise<Review> => {
   try {
+    console.log(getToken())
+    const body = {
+      user_id: getCurrentUser().id,
+      service_id: serviceId,
+      description,
+      rating,
+      service_type: serviceType,
+    }
+    console.log(JSON.stringify(body));
     const response = await fetch(`${API_URL}`, {
       method: "POST",
       headers: {
-        // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
-        "Authorization": TEST_TOKEN,
-
+        "Authorization": `Bearer ${getToken()}`,
       },
-      body: JSON.stringify({
-        user_id: getCurrentUser().id,
-        service_id: serviceId,
-        description,
-        rating,
-        service_type: serviceType,
-      }),
+      body: JSON.stringify(body),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

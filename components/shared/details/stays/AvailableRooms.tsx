@@ -8,13 +8,15 @@ import {fetchAvailableRooms} from "@/lib/actions/StayActions";
 
 interface AvailableRoomsProps {
   stayId: string;
+  checkin: string;
+  checkout: string;
 }
 
-const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
+const AvailableRooms: React.FC<AvailableRoomsProps> = (props) => {
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
   useEffect(() => {
-    fetchAvailableRooms(stayId)
+    fetchAvailableRooms(props.stayId)
       .then((data) => {
         setAvailableRooms(data);
       })
@@ -29,7 +31,7 @@ const AvailableRooms: React.FC<AvailableRoomsProps> = ({stayId}) => {
       <div>
         {availableRooms.map((room) => {
           return (
-            <RoomComponent stayId={stayId} room={room} key={room.id}/>
+            <RoomComponent stayId={props.stayId} room={room} key={room.id} checkin={props.checkin} checkout={props.checkout}/>
           )
         })}
       </div>
