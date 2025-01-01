@@ -1,35 +1,44 @@
-"use client";
-import Image from "next/image";
 import { useState } from "react";
-
 import { Slider, SliderSingleProps } from "antd";
+import Image from "next/image";
 
-const PriceComponent = () => {
+const PriceComponent = ({
+  minBaseFare,
+  maxBaseFare,
+  onPriceChange, // Nhận thêm prop onPriceChange
+}: {
+  minBaseFare: number;
+  maxBaseFare: number;
+  onPriceChange: (priceRange: [number, number]) => void; // Xác định kiểu của hàm callback
+}) => {
   const [isToggled, setIsToggled] = useState(true);
 
   //! SLIDER
 
   const marks: SliderSingleProps["marks"] = {
-    0: "$50",
-    100: "$1200",
+    0: `$${minBaseFare}`,
+    100: `$${maxBaseFare}`,
   };
 
   const [rangeValue, setRangeValue] = useState<number[]>([0, 100]);
 
   const handleChange = (value: number[]) => {
     setRangeValue(value);
+
+    // Ensure that the range has exactly two values
+    const realValues = getRealValues(value);
+
+    // Ensure it's a tuple with two values and pass to the callback
+    if (realValues.length === 2) {
+      onPriceChange(realValues as [number, number]); // Typecast to a tuple [number, number]
+    }
   };
 
-  const getRealValues = () => {
-    const min = 50;
-    const max = 1200;
-    return rangeValue.map((v) => min + ((max - min) * v) / 100);
+  const getRealValues = (value: number[]) => {
+    const min = minBaseFare;
+    const max = maxBaseFare;
+    return value.map((v) => min + ((max - min) * v) / 100);
   };
-
-  const [realMin, realMax] = getRealValues();
-
-  // realMin.toFixed(0)
-  // realMax.toFixed(0)
 
   return (
     <div>
@@ -38,11 +47,7 @@ const PriceComponent = () => {
           <h6 className="paragraph-semibold ">Price</h6>
           <button
             onClick={() => {
-              if (isToggled === true) {
-                setIsToggled(false);
-              } else {
-                setIsToggled(true);
-              }
+              setIsToggled((prev) => !prev);
             }}
           >
             <Image
@@ -59,15 +64,15 @@ const PriceComponent = () => {
             <Slider
               range
               marks={marks}
-              defaultValue={[20, 50]}
+              defaultValue={[20, 70]}
               onChange={handleChange}
               tooltip={{
                 formatter: (value) => {
                   if (value === undefined) {
                     return "";
                   }
-                  const min = 50;
-                  const max = 1200;
+                  const min = minBaseFare;
+                  const max = maxBaseFare;
                   const price = min + ((max - min) * value) / 100;
                   return `$${price.toFixed(0)}`;
                 },

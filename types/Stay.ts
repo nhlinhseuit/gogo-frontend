@@ -2,7 +2,6 @@ import Location  from "./Location";
 import Image from "@/types/Image";
 import Amenity from "@/types/Amenity";
 interface Stay  {
-
   id: string;
   name: string;
   amenities: Amenity[];

@@ -170,6 +170,17 @@ const FlightsInput = ({
       setIsUnalbleGetDestination(0);
 
       return false;
+    } else if (searchQueryFrom === searchQueryTo) {
+      if (isMissingInfo === 0) setIsMissingInfo(1);
+
+      toast({
+        title: `Departure and arrival location can not be the same!`,
+        description: "Please select a another departure or arrival location!.",
+        variant: "error",
+        duration: 3000,
+      });
+      setIsInvalidDate(0);
+      return false;
     } else if (
       !isDateValid(selectedDateDepart) ||
       (selectedDateReturn && !isDateValid(selectedDateReturn))
@@ -204,7 +215,7 @@ const FlightsInput = ({
     return true;
   };
 
-  const validateAndNavigateWithParams = () => {
+  const validateAndNavigateWithParams = ({ replace }: { replace: boolean }) => {
     if (!handleValid()) return;
 
     const params = {
@@ -236,10 +247,17 @@ const FlightsInput = ({
       // page_size: 10,
     };
 
-    handleNavigate(params);
+    if (replace) handleReplace(params);
+    else handleNavigate(params);
   };
 
   const handleNavigate = (params: Record<string, any>) => {
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-flights/flights-search?${queryString}`);
+  };
+  const handleReplace = (params: Record<string, any>) => {
     const formattedParams: Record<string, string> = convertDataNavigate(params);
 
     const queryString = new URLSearchParams(formattedParams).toString();
@@ -352,7 +370,12 @@ const FlightsInput = ({
         </div>
 
         {isSearchFlight ? (
-          <div className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold">
+          <div
+            onClick={() => {
+              validateAndNavigateWithParams({ replace: true });
+            }}
+            className="cursor-pointer ml-3 flex px-4 bg-primary-100 rounded-md justify-center items-center text-black body.semibold"
+          >
             <Image
               src="/assets/icons/searchFlight.svg"
               alt="Search"
@@ -389,18 +412,13 @@ const FlightsInput = ({
             </p>
           </div>
 
-          {/* <Link
-            href={{
-              pathname: "/find-flights/flights-search",
-              query: { param1: "value1", param2: "value2" },
-            }}
-          > */}
           <CustomButton
             srcUrl="/assets/icons/show_flights.svg"
             text="Show Flights"
-            onClick={validateAndNavigateWithParams}
+            onClick={() => {
+              validateAndNavigateWithParams({ replace: false });
+            }}
           />
-          {/* </Link> */}
         </div>
       )}
     </>
