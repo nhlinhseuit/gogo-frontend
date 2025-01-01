@@ -1,5 +1,8 @@
+import FlightDetails from "@/types/FlightDetails";
+
 interface Seat {
   id: string;
+  flight: FlightDetails;
   number: string;
   seat_class: string;
   base_fare: number;

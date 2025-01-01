@@ -1,5 +1,6 @@
 import {BASE_URL} from "@/constants";
 import {formatDateToYYYYMMDD, getCurrentUser, getToken} from "@/utils/util";
+import FlightBooking from "@/types/FlightBooking";
 
 const API_URL = `${BASE_URL}/api/v1`
 
@@ -45,24 +46,32 @@ export const flightBookingInit = async (seatIds: string[]) => {
       body: JSON.stringify({seat_ids: ids})
     });
 
-    if(!response.ok) {
+    if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     return data.data as string
-  } catch(error) {
+  } catch (error) {
     console.error('Error initializing flight booking:', error);
     throw error;
   }
 }
 
-export const confirmFlightBooking = async (passengerName: string, nationalId: string, gender: string) => {
+export const confirmFlightBooking = async (passengerInfo: Array<any>): Promise<FlightBooking> => {
   try {
+    const seats = passengerInfo.map((passenger) => {
+      return {
+        citizen_id: passenger.ciziten_id,
+        citizen_name: passenger.citizen_name,
+        seat_id: passenger.seat_id,
+      }
+    })
     const body = {
-      name: passengerName,
-      national_id: nationalId,
-      gender}
+      seats: seats,
+      user_id: getCurrentUser().id,
+    }
+    console.log(JSON.stringify(body))
     const response = await fetch(`${API_URL}/flight-booking/confirm`, {
       method: "POST",
       headers: {
@@ -72,8 +81,37 @@ export const confirmFlightBooking = async (passengerName: string, nationalId: st
       body: JSON.stringify(body)
     });
 
-    } catch (error) {
-      console.error('Error confirming flight booking:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
+
+    return data.data as FlightBooking;
+
+  } catch (error) {
+    console.error('Error confirming flight booking:', error);
+    throw error;
+  }
+}
+
+export const fetchFlightBooking= async (id: string): Promise<FlightBooking> => {
+  try {
+    const response = await fetch(`${API_URL}/flight-booking/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${getToken()}`,
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.data as FlightBooking;
+
+  } catch (error) {
+    console.error('Error fetching flight booking:', error);
+    throw error;
+  }
 }
