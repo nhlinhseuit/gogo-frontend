@@ -36,10 +36,10 @@ const StayBookingPage: React.FC = () => {
   const [roomData, setRoomData] = useState<Room | null>(null);
   const [bookingId, setBookingId] = useState<string>("");
 
-  const [guestFirstName, setGuestFirstName] = useState<string>("");
+  const [guestFirstName, setGuestFirstName] = useState<string>(getCurrentUser().name);
   const [guestLastName, setGuestLastName] = useState<string>("");
-  const [guestEmail, setGuestEmail] = useState<string>("");
-  const [guestPhone, setGuestPhone] = useState<string>("");
+  const [guestEmail, setGuestEmail] = useState<string>(getCurrentUser().email);
+  const [guestPhone, setGuestPhone] = useState<string>(getCurrentUser().phone_number);
   const [guestCountry, setGuestCountry] = useState<string>("United States");
 
   const [cards, setCards] = useState<Card[]>([]);
@@ -118,11 +118,11 @@ const StayBookingPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [targetTimeLeft]);
 
-  if (!stayId || !roomId) {
+  if (!stayId || !roomId || !checkin || !checkout) {
     return <div>Missing required parameters</div>;
   }
 
-  if (!stayData) {
+  if (!stayData || !roomData) {
     return <div>Loading...</div>;
   }
 
@@ -138,7 +138,7 @@ const StayBookingPage: React.FC = () => {
 
       <div className="grid w-full grid-cols-5 gap-8 mt-">
         <div className="col-span-3 flex flex-col gap-8">
-          <StayInformationComponent stayId={stayId} roomId={roomId}/>
+          <StayInformationComponent checkin={checkin} checkout={checkout} stayId={stayId} roomId={roomId}/>
           <div className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
             <span className="h2-bold">Who is the lead guest?</span>
             <form action="" className="grid grid-cols-2 gap-4">

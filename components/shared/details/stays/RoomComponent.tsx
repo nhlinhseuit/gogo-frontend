@@ -12,11 +12,7 @@ interface RoomProps {
 
 const RoomComponent: React.FC<RoomProps> = (props) => {
 
-  const handleBookNow = () => {
-    router.push("/find-stays/stay-booking/1");
-    console.log("Book Now");
-  }
-
+  console.log(props.room);
   return (
     <div className="flex flex-col items-start gap-4 border-b-2 py-4 md:flex-row md:items-center md:justify-between">
       <div className="flex flex-row items-center gap-4">
