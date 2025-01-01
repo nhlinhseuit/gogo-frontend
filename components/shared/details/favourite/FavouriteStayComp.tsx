@@ -1,4 +1,7 @@
-import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
+import {
+  changeFavouriteStayStatus,
+  fetchFavouriteStays,
+} from "@/lib/actions/FavouriteStaysActions";
 import FavouriteStay from "@/types/FavouriteStay";
 import Stay from "@/types/Stay";
 import { formatCurrency, getReviewComment } from "@/utils/util";
@@ -26,7 +29,32 @@ const FavouriteStayComp = ({ item }: { item: Stay }) => {
       });
   }, []);
 
-  const handleFavoriteAStay = () => {};
+  const handleFavoriteAStay = (stay_id: string) => {
+    console.log("favStays 1", favStays);
+
+    changeFavouriteStayStatus(stay_id)
+      .then((data: any) => {
+        // setIsLoading(false);
+        if (getIsFavoriteItem()) {
+          setFavStays(
+            (prev) => prev?.filter((item) => item.id !== stay_id) || []
+          );
+        } else {
+          setFavStays((prev) => [
+            ...(prev || []),
+            {
+              id: stay_id,
+              user: data.user,
+              stay: data.stay,
+            },
+          ]);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+        // setIsLoading(false);
+      });
+  };
 
   const getIsFavoriteItem = () => {
     const result = favStays?.find((stay) => stay.id === item.id);
@@ -34,9 +62,11 @@ const FavouriteStayComp = ({ item }: { item: Stay }) => {
     return false;
   };
 
+  console.log("favStays 2", favStays);
+
   return (
     <div className="flex w-[100%] mb-6 rounded-lg shadow-full shadow-primary-400">
-      <div className="w-[40%]">
+      {/* <div className="w-[40%]">
         {item.featured_images.length === 0 ? null : (
           <Image
             src={item.featured_images[0].url}
@@ -46,7 +76,7 @@ const FavouriteStayComp = ({ item }: { item: Stay }) => {
             className="w-full rounded-tl-lg"
           />
         )}
-      </div>
+      </div> */}
 
       <div className="w-[60%] p-5">
         <div className="flex justify-between">
@@ -128,7 +158,9 @@ const FavouriteStayComp = ({ item }: { item: Stay }) => {
         </div>
         <div className="flex w-full pt-6 border-t-[1px]">
           <div
-            onClick={handleFavoriteAStay}
+            onClick={() => {
+              handleFavoriteAStay(item.id);
+            }}
             className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer "
           >
             {getIsFavoriteItem() ? (

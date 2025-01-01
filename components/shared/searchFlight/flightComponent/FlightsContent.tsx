@@ -6,7 +6,10 @@ import CheckFlight from "./CheckFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Flight from "@/types/Flight";
 import FavouriteFlights from "@/types/FavouriteFlights";
-import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import {
+  changeFavouriteFlightStatus,
+  fetchFavouriteFlights,
+} from "@/lib/actions/FavouriteFlightsActions";
 
 const FlightsComp = ({ item }: { item: Flight }) => {
   console.log("Flight Item", item);
@@ -34,6 +37,55 @@ const FlightsComp = ({ item }: { item: Flight }) => {
     return false;
   };
 
+  const handleFavAFlight = () => {
+    console.log("favFlights 1", favFlights?.flight_favorites);
+
+    const flight_id = "11";
+
+    changeFavouriteFlightStatus(flight_id, null)
+      .then((data: any) => {
+        // setIsLoading(false);
+        if (getIsFavoriteItem()) {
+          setFavFlights((prev) => {
+            // Kiểm tra nếu `prev` là undefined, trả về undefined
+            if (!prev) return undefined;
+
+            return {
+              ...prev, // Giữ nguyên các trường khác trong `favFlights`
+              flight_favorites: prev.flight_favorites.filter(
+                (item) => item.outbound_flight.id !== flight_id
+              ), // Lọc danh sách
+            };
+          });
+        } else {
+          setFavFlights((prev) => {
+            // Kiểm tra nếu `prev` là undefined, trả về undefined
+            if (!prev) return undefined;
+
+            return {
+              ...prev, // Giữ nguyên các trường khác trong `favFlights`
+              flight_favorites: [
+                ...(prev.flight_favorites || []),
+                {
+                  id: flight_id,
+                  user: data.user,
+                  outbound_flight: data.outbound_flight,
+                  return_flight: data.return_flight,
+                  round_trip: data.round_trip,
+                },
+              ],
+            };
+          });
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+        // setIsLoading(false);
+      });
+  };
+
+  console.log("favFlights 2", favFlights?.flight_favorites);
+
   console.log("favFlights", favFlights);
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
@@ -60,9 +112,9 @@ const FlightsComp = ({ item }: { item: Flight }) => {
                   {getReviewComment(item?.outbound_flight.airline.rating)}
                 </p>
                 <p>
-                  <span className="paragraph-regular mr-1">
+                  {/* <span className="paragraph-regular mr-1">
                     {item?.outbound_flight.airline.reviews[0].rating}
-                  </span>
+                  </span> */}
                   reviews
                 </p>
               </div>
@@ -87,9 +139,7 @@ const FlightsComp = ({ item }: { item: Flight }) => {
 
         <div className="flex w-full pt-5 border-t-[1px]">
           <div
-            onClick={() => {
-              // handleClick(item.id);
-            }}
+            onClick={() => handleFavAFlight()}
             className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer"
           >
             {getIsFavoriteItem() ? (

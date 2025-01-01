@@ -1,4 +1,5 @@
 import FavouriteFlightDetail from "./FavouriteFlightDetail";
+import User from "./User";
 
 interface FavouriteFlight {
     id: string;

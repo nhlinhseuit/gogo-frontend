@@ -131,10 +131,12 @@ export default function Favourites() {
   }, []);
 
   console.log("favFlights", favFlights?.flight_favorites);
+
   useEffect(() => {
     fetchFavouriteStays(params)
       .then((data: any) => {
         setFavStays(data.data);
+        console.log("favStays", favStays);
       })
       .catch((error) => {
         setError(error.message);
