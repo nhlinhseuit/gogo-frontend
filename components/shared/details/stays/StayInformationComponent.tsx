@@ -6,6 +6,7 @@ import Room from "@/types/Room";
 import {fetchStay} from "@/lib/actions/StayActions";
 import {fetchRoom} from "@/lib/actions/RoomActions";
 import {formatDateInWords} from "@/utils/util";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface StayInformationComponentProps {
   stayId: string
@@ -38,7 +39,7 @@ const StayInformationComponent: React.FC<StayInformationComponentProps> = (props
   const monthsOfYear = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   if (!stayData || !roomData) {
-    return <div>Loading...</div>;
+  return <BigLoadingSpinner/>
   }
 
   return (

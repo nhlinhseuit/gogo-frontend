@@ -9,8 +9,17 @@ import FavouriteFlights from "@/types/FavouriteFlight";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 import { useRouter } from "next/navigation";
 
-const FlightsComp = ({ item,departure_time_from, departure_time_to }: { item: Flight, departure_time_from: string;
-  departure_time_to: string }) => {
+const FlightsComp = ({
+  item,
+  departure_time_from,
+  departure_time_to,
+  passenger_count,
+}: {
+  item: Flight;
+  departure_time_from: string;
+  departure_time_to: string;
+  passenger_count: string;
+}) => {
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
   const userId = "3";
@@ -37,16 +46,14 @@ const FlightsComp = ({ item,departure_time_from, departure_time_to }: { item: Fl
     return false;
   };
 
-  console.log("favFlights", favFlights);
+  const handleClickFlightItem = (flightId: string) => {
+    const queryString = new URLSearchParams({
+      departure_time_from,
+      departure_time_to,
+      passenger_count,
+    }).toString();
 
-  const handleClickFlightItem = (
-    flightId: string,
-    departure_time_from: string,
-    departure_time_to: string
-  ) => {
-    router.push(
-      `/find-flights/${flightId}?departure_time_from=${departure_time_from}&departure_time_to=${departure_time_to}`
-    );
+    router.push(`/find-flights/${flightId}?${queryString}`);
   };
 
   return (
@@ -122,11 +129,12 @@ const FlightsComp = ({ item,departure_time_from, departure_time_to }: { item: Fl
               />
             )}
           </div>
-          <button 
-           onClick={() => {
-            handleClickFlightItem(item.outbound_flight.id, departure_time_from, departure_time_to);
-          }}
-          className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
+          <button
+            onClick={() => {
+              handleClickFlightItem(item.outbound_flight.id);
+            }}
+            className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold"
+          >
             View Deals
           </button>
         </div>

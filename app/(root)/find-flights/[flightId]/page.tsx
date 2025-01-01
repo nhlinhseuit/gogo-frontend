@@ -7,6 +7,7 @@ import type FlightDetails from "@/types/FlightDetails";
 import React, { useEffect, useState } from "react";
 import { fetchFlightDetails } from "@/lib/actions/FlightActions";
 import type Seat from "@/types/Seat";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface FlightDetailProps {
   params: {
@@ -49,7 +50,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
   };
 
   if (!flightDetails) {
-    return <div>Loading...</div>;
+    return <BigLoadingSpinner/>
   }
 
   const filteredSeats = selectedClass
