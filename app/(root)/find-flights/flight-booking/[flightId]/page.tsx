@@ -5,7 +5,6 @@ import React, {useEffect, useState} from "react";
 import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import PriceDetailsComponent from "@/components/shared/details/PriceDetailsComponent";
-import CountriesDropdown from "@/components/shared/CountriesDropdown";
 import {useParams, useSearchParams} from "next/navigation";
 import Price from "@/types/Price";
 import Card from "@/types/Card";
@@ -17,6 +16,8 @@ import Seat from "@/types/Seat";
 import {fetchSeat} from "@/lib/actions/SeatActions";
 import FlightInformation from "@/components/shared/details/flights/FlightInformation";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
+import {confirmFlightBooking} from "@/lib/actions/BookingActions";
+import {toast} from "@/hooks/use-toast";
 
 interface PageParams {
   flightId: string;
@@ -50,6 +51,7 @@ const FlightBookingPage: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<Record<string, PassengerDetail>>({});
+
   const fetchCards = () => {
     fetchUserCards(getCurrentUser().id).then((data) => {
       setCards(data);
@@ -58,8 +60,13 @@ const FlightBookingPage: React.FC = () => {
       }
     }).catch((error) => {
       console.error('Error fetching user cards:', error);
+      toast({
+        title: `Error fetching user cards: ${error}`,
+        variant: "error",
+        duration: 3000,
+      });
     });
-  }
+  };
 
   const fetchAllSeats = async (seatIds: string[]) => {
     const fetchedSeats: Seat[] = [];
@@ -77,6 +84,57 @@ const FlightBookingPage: React.FC = () => {
     setSeats(fetchedSeats);
   };
 
+  const handleBooking = async () => {
+
+    if (!cards || cards.length === 0) {
+      toast({
+        title: `Please add a card!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    if (!selectedCard) {
+      toast({
+        title: `Please select a card!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    if(Object.values(passengerDetails).some((passenger) => !passenger.name || !passenger) || !passengerDetails) {
+      toast({
+        title: `Please fill in all passenger details!`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    const passengerInfo = Object.entries(passengerDetails).map(([seatId, passenger]) => ({
+      citizen_id: passenger.nationalID,
+      citizen_name: passenger.name,
+      seat_id: seatId,
+    }));
+    confirmFlightBooking(passengerInfo).then((data) => {
+      setBookingId(data.id);
+      console.log('Flight booking confirmed:', data);
+      toast({
+        title: `Flight booking confirmed!`,
+        variant: "success",
+        duration: 3000,
+      });
+    }).catch((error) => {
+      console.error('Error confirming flight booking:', error)
+      toast({
+        title: `Error confirming flight booking: ${error}`,
+        variant: "error",
+        duration: 3000,
+      });
+    });
+  }
   useEffect(() => {
     fetchFlightDetails(flightId).then((data) => {
       setFlightDetails(data);
@@ -93,7 +151,7 @@ const FlightBookingPage: React.FC = () => {
 
   const onSelectCountry = (country: string) => {
     setGuestCountry(country);
-  }
+  };
 
   useEffect(() => {
     if (seats.length > 0) {
@@ -130,10 +188,6 @@ const FlightBookingPage: React.FC = () => {
     setPassengerDetails(initialPassengers);
   }, [seats]);
 
-  const handleFormSubmit = (seatId: string, passenger: PassengerDetail) => {
-    console.log(`Passenger details for seat ${seatId}:`, passenger);
-  };
-
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -157,12 +211,13 @@ const FlightBookingPage: React.FC = () => {
   }
 
   if (!flightDetails || seats.length === 0 || !price) {
-    return <BigLoadingSpinner/>
+    return <BigLoadingSpinner/>;
   }
 
   return (
     <main className="flex w-full flex-col gap-4">
-      <div className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
+      <div
+        className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
         <span>We are holding the seats ...</span>
         <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>
         <span>{timeLeft}</span>
@@ -172,108 +227,69 @@ const FlightBookingPage: React.FC = () => {
         <div className="col-span-3 flex flex-col gap-8">
           <FlightInformation flightDetails={flightDetails}/>
           {seats.map((seat) => (
-            <form key={seat.id} onSubmit={(e) => {
-              e.preventDefault();
-              handleFormSubmit(seat.id, passengerDetails[seat.id]);
-            }}>
+            <div key={seat.id} className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
               <h3 className="mb-4">Passenger Information for Seat {seat.number}</h3>
-              <div className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="border-2 rounded-md p-2"
+              <input
+                type="text"
+                placeholder="Full Name"
+                className="border-2 rounded-md p-2"
+                value={passengerDetails[seat.id]?.name || ""}
+                onChange={(e) => {
+                  setPassengerDetails((prev) => ({
+                    ...prev,
+                    [seat.id]: {
+                      ...prev[seat.id],
+                      name: e.target.value,
+                    },
+                  }));
+                }}
+              />
 
-                  value={passengerDetails[seat.id]?.name}
-                  onChange={(e) => {
-                    setPassengerDetails(prev => ({
-                      ...prev,
-                      [seat.id]: {
-                        ...prev[seat.id],
-                        name: e.target.value
-                      }
-                    }));
-                  }}
-                />
+              <select
+                className="border-2 rounded-md p-2"
+                value={passengerDetails[seat.id]?.gender || ""}
+                onChange={(e) => {
+                  setPassengerDetails((prev) => ({
+                    ...prev,
+                    [seat.id]: {
+                      ...prev[seat.id],
+                      gender: e.target.value as "male" | "female" | "other",
+                    },
+                  }));
+                }}
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
 
-                <select
-                  className="border-2 rounded-md p-2"
-                  value={passengerDetails[seat.id]?.gender || ""}
-                  onChange={(e) => {
-                    setPassengerDetails(prev => ({
-                      ...prev,
-                      [seat.id]: {
-                        ...prev[seat.id],
-                        gender: e.target.value as "male" | "female" | "other"
-                      }
-                    }));
-                  }}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-
-
-                <input
-                  type="text"
-                  placeholder="National ID"
-                  className="border-2 rounded-md p-2"
-                  value={passengerDetails[seat.id]?.nationalID || ""}
-                  onChange={(e) => {
-                    setPassengerDetails(prev => ({
-                      ...prev,
-                      [seat.id]: {
-                        ...prev[seat.id],
-                        nationalID: e.target.value
-                      }
-                    }));
-                  }}
-                />
-
-                <button type="submit" className="w-full rounded-lg p-4 bg-primary-100">Save Passenger Info</button>
-              </div>
-            </form>
+              <input
+                type="text"
+                placeholder="National ID"
+                className="border-2 rounded-md p-2"
+                value={passengerDetails[seat.id]?.nationalID || ""}
+                onChange={(e) => {
+                  setPassengerDetails((prev) => ({
+                    ...prev,
+                    [seat.id]: {
+                      ...prev[seat.id],
+                      nationalID: e.target.value,
+                    },
+                  }));
+                }}
+              />
+            </div>
           ))}
-          <div className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
-            <span className="h2-bold">Who is the Passenger?</span>
-            <form className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col">
-                <label htmlFor="firstName">First Name</label>
-                <input id="firstName" type="text" placeholder="First Name" className="border-2 rounded-md p-2"
-                       value={guestFirstName} onChange={(e) => setGuestFirstName(e.target.value)}/>
-              </div>
-              <div className="flex flex-col">
-                <label htmlFor="lastName">Last Name</label>
-                <input id="lastName" type="text" placeholder="Last Name" className="border-2 rounded-md p-2"
-                       value={guestLastName} onChange={(e) => setGuestLastName(e.target.value)}/>
-              </div>
-              <div className="flex flex-col">
-                <label htmlFor="email">Email</label>
-                <input id="email" type="email" placeholder="Email" className="border-2 rounded-md p-2"
-                       value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)}/>
-              </div>
-              <div className="flex flex-col">
-                <label htmlFor="phone">Phone</label>
-                <input id="phone" type="tel" placeholder="Phone" className="border-2 rounded-md p-2"
-                       value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}/>
-              </div>
-              <div className="flex flex-col col-span-2">
-                <label htmlFor="national-id">National ID</label>
-                <input id="national-id" type="text" placeholder="National ID" className="border-2 w-full rounded-md p-2"/>
-              </div>
-              <div className="flex flex-col col-span-2">
-                <label htmlFor="country">Country</label>
-                <CountriesDropdown onSelectCountry={onSelectCountry}
-                                   selectedCountry={guestCountry}/>
-              </div>
-            </form>
-          </div>
 
           <PaymentOptions total={price?.total ?? 0}/>
-          <PaymentCardSelection cards={cards} fetchCards={fetchCards} onSelectCard={setSelectedCard}
-                                selectedCard={selectedCard}/>
-          <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
+          <PaymentCardSelection
+            cards={cards}
+            fetchCards={fetchCards}
+            onSelectCard={setSelectedCard}
+            selectedCard={selectedCard}
+          />
+          <button onClick={() => handleBooking()} className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
           <PriceDetailsComponent
@@ -281,13 +297,12 @@ const FlightBookingPage: React.FC = () => {
             stay={null}
             seats={seats}
             room={null}
-            price={price ?? { base_fare: 0, discount: 0, tax: 0, service_fee: 0, total: 0 }}
+            price={price ?? {base_fare: 0, discount: 0, tax: 0, service_fee: 0, total: 0}}
           />
-
         </div>
       </div>
     </main>
   );
-}
+};
 
 export default FlightBookingPage;
