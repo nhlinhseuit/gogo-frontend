@@ -1,5 +1,8 @@
 import { BASE_URL } from "@/constants";
+import FavoriteAStayResult from "@/types/FavoriteAStayResult";
+import FavouriteFlights from "@/types/FavouriteFlights";
 import FavouriteStay from "@/types/FavouriteStay";
+import { getCurrentUser, getToken } from "@/utils/util";
 import { getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
@@ -31,28 +34,37 @@ export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]>
   }
 };
 
-export const changeFavouriteStayStatus = async (params: any): Promise<FavouriteStay[]> => {
+export const changeFavouriteStayStatus = async (stay_id: any): Promise<FavoriteAStayResult[]> => {
   try {
-    console.log('params:',params)
-    const queryString = new URLSearchParams(params).toString();
-    console.log("query string", queryString)
-    const urlWithParams = `${API_URL}?${queryString}`;
-    console.log("urlWithParams", urlWithParams)
+    const user = getCurrentUser()
+    const userId = user['id'] ?? ''
 
-    const response = await fetch(urlWithParams, {
-      method: "GET",
+
+    const body = {
+      "user_id": userId,
+      "stay_id": stay_id
+    }
+
+    console.log('body', body)
+
+    const token = getToken()
+
+    const response = await fetch(API_URL, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
       },
+      body: body ? JSON.stringify(body) : null,
     });
     console.log('response: ', response)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteStay[]>;
+    return (await response.json()) as Promise<FavoriteAStayResult[]>;
   } catch (error) {
-    console.error("Error fetching favourite stays:", error);
+    console.error("Error changeFavouriteStayStatus:", error);
     throw error;
   }
 };

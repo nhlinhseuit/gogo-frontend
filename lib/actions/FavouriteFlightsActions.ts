@@ -1,15 +1,19 @@
 import { BASE_URL } from "@/constants";
-import FavouriteFlights from "@/types/FavouriteFlight";
+import FavouriteFlight from "@/types/FavouriteFlight";
+import FavouriteFlights from "@/types/FavouriteFlights";
+import { getCurrentUser, getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/flights/favorites`;
 
-
 export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFlights[]> => {
   try {
-    const response = await fetch(`${API_URL}/${userId}`, {
+    const token = getToken()
+
+    const response = await fetch(`${API_URL}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
       },
     });
     console.log('response: ', response)
@@ -24,25 +28,37 @@ export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFl
   }
 };
 
-export const changeFavouriteStayStatus = async (params: any): Promise<FavouriteFlights[]> => {
+export const changeFavouriteFlightStatus = async (outbound_flight_id: any, return_flight_id: any): Promise<FavouriteFlight[]> => {
   try {
-    const queryString = new URLSearchParams(params).toString();
-    const urlWithParams = `${API_URL}?${queryString}`;
+    const user = getCurrentUser()
+    const userId = user['id'] ?? ''
 
-    const response = await fetch(urlWithParams, {
-      method: "GET",
+    const body = {
+      "user_id": userId,
+      "outbound_flight_id": outbound_flight_id,
+      "return_flight_id": return_flight_id
+    }
+
+    console.log('body', body)
+
+    const token = getToken()
+
+    const response = await fetch(API_URL, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
       },
+      body: body ? JSON.stringify(body) : null,
     });
     console.log('response: ', response)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteFlights[]>;
+    return (await response.json()) as Promise<FavouriteFlight[]>;
   } catch (error) {
-    console.error("Error fetching favourite stays:", error);
+    console.error("Error changeFavouriteStayStatus:", error);
     throw error;
   }
 };

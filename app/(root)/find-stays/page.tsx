@@ -1,5 +1,6 @@
 "use client";
 
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import BookComponent from "@/components/shared/details/findComponents/BookComponent";
 import FindHeader from "@/components/shared/details/findComponents/FindHeader";
 import SriLanka from "@/components/shared/details/findComponents/SriLanka";
@@ -9,7 +10,6 @@ import Location from "@/types/Location";
 import { imagesBookComponent } from "@/utils/util";
 import { useEffect, useState } from "react";
 import "../../globals.css";
-import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 export default function FindStays() {
   const MockRecentSearches = [
@@ -90,17 +90,57 @@ export default function FindStays() {
       });
   }, []);
 
+  let data: string[] | null = null;
+
+  const [recentLocations, setRecentLocations] = useState<Location[]>([]);
+
+  useEffect(() => {
+    const getRecentSearchs = () => {
+      if (typeof window !== "undefined") {
+        const recentLocalStorage = localStorage.getItem("recentSearchs");
+        try {
+          return recentLocalStorage ? JSON.parse(recentLocalStorage) : [];
+        } catch (error) {
+          console.error("Error parsing recentSearchs:", error);
+          return [];
+        }
+      }
+      return [];
+    };
+
+    data = getRecentSearchs(); // Lấy dữ liệu từ localStorage
+    console.log("data", data); // Log ra mảng ["6", "7"]
+  }, []);
+
+  useEffect(() => {
+    fetchLocations()
+      .then((response: any) => {
+        const locations: Location[] = response.data;
+
+        // Lọc các địa điểm dựa trên ID có trong `data`
+        const filteredLocations = locations.filter((item) =>
+          data?.includes(item.id.toString())
+        );
+
+        setRecentLocations(filteredLocations);
+      })
+      .catch((error) => {
+        console.error("Error fetching locations:", error);
+      });
+  }, []);
+
+  console.log("recentLocations", recentLocations);
+
   return (
     <main className="p-4">
       <div className="mt-8">
         <h1 className="mb-2 h2-bold tracking-normal">Your recent searches</h1>
-        <div className="flex justify-between">
-          {MockRecentSearches.map((item, index) => (
+        <div className="flex justify-start gap-10">
+          {recentLocations.map((item) => (
             <PlaceComponent
-              key={index}
-              imgUrl={item.imgUrl}
-              country={item.country}
-              countPlace={item.countPlace}
+              key={item.id}
+              imgUrl={item.imageUrl ?? "/assets/images/Turkey.svg"}
+              city={item.city}
             />
           ))}
         </div>

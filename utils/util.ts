@@ -97,6 +97,13 @@ export const getToken = () => {
   } catch (e) {
     console.log("error", e);
   }
+  try {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("authToken") || null;
+    } else return null;
+  } catch (e) {
+    console.log("error", e);
+  }
 };
 
 export const validateEmail = (value: string) => {
