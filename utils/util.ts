@@ -42,7 +42,8 @@ const images = [
   "/assets/images/US.svg",
   "/assets/images/UK.svg",
   "/assets/images/Japan.svg",
-  "/assets/images/UAE.svg",
+  "/assets/images/flight.svg",
+  "/assets/images/stay.svg",
 ];
 
 export function getRandomImgUrl() {
