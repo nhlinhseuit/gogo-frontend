@@ -31,7 +31,7 @@ const tabs = [
   },
 ];
 
- function StaysSearch() {
+function StaysSearch() {
   const [isSelected, setIsSelected] = useState("HOTEL");
   const [stays, setStays] = useState<Stay[]>();
 
@@ -67,10 +67,6 @@ const tabs = [
     localStorage.setItem("recentSearchs", JSON.stringify(recents));
   };
 
-  useEffect(() => {
-    handleRecentSearch();
-  }, []);
-
   const searchStaysFunc = (params: any, isFilter?: boolean) => {
     if (isFilter) setIsLoadingFilter(true);
     else setIsLoading(true);
@@ -89,6 +85,8 @@ const tabs = [
   };
 
   useEffect(() => {
+    handleRecentSearch();
+
     searchStaysFunc(params);
   }, [searchParams]);
 
@@ -287,6 +285,7 @@ const tabs = [
                       key={index}
                       item={stay}
                       paramsRef={params}
+                      isFavorite
                       // checkin={params["checkin_date"] ?? ""}
                       // checkout={params["checkout_date"] ?? ""}
                     />

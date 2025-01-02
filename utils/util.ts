@@ -50,6 +50,10 @@ export function getRandomImgUrl() {
   return images[randomIndex];
 }
 
+export function getRandomNumber() {
+  return Math.floor(Math.random() * (200 - 90 + 1)) + 90;
+}
+
 export const imagesBookComponent = [
   "/assets/images/Melbourne.svg",
   "/assets/images/Columbia.svg",
