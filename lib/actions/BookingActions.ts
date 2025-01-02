@@ -4,10 +4,12 @@ import FlightBooking from "@/types/FlightBooking";
 import Card from "@/types/Card";
 import {createPayment} from "@/lib/actions/PaymentActions";
 import {handleError} from "@/lib/actions/HandleError";
+import {patchConsoleError} from "next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info";
+import StayBooking from "@/types/StayBooking";
 
 const API_URL = `${BASE_URL}/api/v1`
 
-export const requestStayBooking = async (stayId: string, roomId: string, checkin: string, checkout: string) => {
+export const requestStayBooking = async (roomId: string, checkin: string, checkout: string) => {
   try {
     const body = {
       user_id: getCurrentUser().id,
@@ -26,10 +28,16 @@ export const requestStayBooking = async (stayId: string, roomId: string, checkin
       body: JSON.stringify(body)
     })
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
+    }
+
     const data = await response.json();
     return {
-      booking_id: data.id,
-      lock_expiration: data.lock_expiration,
+      booking_id: data.data.id,
+      lock_expiration: data.data.lock_expiration,
     };
   } catch (error) {
     console.error('Error requesting booking:', error);
@@ -37,16 +45,50 @@ export const requestStayBooking = async (stayId: string, roomId: string, checkin
   }
 }
 
-export const flightBookingInit = async (seatIds: string[]) => {
+export const confirmStayBooking = async (customerInfo: any, card: Card, booking_id: string) => {
   try {
-    const ids = seatIds.join(',');
-    const response = await fetch(`${API_URL}/flight-booking`, {
+    const body = {
+      booking_id: booking_id,
+      email: getCurrentUser().email,
+      phone: customerInfo.customer_name,
+      country: customerInfo.customer_phone,
+      first_name: customerInfo.customer_email,
+      last_name: customerInfo.customer_country,
+    }
+    console.log(JSON.stringify(body))
+    const response = await fetch(`${API_URL}/stays/booking/guest-info`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({seat_ids: ids})
+      body: JSON.stringify(body)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
+    }
+
+    const data = await response.json();
+    const stayBooking = await createPayment(card.id, booking_id, 'ROOM');
+    console.log(stayBooking)
+    return data;
+  } catch (error) {
+    console.error('Error confirming booking:', error);
+    throw error;
+  }
+}
+
+export const fetchStayBooking= async (id: string): Promise<StayBooking> => {
+  try {
+    const response = await fetch(`${API_URL}/stays/booking/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -56,13 +98,12 @@ export const flightBookingInit = async (seatIds: string[]) => {
     }
 
     const data = await response.json();
-    return data.data as string
+    return data as StayBooking;
   } catch (error) {
-    console.error('Error initializing flight booking:', error);
+    console.error('Error fetching stay booking:', error);
     throw error;
   }
 }
-
 export const confirmFlightBooking = async (passengerInfo: Array<any>, card: Card, bookingId: string): Promise<FlightBooking> => {
   try {
     const seats = passengerInfo.map((passenger) => {

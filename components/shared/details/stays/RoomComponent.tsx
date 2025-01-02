@@ -1,7 +1,9 @@
 import "@/app/globals.css"
 import type Room from "@/types/Room";
-import {router} from "next/client";
-import Link from "next/link";
+import {requestStayBooking} from "@/lib/actions/BookingActions";
+import {toast} from "@/hooks/use-toast";
+import React from "react";
+import {useRouter} from "next/navigation";
 
 interface RoomProps {
   stayId: string;
@@ -11,8 +13,30 @@ interface RoomProps {
 }
 
 const RoomComponent: React.FC<RoomProps> = (props) => {
-
-  console.log(props.room);
+  const router = useRouter();
+  const handleBookNow = () => {
+    requestStayBooking(props.room.id, props.checkin, props.checkout).then((data) => {
+      console.log("booking ", data)
+      if (data.booking_id) {
+        router.push(`/find-stays/stay-booking/${props.stayId}?booking_id=${data.booking_id}&checkin=${props.checkin}&checkout=${props.checkout}&expiration=${data.lock_expiration}`);
+      } else {
+        toast({
+          title: "Something went wrong",
+          description: "Please try again later",
+          variant: "error",
+          duration: 3000,
+        });
+      }
+    }).catch((error) => {
+      console.error('Error requesting stay booking:', error);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later",
+        variant: "error",
+        duration: 3000,
+      });
+    });
+  }
   return (
     <div className="flex flex-col items-start gap-4 border-b-2 py-4 md:flex-row md:items-center md:justify-between">
       <div className="flex flex-row items-center gap-4">
@@ -27,7 +51,10 @@ const RoomComponent: React.FC<RoomProps> = (props) => {
         <span className="h2-bold">
           ${props.room.base_fare}<span className="text-sm">/night</span>
         </span>
-        <Link href={`/find-stays/stay-booking/${props.stayId}?room_id=${props.room.id}&checkin=${props.checkin}&checkout=${props.checkout}`} className="rounded-md px-9 py-4 bg-primary-100">Book Now</Link>
+        <button onClick={() => {
+          handleBookNow()
+        }} className="rounded-md px-9 py-4 bg-primary-100">Book Now
+        </button>
       </div>
 
     </div>

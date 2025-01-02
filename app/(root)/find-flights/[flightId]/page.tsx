@@ -4,10 +4,16 @@ import FlightInformation from "@/components/shared/details/flights/FlightInforma
 import LocationComponent from "@/components/shared/details/LocationComponent";
 import RatingSummaryComponent from "@/components/shared/details/RatingSummaryComponent";
 import type FlightDetails from "@/types/FlightDetails";
-import React, { useEffect, useState } from "react";
-import { fetchFlightDetails } from "@/lib/actions/FlightActions";
+import React, {useEffect, useState} from "react";
+import {useSearchParams} from "next/navigation";
+import {fetchFlightDetails} from "@/lib/actions/FlightActions";
 import type Seat from "@/types/Seat";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
+import ReviewsSection from "@/components/shared/details/ReviewsSection";
+import Review from "@/types/Review";
+import {fetchServiceReview, postReview} from "@/lib/actions/ReviewActions";
+import {toast} from "@/hooks/use-toast";
+import AddReviewModal from "@/components/shared/AddReviewModal";
 
 interface FlightDetailProps {
   params: {
@@ -15,13 +21,23 @@ interface FlightDetailProps {
   };
 }
 
-const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
+const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
+  const searchParams = useSearchParams();
+  const passengerCount = parseInt(searchParams.get("passenger_count") || "1", 10);
+
   const [flightDetails, setFlightDetails] = useState<FlightDetails | null>(null);
   const [lowestPrice, setLowestPrice] = useState<number | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]); // Changed to array
-
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    size: 10,
+    total: 1,
+    total_page: 1,
+  });
   useEffect(() => {
     fetchFlightDetails(params.flightId)
       .then((data) => {
@@ -36,34 +52,84 @@ const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
       });
   }, [params.flightId]);
 
+
+  if (!flightDetails) {
+    return <BigLoadingSpinner/>;
+  }
+
   const handleClassSelection = (seatClass: string) => {
     setSelectedClass(seatClass === selectedClass ? null : seatClass);
     setSelectedSeats([]); // Reset seat selection when class changes
   };
 
   const handleSeatSelection = (seatId: string) => {
-    setSelectedSeats((prevSeats) =>
-      prevSeats.includes(seatId)
-        ? prevSeats.filter((id) => id !== seatId) // Deselect seat
-        : [...prevSeats, seatId] // Select seat
-    );
+    setSelectedSeats((prevSeats) => {
+      if (prevSeats.includes(seatId)) {
+        return prevSeats.filter((id) => id !== seatId); // Deselect seat
+      }
+      if (prevSeats.length < passengerCount) {
+        return [...prevSeats, seatId]; // Select seat
+      }
+      return prevSeats; // Do nothing if limit reached
+    });
   };
 
-  if (!flightDetails) {
-    return <BigLoadingSpinner/>
+  const onGetReviews = () => {
+    fetchServiceReview(flightDetails?.airline.id, paginationModel.page).then((data) => {
+      setReviews(data.data)
+      console.log(reviews)
+      setPaginationModel({
+        page: data.page,
+        size: data.size,
+        total: data.total,
+        total_page: data.total_page,
+      })
+    }).catch((error) => {
+      toast(
+        {
+          title: `Error fetching reviews: ${error}`,
+          variant: "error",
+          duration: 3000,
+        }
+      )
+    });
   }
+
+  const onPageChange = (page: number) => {
+    setPaginationModel({
+      ...paginationModel,
+      page: page,
+    })
+  }
+
+  const onPostReview = (description: string, rating: number) => {
+    postReview(flightDetails.airline.id, description, rating, "AIRLINE").then(() => {
+      onGetReviews();
+    }).catch((error) => {
+      toast({
+        title: `Error posting review: ${error}`,
+        variant: "error",
+        duration: 3000,
+      })
+    });
+  }
+
 
   const filteredSeats = selectedClass
     ? flightDetails.seats.filter((seat) => seat.seat_class === selectedClass)
     : flightDetails.seats;
 
+  const sortedSeats = filteredSeats.filter((seat) => seat.available).sort((a, b) =>
+    a.number.localeCompare(b.number)
+  );
+
   return (
     <main className="flex w-full flex-col gap-4 py-4">
       <div className="flex flex-row justify-between">
-        <span className="h2-bold">{flightDetails.name}</span>
+        <span className="h2-bold">{flightDetails.airline.name} {flightDetails.name}</span>
         <span className="h2-bold text-accent-orange">From ${lowestPrice}</span>
       </div>
-      <LocationComponent location={flightDetails.departure_airport.name} />
+      <LocationComponent location={flightDetails.departure_airport.name}/>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <RatingSummaryComponent
           rating={flightDetails.airline.rating}
@@ -105,6 +171,17 @@ const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
         className="w-full h-[650px] object-cover"
         alt="Flight"
       />
+      <div className="flex flex-row gap-4 overflow-x-auto">
+        {flightDetails.featured_images.map((image) => (
+          <img
+            key={image.id}
+            src={image.url}
+            alt="Flight"
+            className="size-24 rounded cursor-pointer"
+            onClick={() => setMainImage(image.url)}
+          />
+        ))}
+      </div>
       <div className="flex flex-row justify-between">
         <span className="h2-bold">Seat Class</span>
       </div>
@@ -127,9 +204,12 @@ const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
       </div>
       <div className="flex flex-row justify-between">
         <span className="h2-bold">Seat Selection</span>
+        <span>
+          {selectedSeats.length}/{passengerCount} seats selected
+        </span>
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {filteredSeats.map((seat) => (
+        {sortedSeats.map((seat) => (
           <button
             key={seat.id}
             className={`p-4 rounded-md text-center ${
@@ -142,7 +222,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
             onClick={() => seat.available && handleSeatSelection(seat.id)}
             disabled={!seat.available}
           >
-            <div>{seat.number}</div>
+            <div className="font-semibold text-xl">{seat.number}</div>
             <div className="text-sm">
               {seat.seat_class} - ${seat.base_fare + seat.service_fee}
             </div>
@@ -150,29 +230,30 @@ const FlightDetail: React.FC<FlightDetailProps> = ({ params }) => {
         ))}
       </div>
 
-      <div className="flex flex-row gap-4 overflow-x-auto">
-        {flightDetails.featured_images.map((image) => (
-          <img
-            key={image.id}
-            src={image.url}
-            alt="Flight"
-            className="size-24 rounded cursor-pointer"
-            onClick={() => setMainImage(image.url)}
-          />
-        ))}
-      </div>
       <div className="flex flex-col rounded p-4 bg-primary-100">
         <span className="h2-bold">{flightDetails.airline.name} Policies</span>
         <div className="flex flex-col gap-4 md:flex-row md:gap-8">
           {flightDetails.airline.policies.map((policy) => (
             <div key={policy.id} className="flex flex-row items-center gap-4">
-              <img src="/assets/icons/attention.svg" alt="Attention" />
+              <img src="/assets/icons/attention.svg" alt="Attention"/>
               <span className="font-light">{policy.content}</span>
             </div>
           ))}
         </div>
       </div>
-      <FlightInformation flightDetails={flightDetails} className="my-4" />
+      <FlightInformation flightDetails={flightDetails} className="my-4"/>
+      <ReviewsSection averageRating={flightDetails.airline.rating} reviewCount={flightDetails.airline.review_count}
+                      reviews={reviews} type="airline" id={Number(flightDetails.airline.id)}
+                      onGiveReview={() => setIsAddReviewModalOpen(true)}
+                      paginationModel={paginationModel} onPageChange={() => onPageChange(paginationModel.page)}/>
+
+      {isAddReviewModalOpen && (
+        <AddReviewModal
+          isOpen={isAddReviewModalOpen}
+          onClose={() => setIsAddReviewModalOpen(false)}
+          onSubmit={onPostReview}
+        />
+      )}
     </main>
   );
 };
