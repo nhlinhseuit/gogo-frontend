@@ -1,9 +1,7 @@
 import { BASE_URL } from "@/constants";
 import FavoriteAStayResult from "@/types/FavoriteAStayResult";
-import FavouriteFlights from "@/types/FavouriteFlights";
 import FavouriteStay from "@/types/FavouriteStay";
 import { getCurrentUser, getToken } from "@/utils/util";
-import { getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
 

@@ -34,7 +34,7 @@ const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
                 </p>
                 <p>
                   <span className="paragraph-regular mr-1">
-                    {item?.outbound_flight.airline.reviews[0].rating}
+                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
                   </span>
                   reviews
                 </p>
