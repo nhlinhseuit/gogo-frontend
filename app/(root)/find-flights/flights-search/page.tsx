@@ -13,21 +13,19 @@ import { fetchAirlines } from "@/lib/actions/Search/FetchAirlines";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Airline from "@/types/Airline";
 import Flight from "@/types/Flight";
-import { convertDataNavigate, convertDataReceive } from "@/utils/util";
+import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
-import router from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 const trips = ["Round trip", "On Way", "Multi-City"];
 
 export default function FlightsSearch() {
-  const [isSelected, setIsSelected] = useState("Best");
   const [flights, setFlights] = useState<Flight[]>();
   const [airlines, setAirlines] = useState<Airline[]>();
 
   const [isUsingFilter, setIsUsingFilter] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +50,6 @@ export default function FlightsSearch() {
 
     searchFlights(params)
       .then((data: any) => {
-        console.log("data flights", data);
         setFlights(data.data);
         if (isFilter) setIsLoadingFilter(false);
         else setIsLoading(false);
@@ -68,7 +65,6 @@ export default function FlightsSearch() {
     setIsLoading(true);
     fetchAirlines()
       .then((data: any) => {
-        console.log("data airlines", data);
         setAirlines(data.data);
         setIsLoading(false);
       })
@@ -119,7 +115,6 @@ export default function FlightsSearch() {
 
   const handleTimeRangeChange = (timeRange: [string, string]) => {
     timeRangeRef.current = timeRange;
-    console.log("Selected Time Range:", timeRange);
   };
 
   //! RATING COMPONENT
@@ -181,7 +176,7 @@ export default function FlightsSearch() {
       <div>
         <FlightsInput
           isSearchFlight
-          otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
+          otherClasses="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
           departure_location={paramsData.departure_location}
           arrival_location={paramsData.arrival_location}
           tripTypeParams={paramsData.roundTrip}
@@ -254,6 +249,7 @@ export default function FlightsSearch() {
                   {flights?.map((flight) => (
                     <FlightsComp
                       item={flight}
+                      outbound_flight_id={flight.outbound_flight.id}
                       departure_time_from={params["departure_time_from"] ?? ""}
                       departure_time_to={params["departure_time_to"] ?? ""}
                       passenger_count={params["passenger_count"] ?? ""}

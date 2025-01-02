@@ -83,7 +83,7 @@ const PaymentCard = () => {
           <p className="font-medium">Add a new card</p>
         </div>
       </label>
-      {isModalOpen && <AddCardModal closeModal={closeModal} />}
+      {isModalOpen && <AddCardModal fetchCards={() => {}} closeModal={closeModal} />}
     </div>
   );
 };

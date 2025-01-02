@@ -11,12 +11,12 @@ import { useEffect, useState } from "react";
 
 const FavouriteStayComp = ({
   item,
-  checkin,
-  checkout,
+  // checkin,
+  // checkout,
 }: {
   item: Stay;
-  checkin: string;
-  checkout: string;
+  // checkin: string;
+  // checkout: string;
 }) => {
   const [error, setError] = useState<string | null>(null);
 
@@ -75,12 +75,12 @@ const FavouriteStayComp = ({
 
   const handleClickStayItem = (
     stayId: string,
-    checkin: string,
-    checkout: string
+    // checkin: string,
+    // checkout: string
   ) => {
-    router.push(
-      `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
-    );
+    // router.push(
+    //   `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
+    // );
   };
 
   return (
@@ -200,7 +200,8 @@ const FavouriteStayComp = ({
           </div>
           <button
             onClick={() => {
-              handleClickStayItem(item.id, checkin, checkout);
+              handleClickStayItem(item.id);
+              // handleClickStayItem(item.id, checkin, checkout);
             }}
             className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold transform transition-transform hover:scale-95 duration-300"
           >

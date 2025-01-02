@@ -39,8 +39,6 @@ export const changeFavouriteFlightStatus = async (outbound_flight_id: any, retur
       "return_flight_id": return_flight_id
     }
 
-    console.log('body', body)
-
     const token = getToken()
 
     const response = await fetch(API_URL, {

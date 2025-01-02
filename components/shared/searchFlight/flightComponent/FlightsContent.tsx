@@ -12,16 +12,17 @@ import { changeFavouriteFlightStatus } from "@/lib/actions/FavouriteFlightsActio
 
 const FlightsComp = ({
   item,
+  outbound_flight_id,
   departure_time_from,
   departure_time_to,
   passenger_count,
 }: {
   item: Flight;
+  outbound_flight_id: string;
   departure_time_from: string;
   departure_time_to: string;
   passenger_count: string;
 }) => {
-  console.log("Flight Item", item);
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
   const userId = "3";
@@ -39,8 +40,6 @@ const FlightsComp = ({
   }, []);
 
   const getIsFavoriteItem = () => {
-    console.log("item.outbound_flight.id", item.outbound_flight.id);
-
     const result = favFlights?.flight_favorites.find(
       (flight) => flight.outbound_flight.id === item.outbound_flight.id
     );
@@ -59,36 +58,30 @@ const FlightsComp = ({
   };
 
   const handleFavAFlight = () => {
-    console.log("favFlights 1", favFlights?.flight_favorites);
-
-    const flight_id = "11";
-
-    changeFavouriteFlightStatus(flight_id, null)
+    changeFavouriteFlightStatus(outbound_flight_id, null)
       .then((data: any) => {
         // setIsLoading(false);
         if (getIsFavoriteItem()) {
           setFavFlights((prev) => {
-            // Kiểm tra nếu `prev` là undefined, trả về undefined
             if (!prev) return undefined;
 
             return {
-              ...prev, // Giữ nguyên các trường khác trong `favFlights`
+              ...prev,
               flight_favorites: prev.flight_favorites.filter(
-                (item) => item.outbound_flight.id !== flight_id
-              ), // Lọc danh sách
+                (item) => item.outbound_flight.id !== outbound_flight_id
+              ),
             };
           });
         } else {
           setFavFlights((prev) => {
-            // Kiểm tra nếu `prev` là undefined, trả về undefined
             if (!prev) return undefined;
 
             return {
-              ...prev, // Giữ nguyên các trường khác trong `favFlights`
+              ...prev,
               flight_favorites: [
                 ...(prev.flight_favorites || []),
                 {
-                  id: flight_id,
+                  id: outbound_flight_id,
                   user: data.user,
                   outbound_flight: data.outbound_flight,
                   return_flight: data.return_flight,
@@ -104,10 +97,9 @@ const FlightsComp = ({
         // setIsLoading(false);
       });
   };
+  
+  console.log('favFlights', favFlights)
 
-  console.log("favFlights 2", favFlights?.flight_favorites);
-
-  console.log("favFlights", favFlights);
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[40%] p-3">
