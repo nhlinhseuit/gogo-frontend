@@ -4,6 +4,7 @@ import {BASE_URL} from "@/constants";
 import {getCurrentUser, getToken} from "@/utils/util";
 import {fetchUser} from "@/lib/actions/UserActions";
 import User from "@/types/User";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1/reviews`
 
@@ -26,7 +27,9 @@ export const fetchServiceReview = async (serviceId: string, page: number = 0, si
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const data = await response.json();
@@ -77,7 +80,9 @@ export const postReview = async (serviceId: string, description: string, rating:
       body: JSON.stringify(body),
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
     const data = await response.json();
     return data as Review;

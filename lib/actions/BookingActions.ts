@@ -1,6 +1,9 @@
 import {BASE_URL} from "@/constants";
 import {formatDateToYYYYMMDD, getCurrentUser, getToken} from "@/utils/util";
 import FlightBooking from "@/types/FlightBooking";
+import Card from "@/types/Card";
+import {createPayment} from "@/lib/actions/PaymentActions";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1`
 
@@ -47,7 +50,9 @@ export const flightBookingInit = async (seatIds: string[]) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const data = await response.json();
@@ -58,7 +63,7 @@ export const flightBookingInit = async (seatIds: string[]) => {
   }
 }
 
-export const confirmFlightBooking = async (passengerInfo: Array<any>): Promise<FlightBooking> => {
+export const confirmFlightBooking = async (passengerInfo: Array<any>, card: Card, bookingId: string): Promise<FlightBooking> => {
   try {
     const seats = passengerInfo.map((passenger) => {
       return {
@@ -82,9 +87,16 @@ export const confirmFlightBooking = async (passengerInfo: Array<any>): Promise<F
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
+
     const data = await response.json();
+
+    const flightBooking = data.data as FlightBooking;
+
+    await createPayment(card.id, flightBooking.id, 'FLIGHT');
 
     return data.data as FlightBooking;
 
@@ -94,7 +106,7 @@ export const confirmFlightBooking = async (passengerInfo: Array<any>): Promise<F
   }
 }
 
-export const fetchFlightBooking= async (id: string): Promise<FlightBooking> => {
+export const fetchFlightBooking = async (id: string): Promise<FlightBooking> => {
   try {
     const response = await fetch(`${API_URL}/flight-booking/${id}`, {
       method: "GET",
@@ -104,7 +116,9 @@ export const fetchFlightBooking= async (id: string): Promise<FlightBooking> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const data = await response.json();

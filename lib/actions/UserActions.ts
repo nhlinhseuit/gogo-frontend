@@ -1,7 +1,7 @@
 import type User from "@/types/User";
 import {getToken} from "@/utils/util";
-import type Room from "@/types/Room";
 import {BASE_URL} from "@/constants";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1/users`
 export const fetchUser = async (userId: string): Promise<User> => {
@@ -15,7 +15,9 @@ export const fetchUser = async (userId: string): Promise<User> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
     const data = await response.json();
     return data.data as User;
