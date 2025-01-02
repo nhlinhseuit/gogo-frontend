@@ -8,7 +8,7 @@ import { authenticate } from "@/lib/actions/Authen/AuthenActions";
 import { convertDataNavigate, convertDataReceive, validateEmail, validatePassword } from "@/utils/util";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const Login = () => {
   const searchParams = useSearchParams();
@@ -180,5 +180,11 @@ const Login = () => {
     </main>
   );
 };
+
+const SuspendedLogin = () => (
+  <Suspense fallback={<p>Loading...</p>}>
+    <Login />
+  </Suspense>
+);
 
 export default Login;
