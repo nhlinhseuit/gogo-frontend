@@ -5,13 +5,14 @@ import { getCurrentUser, getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/favorites/stays`;
 
-
-export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]> => {
+export const fetchFavouriteStays = async (
+  params: any
+): Promise<FavouriteStay[]> => {
   try {
     const queryString = new URLSearchParams(params).toString();
     const urlWithParams = `${API_URL}?${queryString}`;
 
-    const token = getToken()
+    const token = getToken();
 
     const response = await fetch(urlWithParams, {
       method: "GET",
@@ -20,7 +21,7 @@ export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]>
         Authorization: `Bearer ${token ?? ""}`,
       },
     });
-    console.log('response: ', response)
+    console.log("response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -32,20 +33,21 @@ export const fetchFavouriteStays = async (params: any): Promise<FavouriteStay[]>
   }
 };
 
-export const changeFavouriteStayStatus = async (stay_id: any): Promise<FavoriteAStayResult[]> => {
+export const favouriteAStay = async (
+  stay_id: any
+): Promise<FavoriteAStayResult[]> => {
   try {
-    const user = getCurrentUser()
-    const userId = user['id'] ?? ''
-
+    const user = getCurrentUser();
+    const userId = user["id"] ?? "";
 
     const body = {
-      "user_id": userId,
-      "stay_id": stay_id
-    }
+      user_id: userId,
+      stay_id: stay_id,
+    };
 
-    console.log('body', body)
+    console.log("body", body);
 
-    const token = getToken()
+    const token = getToken();
 
     const response = await fetch(API_URL, {
       method: "POST",
@@ -55,15 +57,39 @@ export const changeFavouriteStayStatus = async (stay_id: any): Promise<FavoriteA
       },
       body: body ? JSON.stringify(body) : null,
     });
-    console.log('response: ', response)
+    console.log("response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return (await response.json()) as Promise<FavoriteAStayResult[]>;
   } catch (error) {
-    console.error("Error changeFavouriteStayStatus:", error);
+    console.error("Error favouriteAStay:", error);
     throw error;
   }
 };
 
+export const deleteFavouriteAStay = async (
+  id: any
+)=> {
+  try {
+    const token = getToken();
+
+    const response = await fetch(API_URL + `/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return (await response.json());
+  } catch (error) {
+    console.error("Error deleteFavouriteAStay:", error);
+    throw error;
+  }
+};

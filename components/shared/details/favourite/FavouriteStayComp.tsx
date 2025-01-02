@@ -1,10 +1,11 @@
+import { deleteFavouriteAFlight } from "@/lib/actions/FavouriteFlightsActions";
 import {
-  changeFavouriteStayStatus,
+  favouriteAStay,
   fetchFavouriteStays,
 } from "@/lib/actions/FavouriteStaysActions";
 import FavouriteStay from "@/types/FavouriteStay";
 import Stay from "@/types/Stay";
-import { formatCurrency, getReviewComment } from "@/utils/util";
+import { formatCurrency, getCurrentUser, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,10 +14,12 @@ const FavouriteStayComp = ({
   item,
   // checkin,
   // checkout,
+  paramsRef,
 }: {
   item: Stay;
   // checkin: string;
   // checkout: string;
+  paramsRef?: any;
 }) => {
   const [error, setError] = useState<string | null>(null);
 
@@ -38,17 +41,37 @@ const FavouriteStayComp = ({
       });
   }, []);
 
-  const handleFavoriteAStay = (stay_id: string) => {
-    console.log("favStays 1", favStays);
+  const checkIsCurrentUser = () => {
+    //? Middleware
+    const currentUser = getCurrentUser();
 
-    changeFavouriteStayStatus(stay_id)
-      .then((data: any) => {
-        // setIsLoading(false);
-        if (getIsFavoriteItem()) {
+    if (!currentUser) {
+      const queryString = new URLSearchParams(paramsRef).toString();
+      router.push(`/login?${queryString}`);
+    }
+  };
+
+  const handleFavAStay = (stay_id: string) => {
+    checkIsCurrentUser();
+
+    if (getIsFavoriteItem()) {
+      const result = favStays?.find((stay) => stay.id === item.id);
+
+      deleteFavouriteAFlight(result?.id)
+        .then((data: any) => {
+          // setIsLoading(false);
           setFavStays(
             (prev) => prev?.filter((item) => item.id !== stay_id) || []
           );
-        } else {
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    } else {
+      favouriteAStay(stay_id)
+        .then((data: any) => {
+          // setIsLoading(false);
           setFavStays((prev) => [
             ...(prev || []),
             {
@@ -57,12 +80,12 @@ const FavouriteStayComp = ({
               stay: data.stay,
             },
           ]);
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-        // setIsLoading(false);
-      });
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    }
   };
 
   const getIsFavoriteItem = () => {
@@ -74,7 +97,7 @@ const FavouriteStayComp = ({
   const router = useRouter();
 
   const handleClickStayItem = (
-    stayId: string,
+    stayId: string
     // checkin: string,
     // checkout: string
   ) => {
@@ -178,7 +201,7 @@ const FavouriteStayComp = ({
         <div className="flex w-full pt-6 border-t-[1px]">
           <div
             onClick={() => {
-              handleFavoriteAStay(item.id);
+              handleFavAStay(item.id);
             }}
             className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer "
           >

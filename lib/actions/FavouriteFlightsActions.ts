@@ -5,9 +5,11 @@ import { getCurrentUser, getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/flights/favorites`;
 
-export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFlights[]> => {
+export const fetchFavouriteFlights = async (
+  userId: string
+): Promise<FavouriteFlights[]> => {
   try {
-    const token = getToken()
+    const token = getToken();
 
     const response = await fetch(`${API_URL}`, {
       method: "GET",
@@ -16,7 +18,7 @@ export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFl
         Authorization: `Bearer ${token ?? ""}`,
       },
     });
-    console.log('response: ', response)
+    console.log("response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -28,18 +30,21 @@ export const fetchFavouriteFlights = async (userId: string): Promise<FavouriteFl
   }
 };
 
-export const changeFavouriteFlightStatus = async (outbound_flight_id: any, return_flight_id: any): Promise<FavouriteFlight[]> => {
+export const favouriteAFlight = async (
+  outbound_flight_id: any,
+  return_flight_id: any
+): Promise<FavouriteFlight[]> => {
   try {
-    const user = getCurrentUser()
-    const userId = user['id'] ?? ''
+    const user = getCurrentUser();
+    const userId = user["id"] ?? "";
 
     const body = {
-      "user_id": userId,
-      "outbound_flight_id": outbound_flight_id,
-      "return_flight_id": return_flight_id
-    }
+      user_id: userId,
+      outbound_flight_id: outbound_flight_id,
+      return_flight_id: return_flight_id,
+    };
 
-    const token = getToken()
+    const token = getToken();
 
     const response = await fetch(API_URL, {
       method: "POST",
@@ -49,15 +54,39 @@ export const changeFavouriteFlightStatus = async (outbound_flight_id: any, retur
       },
       body: body ? JSON.stringify(body) : null,
     });
-    console.log('response: ', response)
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return (await response.json()) as Promise<FavouriteFlight[]>;
   } catch (error) {
-    console.error("Error changeFavouriteStayStatus:", error);
+    console.error("Error favouriteAFlight:", error);
     throw error;
   }
 };
 
+export const deleteFavouriteAFlight = async (
+  favoriteFlightId: any
+): Promise<FavouriteFlight[]> => {
+  try {
+    const token = getToken();
+
+    const response = await fetch(API_URL + `/${favoriteFlightId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return (await response.json()) as Promise<FavouriteFlight[]>;
+  } catch (error) {
+    console.error("Error deleteFavouriteAFlight:", error);
+    throw error;
+  }
+};

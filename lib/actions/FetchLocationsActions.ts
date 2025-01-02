@@ -10,8 +10,6 @@ export const fetchLocations = async (): Promise<Location[]> => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-
       },
     });
 
