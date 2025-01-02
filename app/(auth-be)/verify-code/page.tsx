@@ -15,7 +15,7 @@ import { Suspense, useState } from "react";
 const Page = () => {
   const [code, setCode] = useState("");
   const router = useRouter();
-  
+
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const [otpId, setOtpId] = useState(searchParams.get("otp_id"));
@@ -62,7 +62,7 @@ const Page = () => {
   return (
     <main>
       <div className="w-full h-screen flex gap-12">
-        <div className="flex-grow flex flex-col items-start justify-center gap-10">
+        <div className="ml-4 flex-grow flex flex-col items-start justify-center gap-10">
           <Image
             src="/assets/icons/logo-header-dark.svg"
             width={80}

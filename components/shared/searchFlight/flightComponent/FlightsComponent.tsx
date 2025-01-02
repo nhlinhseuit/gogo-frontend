@@ -25,6 +25,7 @@ const FlightsComponent = ({
   departure_time_to,
   passenger_count,
   paramsRef,
+  isFavorite,
 }: {
   item: Flight;
   outbound_flight_id: string;
@@ -32,15 +33,21 @@ const FlightsComponent = ({
   departure_time_to: string;
   passenger_count: string;
   paramsRef: any;
+  isFavorite?: boolean;
 }) => {
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
-  const userId = "3";
+  const currentUser = getCurrentUser();
+
+  //TODO: XÀI TẠM THỜI
+  // const userId = "3";
 
   const router = useRouter();
 
   useEffect(() => {
-    fetchFavouriteFlights(userId)
+    if (isFavorite && !currentUser) return;
+
+    fetchFavouriteFlights(currentUser.id ?? "")
       .then((data: any) => {
         setFavFlights(data.data);
       })
@@ -69,13 +76,13 @@ const FlightsComponent = ({
 
   const checkIsCurrentUser = () => {
     //? Middleware
-    const currentUser = getCurrentUser();
 
     if (!currentUser) {
       const queryString = new URLSearchParams(
         convertDataNavigate(paramsRef)
       ).toString();
       router.push(`/login?${queryString}`);
+      return;
     }
   };
 
