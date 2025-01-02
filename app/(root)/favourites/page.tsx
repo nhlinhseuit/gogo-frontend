@@ -16,12 +16,10 @@ const tabs = [
   {
     type: "Flights",
     title: "Flights",
-    count: 2,
   },
   {
     type: "Places",
     title: "Places",
-    count: 3,
   },
 ];
 
@@ -130,7 +128,7 @@ export default function Favourites() {
       });
   }, []);
 
-  console.log("favFlights", favFlights?.flight_favorites);
+  console.log("favFlights", favFlights);
 
   useEffect(() => {
     fetchFavouriteStays(params)
@@ -154,7 +152,8 @@ export default function Favourites() {
             key={index}
             type={item.type}
             title={item.title}
-            count={item.count}
+            countFlights={favFlights?.flight_favorites.length ?? 0}
+            countPlaces={favStays?.length ?? 0}
             isSelected={isSelected}
             onClick={() => {
               setIsSelected(item.type);

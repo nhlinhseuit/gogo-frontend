@@ -8,7 +8,7 @@ import DepartureTimeComponent from "@/components/shared/searchFlight/filters/Dep
 import FlightCheckComponent from "@/components/shared/searchFlight/filters/FlightCheckComponent";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
-import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
+import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsComp";
 import { fetchAirlines } from "@/lib/actions/Search/FetchAirlines";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Airline from "@/types/Airline";

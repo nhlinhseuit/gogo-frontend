@@ -141,6 +141,7 @@ export default function FindStays() {
               key={item.id}
               imgUrl={item.imageUrl ?? "/assets/images/Turkey.svg"}
               city={item.city}
+              country={item.country}
             />
           ))}
         </div>

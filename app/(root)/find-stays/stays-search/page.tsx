@@ -69,6 +69,7 @@ export default function StaysSearch() {
 
   useEffect(() => {
     handleRecentSearch();
+  });
 
   const searchStaysFunc = (params: any, isFilter?: boolean) => {
     if (isFilter) setIsLoadingFilter(true);
@@ -285,8 +286,8 @@ export default function StaysSearch() {
                     <FavouriteStayComp
                       key={index}
                       item={stay}
-                      checkin={params["checkin_date"] ?? ""}
-                      checkout={params["checkout_date"] ?? ""}
+                      // checkin={params["checkin_date"] ?? ""}
+                      // checkout={params["checkout_date"] ?? ""}
                     />
                   ))}
               </div>

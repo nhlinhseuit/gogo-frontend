@@ -112,7 +112,9 @@ const FlightsComp = ({
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[40%] p-3">
         <Image
-          src={item?.outbound_flight.airline.image ?? ""}
+          src={
+            item?.outbound_flight.airline.image ?? "/assets/images/flight.svg"
+          }
           alt="places"
           width={200}
           height={200}
