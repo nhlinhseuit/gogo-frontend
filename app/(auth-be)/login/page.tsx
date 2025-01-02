@@ -5,7 +5,12 @@ import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
 import { useToast } from "@/hooks/use-toast";
 import { authenticate } from "@/lib/actions/Authen/AuthenActions";
-import { convertDataNavigate, convertDataReceive, validateEmail, validatePassword } from "@/utils/util";
+import {
+  convertDataNavigate,
+  convertDataReceive,
+  validateEmail,
+  validatePassword,
+} from "@/utils/util";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -48,12 +53,12 @@ const Login = () => {
           else if (!prevRoute && prevStaySearch) {
             router.push(`/find-stays/stays-search?${searchParams}`);
           } else if (!prevRoute && prevFlightSearch) {
+            const paramsData = convertDataReceive(searchParams);
+            const queryString = new URLSearchParams(
+              convertDataNavigate(paramsData)
+            ).toString();
 
-              const paramsData = convertDataReceive(searchParams);
-              const queryString = new URLSearchParams(convertDataNavigate(paramsData)).toString();
-            
             router.push(`/find-flights/flights-search?${queryString}`);
-
           } else {
             toast({
               title: `Login successfully!`,
@@ -67,11 +72,10 @@ const Login = () => {
     }
   };
 
-
   return (
     <main>
       <div className="w-full h-screen flex gap-12">
-        <div className="flex-grow flex flex-col items-start justify-center gap-6">
+        <div className="ml-4 flex-grow flex flex-col items-start justify-center gap-6">
           <Image
             src="/assets/icons/logo-header-dark.svg"
             width={80}

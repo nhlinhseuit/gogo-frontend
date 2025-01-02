@@ -247,8 +247,10 @@ function FlightsSearch() {
             ) : (
               <div className="w-[70%] ml-4">
                 <div>
-                  {flights?.map((flight) => (
+                  {flights?.map((flight, index) => (
                     <FlightsComponent
+                      key={`${flight.outbound_flight.id}_${index}`}
+                      isFavorite
                       item={flight}
                       outbound_flight_id={flight.outbound_flight.id}
                       departure_time_from={params["departure_time_from"] ?? ""}
