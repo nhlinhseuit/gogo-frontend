@@ -55,14 +55,13 @@ export const fetchServiceReview = async (serviceId: string, page: number = 0, si
       total_page: data.total_page,
     };
   } catch (error) {
-    console.error('Error fetching service reviews:', error);
+    console.error('Error fetching reviews:', error);
     throw error;
   }
 };
 
 export const postReview = async (serviceId: string, description: string, rating: number, serviceType: string): Promise<Review> => {
   try {
-    console.log(getToken())
     const body = {
       user_id: getCurrentUser().id,
       service_id: serviceId,

@@ -1,4 +1,4 @@
-import { ReadonlyURLSearchParams } from "next/navigation";
+import {ReadonlyURLSearchParams} from "next/navigation";
 
 export const defaultSearchFlightParams = (
   locationName: string,
@@ -201,7 +201,7 @@ export const formatDayFromInputToISODateApi = (
   // (10h tối)
   const endTime = `${year}-${month}-${day}T22:00:00Z`;
 
-  return { startTime, endTime };
+  return {startTime, endTime};
 };
 
 //? KHI NHẬN GIÁ TRỊ TỪ PARAMS, CONVERT ĐỂ HIỂN THỊ TRÊN FLIGHTSINPUT VÀ STAYSINPUT
@@ -269,7 +269,7 @@ export const normalizeSearchItem = (term: string | number) => {
   return normalizedTerm.replace(/[^a-z0-9\s]/g, "");
 };
 
-export const formatCurrency = ({ price }: { price: number }) => {
+export const formatCurrency = ({price}: { price: number }) => {
   if (price === 0) return `0`;
 
   const absPrice = Math.abs(price);
@@ -289,14 +289,14 @@ export const formatCurrency = ({ price }: { price: number }) => {
 };
 
 
-export const formatDateToMMYY = (dateString: string)=> {
+export const formatDateToMMYY = (dateString: string) => {
   const date = new Date(dateString);
   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
   const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
   return `${month}/${year}`;
 }
 
-export const formatDateToYYYYMMDD = (dateString: string)=> {
+export const formatDateToYYYYMMDD = (dateString: string) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
@@ -316,3 +316,16 @@ export const formatDateInWords = (dateString: string) => {
 
   return `${dayName}, ${monthName} ${day}, ${year}`;
 }
+export const convertToLocaleDate = (isoString: string): Date => {
+  const truncatedString = isoString.replace(/(\.\d{3})\d*/, '$1');
+
+  const date = new Date(truncatedString);
+
+  if (isNaN(date.getTime())) {
+    throw new Error('Invalid ISO string');
+  }
+
+  const adjustedTime = date.getTime() + 7 * 60 * 60 * 1000;
+
+  return new Date(adjustedTime);
+};

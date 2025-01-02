@@ -4,7 +4,6 @@ import {getToken} from "@/utils/util";
 import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1/rooms`
-const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`;
 
 export const fetchRoom = async (roomId: string): Promise<Room> => {
   try {
