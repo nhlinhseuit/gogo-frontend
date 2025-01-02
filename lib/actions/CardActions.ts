@@ -1,6 +1,7 @@
 import {BASE_URL} from "@/constants";
 import {getCurrentUser, getToken} from "@/utils/util";
 import type Card from "@/types/Card";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1/bank-card`
 const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`
@@ -16,7 +17,9 @@ export const fetchUserCards = async (userId: string): Promise<Card[]> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const data = await response.json();
@@ -40,7 +43,9 @@ export const fetchCardWithId = async (cardId: string): Promise<Card> => {
       }
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const data = await response.json();
@@ -81,7 +86,9 @@ export const addCard = async (number: string, expiryDate: string, cvc: string, n
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const data = await response.json();
