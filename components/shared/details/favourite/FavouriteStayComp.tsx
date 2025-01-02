@@ -15,23 +15,32 @@ const FavouriteStayComp = ({
   // checkin,
   // checkout,
   paramsRef,
+  isFavorite,
 }: {
   item: Stay;
   // checkin: string;
   // checkout: string;
   paramsRef?: any;
+  isFavorite?: boolean;
 }) => {
   const [error, setError] = useState<string | null>(null);
 
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
 
-  const params = {
-    user_id: "2",
-    page: 0,
-    size: 10,
-  };
+  const currentUser = getCurrentUser();
 
   useEffect(() => {
+    if (isFavorite && !currentUser) return;
+
+    const params = {
+      //TODO: XÀI TẠM THỜI
+      // user_id: "2",
+
+      user_id: currentUser.id ?? "",
+      page: 0,
+      size: 10,
+    };
+
     fetchFavouriteStays(params)
       .then((data: any) => {
         setFavStays(data.data);
@@ -43,11 +52,11 @@ const FavouriteStayComp = ({
 
   const checkIsCurrentUser = () => {
     //? Middleware
-    const currentUser = getCurrentUser();
 
     if (!currentUser) {
       const queryString = new URLSearchParams(paramsRef).toString();
       router.push(`/login?${queryString}`);
+      return;
     }
   };
 

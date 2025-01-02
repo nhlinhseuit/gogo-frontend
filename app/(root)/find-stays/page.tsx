@@ -7,7 +7,7 @@ import SriLanka from "@/components/shared/details/findComponents/SriLanka";
 import PlaceComponent from "@/components/shared/details/findStays/PlaceComponent";
 import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
 import Location from "@/types/Location";
-import { imagesBookComponent } from "@/utils/util";
+import { getRandomImgUrl, imagesBookComponent } from "@/utils/util";
 import { useEffect, useState } from "react";
 import "../../globals.css";
 
@@ -133,14 +133,16 @@ export default function FindStays() {
 
   return (
     <main className="p-4">
-      <div className="mt-8">
+      <div className="mt-16">
         <h1 className="mb-2 h2-bold tracking-normal">Your recent searches</h1>
-        <div className="flex justify-start gap-10">
+        <div className="flex flex-wrap justify-start gap-10">
           {recentLocations.map((item) => (
             <PlaceComponent
               key={item.id}
-              imgUrl={item.imageUrl ?? "/assets/images/Turkey.svg"}
+              id={item.id}
+              imgUrl={item.imageUrl ?? getRandomImgUrl()}
               city={item.city}
+              country={item.country}
             />
           ))}
         </div>

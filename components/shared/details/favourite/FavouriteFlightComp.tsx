@@ -1,10 +1,9 @@
 "use client";
 
-import FavouriteFlights from "@/types/FavouriteFlights";
+import FavouriteFlight from "@/types/FavouriteFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import FavoriteCheckFlight from "../../searchFlight/flightComponent/FavoriteCheckFlight";
-import FavouriteFlight from "@/types/FavouriteFlight";
 
 const FavouriteFlightComp = ({
   item,
