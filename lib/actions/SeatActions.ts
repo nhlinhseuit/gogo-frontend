@@ -1,5 +1,6 @@
 import type Seat from "@/types/Seat";
-import {getCurrentUser, getToken} from "@/utils/util";
+import {getToken} from "@/utils/util";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `http://52.64.172.62:8080/api/v1/flights/seats`
 const TEST_TOKEN = `Bearer ${process.env.NEXT_PUBLIC_TEST_TOKEN}`
@@ -15,8 +16,10 @@ export const fetchSeat = async (seatId: string): Promise<Seat> => {
       },
     });
 
-    if(!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
     const data = await response.json();
     return data.data as Seat;

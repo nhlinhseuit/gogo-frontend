@@ -1,6 +1,7 @@
 import {BASE_URL} from "@/constants";
 import Room from "@/types/Room";
 import {getToken} from "@/utils/util";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1`
 export const getRoomsOfStay = async (stayId: string): Promise<Room[]> => {
@@ -13,8 +14,9 @@ export const getRoomsOfStay = async (stayId: string): Promise<Room[]> => {
       }
     });
     if (!response.ok) {
-      throw new Error("Failed to fetch rooms");
-    }
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);    }
     const data = await response.json();
     return data.data as Room[];
 
