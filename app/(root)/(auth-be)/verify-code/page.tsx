@@ -10,9 +10,9 @@ import { forgotPassword } from "@/lib/actions/Authen/ForgotPassword";
 import { verifyCode } from "@/lib/actions/Authen/VerifyCode";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [code, setCode] = useState("");
   const router = useRouter();
   
@@ -138,4 +138,10 @@ const page = () => {
   );
 };
 
-export default page;
+const SuspendedPage = () => (
+  <Suspense fallback={<p>Loading...</p>}>
+    <Page />
+  </Suspense>
+);
+
+export default SuspendedPage;

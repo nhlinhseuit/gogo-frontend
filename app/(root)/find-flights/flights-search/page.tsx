@@ -15,11 +15,11 @@ import Airline from "@/types/Airline";
 import Flight from "@/types/Flight";
 import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 const trips = ["Round trip", "On Way", "Multi-City"];
 
-export default function FlightsSearch() {
+function FlightsSearch() {
   const [flights, setFlights] = useState<Flight[]>();
   const [airlines, setAirlines] = useState<Airline[]>();
 
@@ -270,5 +270,13 @@ export default function FlightsSearch() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function WrappedFlightsSearch() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FlightsSearch />
+    </Suspense>
   );
 }
