@@ -42,15 +42,10 @@ const FlightBookingPage: React.FC = () => {
 
   const [flightDetails, setFlightDetails] = useState<FlightDetails | null>(null);
 
-  const [guestFirstName, setGuestFirstName] = useState<string>(getCurrentUser().name);
-  const [guestLastName, setGuestLastName] = useState<string>("");
-  const [guestEmail, setGuestEmail] = useState<string>(getCurrentUser().email);
-  const [guestPhone, setGuestPhone] = useState<string>(getCurrentUser().phone_number);
-  const [guestCountry, setGuestCountry] = useState<string>("United States");
-
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<Record<string, PassengerDetail>>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchCards = () => {
     fetchUserCards(getCurrentUser().id).then((data) => {
@@ -113,12 +108,14 @@ const FlightBookingPage: React.FC = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const passengerInfo = Object.entries(passengerDetails).map(([seatId, passenger]) => ({
       citizen_id: passenger.nationalID,
       citizen_name: passenger.name,
       seat_id: seatId,
     }));
-    confirmFlightBooking(passengerInfo).then((data) => {
+    confirmFlightBooking(passengerInfo, selectedCard, bookingId).then((data) => {
       setBookingId(data.id);
       console.log('Flight booking confirmed:', data);
       toast({
@@ -134,6 +131,8 @@ const FlightBookingPage: React.FC = () => {
         duration: 3000,
       });
     });
+
+    setIsLoading(false);
   }
   useEffect(() => {
     fetchFlightDetails(flightId).then((data) => {
@@ -148,10 +147,6 @@ const FlightBookingPage: React.FC = () => {
 
     fetchCards();
   }, []);
-
-  const onSelectCountry = (country: string) => {
-    setGuestCountry(country);
-  };
 
   useEffect(() => {
     if (seats.length > 0) {
@@ -210,7 +205,7 @@ const FlightBookingPage: React.FC = () => {
     return <div>Missing required parameters</div>;
   }
 
-  if (!flightDetails || seats.length === 0 || !price) {
+  if (!flightDetails || seats.length === 0 || !price || isLoading) {
     return <BigLoadingSpinner/>;
   }
 

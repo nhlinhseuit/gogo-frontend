@@ -1,7 +1,8 @@
 import type Stay from "@/types/Stay";
 import type Room from "@/types/Room";
 import {BASE_URL} from "@/constants";
-import {getCurrentUser, getToken} from "@/utils/util";
+import {getToken} from "@/utils/util";
+import {handleError} from "@/lib/actions/HandleError";
 
 const API_URL = `${BASE_URL}/api/v1/stays`
 
@@ -19,7 +20,9 @@ export const fetchStay = async (stayId: string): Promise<Stay> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     return await response.json() as Promise<Stay>;
@@ -75,7 +78,9 @@ export const fetchAvailableRooms = async (stayId: string, checkin: string, check
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
     }
 
     const result = await response.json();
