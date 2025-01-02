@@ -187,4 +187,4 @@ const SuspendedLogin = () => (
   </Suspense>
 );
 
-export default Login;
+export default SuspendedLogin;
