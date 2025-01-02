@@ -46,7 +46,7 @@ const page = () => {
   return (
     <main>
       <div className="w-full h-screen flex gap-12">
-        <div className="flex-grow flex flex-col items-start justify-center gap-10">
+        <div className="ml-4 flex-grow flex flex-col items-start justify-center gap-10">
           <Image
             src="/assets/icons/logo-header-dark.svg"
             width={80}
