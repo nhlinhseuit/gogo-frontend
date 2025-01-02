@@ -286,6 +286,7 @@ export default function StaysSearch() {
                     <FavouriteStayComp
                       key={index}
                       item={stay}
+                      paramsRef={params}
                       // checkin={params["checkin_date"] ?? ""}
                       // checkout={params["checkout_date"] ?? ""}
                     />

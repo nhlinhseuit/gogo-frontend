@@ -3,25 +3,35 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import CheckFlight from "./CheckFlight";
-import { formatCurrency, getReviewComment } from "@/utils/util";
+import {
+  convertDataNavigate,
+  formatCurrency,
+  getCurrentUser,
+  getReviewComment,
+} from "@/utils/util";
 import Flight from "@/types/Flight";
 import FavouriteFlights from "@/types/FavouriteFlights";
-import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import {
+  deleteFavouriteAFlight,
+  fetchFavouriteFlights,
+} from "@/lib/actions/FavouriteFlightsActions";
 import { useRouter } from "next/navigation";
-import { changeFavouriteFlightStatus } from "@/lib/actions/FavouriteFlightsActions";
+import { favouriteAFlight } from "@/lib/actions/FavouriteFlightsActions";
 
-const FlightsComp = ({
+const FlightsComponent = ({
   item,
   outbound_flight_id,
   departure_time_from,
   departure_time_to,
   passenger_count,
+  paramsRef,
 }: {
   item: Flight;
   outbound_flight_id: string;
   departure_time_from: string;
   departure_time_to: string;
   passenger_count: string;
+  paramsRef: any;
 }) => {
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
@@ -57,12 +67,31 @@ const FlightsComp = ({
     router.push(`/find-flights/${flightId}?${queryString}`);
   };
 
+  const checkIsCurrentUser = () => {
+    //? Middleware
+    const currentUser = getCurrentUser();
+
+    if (!currentUser) {
+      const queryString = new URLSearchParams(
+        convertDataNavigate(paramsRef)
+      ).toString();
+      router.push(`/login?${queryString}`);
+    }
+  };
+
   const handleFavAFlight = () => {
-    changeFavouriteFlightStatus(outbound_flight_id, null)
-      .then((data: any) => {
-        // setIsLoading(false);
-        if (getIsFavoriteItem()) {
+    checkIsCurrentUser();
+
+    if (getIsFavoriteItem()) {
+      const result = favFlights?.flight_favorites.find(
+        (flight) => flight.outbound_flight.id === item.outbound_flight.id
+      );
+
+      deleteFavouriteAFlight(result?.id)
+        .then((data: any) => {
+          // setIsLoading(false);
           setFavFlights((prev) => {
+            console.log("prev 1", prev);
             if (!prev) return undefined;
 
             return {
@@ -72,8 +101,17 @@ const FlightsComp = ({
               ),
             };
           });
-        } else {
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    } else {
+      favouriteAFlight(outbound_flight_id, null)
+        .then((data: any) => {
+          // setIsLoading(false);
           setFavFlights((prev) => {
+            console.log("prev 2", prev);
             if (!prev) return undefined;
 
             return {
@@ -90,15 +128,13 @@ const FlightsComp = ({
               ],
             };
           });
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-        // setIsLoading(false);
-      });
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    }
   };
-  
-  console.log('favFlights', favFlights)
 
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
@@ -187,4 +223,7 @@ const FlightsComp = ({
   );
 };
 
-export default FlightsComp;
+export default FlightsComponent;
+
+// http://localhost:3000/find-flights/flights-search?roundTrip=false&departure_location=H%C3%A0+N%E1%BB%99i&departure_location_id=1&arrival_location=H%E1%BB%93+Ch%C3%AD+Minh&arrival_location_id=2&departure_time_from=2024-12-25T06:00:00Z&departure_time_to=2025-12-25T10:00:00Z&return_time_from=&return_time_to=&seat_classes=%5B%22ECONOMY%22%5D&passenger_count=1
+// http://localhost:3000/find-flights/flights-search?roundTrip=false&departure_location_id=1&arrival_location_id=2&departure_time_from=2024-12-25T06%3A00%3A00Z&departure_time_to=2024-12-25T06%3A00%3A00Z&return_time_from=&return_time_to=&seat_classes=%5B%22ECONOMY%22%5D&passenger_count=1&departure_location=H%C3%A0+N%E1%BB%99i

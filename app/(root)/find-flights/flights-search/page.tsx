@@ -8,7 +8,7 @@ import DepartureTimeComponent from "@/components/shared/searchFlight/filters/Dep
 import FlightCheckComponent from "@/components/shared/searchFlight/filters/FlightCheckComponent";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
-import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsContent";
+import FlightsComponent from "@/components/shared/searchFlight/flightComponent/FlightsComponent";
 import { fetchAirlines } from "@/lib/actions/Search/FetchAirlines";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Airline from "@/types/Airline";
@@ -32,6 +32,7 @@ export default function FlightsSearch() {
   const searchParams = useSearchParams();
 
   const paramsData = convertDataReceive(searchParams);
+
   const params = {
     roundTrip: paramsData.roundTrip,
     departure_location_id: paramsData.departure_location_id,
@@ -247,12 +248,13 @@ export default function FlightsSearch() {
               <div className="w-[70%] ml-4">
                 <div>
                   {flights?.map((flight) => (
-                    <FlightsComp
+                    <FlightsComponent
                       item={flight}
                       outbound_flight_id={flight.outbound_flight.id}
                       departure_time_from={params["departure_time_from"] ?? ""}
                       departure_time_to={params["departure_time_to"] ?? ""}
                       passenger_count={params["passenger_count"] ?? ""}
+                      paramsRef={paramsData}
                     />
                   ))}
                 </div>

@@ -1,16 +1,16 @@
 "use client";
 
-import Tab from "@/components/shared/details/favourite/Tab";
-import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
-import { useEffect, useState } from "react";
-import "../../globals.css";
-import FavouriteStay from "@/types/FavouriteStay";
-import FavouriteFlights from "@/types/FavouriteFlights";
-import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
-import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
 import FavouriteFlightComp from "@/components/shared/details/favourite/FavouriteFlightComp";
+import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
+import Tab from "@/components/shared/details/favourite/Tab";
+import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
+import FavouriteFlights from "@/types/FavouriteFlights";
+import FavouriteStay from "@/types/FavouriteStay";
 import { getCurrentUser } from "@/utils/util";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import "../../globals.css";
 
 const tabs = [
   {
@@ -130,20 +130,15 @@ export default function Favourites() {
       });
   }, []);
 
-  console.log("favFlights", favFlights?.flight_favorites);
-
   useEffect(() => {
     fetchFavouriteStays(params)
       .then((data: any) => {
         setFavStays(data.data);
-        console.log("favStays", favStays);
       })
       .catch((error) => {
         setError(error.message);
       });
   }, []);
-
-  console.log("favStays", favStays);
 
   return (
     <main>

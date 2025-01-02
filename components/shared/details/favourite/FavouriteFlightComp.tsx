@@ -6,8 +6,11 @@ import Image from "next/image";
 import FavoriteCheckFlight from "../../searchFlight/flightComponent/FavoriteCheckFlight";
 import FavouriteFlight from "@/types/FavouriteFlight";
 
-const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
-  console.log("Flight Item", item);
+const FavouriteFlightComp = ({
+  item,
+}: {
+  item: FavouriteFlight;
+}) => {
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[30%] p-3">
