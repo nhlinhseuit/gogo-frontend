@@ -55,7 +55,7 @@ const PaymentCard = () => {
         </div>
       </label>
 
-      {/* Add a New Cad */}
+      {/* Add a New Card */}
       <label
         htmlFor="add-new-card"
         className={`h-[180px] just w-[30%] block p-8 border-2 border-dashed rounded-xl text-center cursor-pointer ${
@@ -83,7 +83,7 @@ const PaymentCard = () => {
           <p className="font-medium">Add a new card</p>
         </div>
       </label>
-      {isModalOpen && <AddCardModal closeModal={closeModal} />}
+      {isModalOpen && <AddCardModal fetchCards={() => {}} closeModal={closeModal} />}
     </div>
   );
 };

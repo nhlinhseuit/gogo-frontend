@@ -57,10 +57,10 @@ const page = () => {
         <BigLoadingSpinner />
       ) : locations.data.length > 0 ? (
         <div className="flex flex-wrap justify-start gap-x-10 gap-y-6 mt-8">
-          {locations.data.map((item) => (
+          {locations.data.map((item, index) => (
             <PlacesComponent
               key={item.id}
-              imgUrl={item.imageUrl ?? getRandomImgUrl()}
+              imgUrl={item.imageUrl ?? getRandomImgUrl(index)}
               placeTitle={`${item.city}, ${item.country}`}
               onClick={() => {
                 handleNavigateFlight(item.id, item.city);

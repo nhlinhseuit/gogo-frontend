@@ -1,34 +1,43 @@
+import { deleteFavouriteAFlight } from "@/lib/actions/FavouriteFlightsActions";
 import {
-  changeFavouriteStayStatus,
+  deleteFavouriteAStay,
+  favouriteAStay,
   fetchFavouriteStays,
 } from "@/lib/actions/FavouriteStaysActions";
 import FavouriteStay from "@/types/FavouriteStay";
 import Stay from "@/types/Stay";
-import { formatCurrency, getReviewComment } from "@/utils/util";
+import { formatCurrency, getCurrentUser, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const FavouriteStayComp = ({
   item,
-}: // checkin,
-// checkout,
-{
+  paramsRef,
+  isFavorite,
+}: {
   item: Stay;
-  // checkin: string;
-  // checkout: string;
+  paramsRef?: any;
+  isFavorite?: boolean;
 }) => {
   const [error, setError] = useState<string | null>(null);
 
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
 
-  const params = {
-    user_id: "2",
-    page: 0,
-    size: 10,
-  };
+  const currentUser = getCurrentUser();
 
   useEffect(() => {
+    if (isFavorite && !currentUser) return;
+
+    const params = {
+      //TODO: XÀI TẠM THỜI
+      // user_id: "2",
+
+      user_id: currentUser.id ?? "",
+      page: 0,
+      size: 10,
+    };
+
     fetchFavouriteStays(params)
       .then((data: any) => {
         setFavStays(data.data);
@@ -38,35 +47,60 @@ const FavouriteStayComp = ({
       });
   }, []);
 
-  const handleFavoriteAStay = (stay_id: string) => {
-    console.log("favStays 1", favStays);
+  const checkIsCurrentUser = () => {
+    //? Middleware
 
-    changeFavouriteStayStatus(stay_id)
-      .then((data: any) => {
-        // setIsLoading(false);
-        if (getIsFavoriteItem()) {
+    if (!currentUser) {
+      const queryString = new URLSearchParams(paramsRef).toString();
+      router.push(`/login?${queryString}`);
+      return;
+    }
+  };
+
+  const handleFavAStay = (stay_id: string) => {
+    checkIsCurrentUser();
+
+    if (getIsFavoriteItem()) {
+      const result = favStays?.find((favStay) => favStay.stay.id === item.id);
+
+      deleteFavouriteAStay(result?.id ?? "")
+        .then((data: any) => {
+          // setIsLoading(false);
+
           setFavStays(
-            (prev) => prev?.filter((item) => item.id !== stay_id) || []
+            (prev) =>
+              prev?.filter((favStay) => favStay.stay.id !== stay_id) || []
           );
-        } else {
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    } else {
+      favouriteAStay(stay_id)
+        .then((data: any) => {
+          console.log("favouriteAStay data", data);
+
+          // setIsLoading(false);
           setFavStays((prev) => [
             ...(prev || []),
             {
-              id: stay_id,
-              user: data.user,
-              stay: data.stay,
+              id: data.data.id,
+              user: currentUser,
+              stay: data.data.stay,
             },
           ]);
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-        // setIsLoading(false);
-      });
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    }
   };
 
   const getIsFavoriteItem = () => {
-    const result = favStays?.find((stay) => stay.id === item.id);
+    const result = favStays?.find((favStay) => favStay.stay.id == item.id);
+
     if (result != undefined) return true;
     return false;
   };
@@ -74,13 +108,13 @@ const FavouriteStayComp = ({
   const router = useRouter();
 
   const handleClickStayItem = (
-    stayId: string,
-    checkin: string,
-    checkout: string
+    stayId: string
+    // checkin: string,
+    // checkout: string
   ) => {
-    router.push(
-      `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
-    );
+    // router.push(
+    //   `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
+    // );
   };
 
   return (
@@ -183,7 +217,7 @@ const FavouriteStayComp = ({
         <div className="flex w-full pt-6 border-t-[1px]">
           <div
             onClick={() => {
-              handleFavoriteAStay(item.id);
+              handleFavAStay(item.id);
             }}
             className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer "
           >
@@ -205,6 +239,7 @@ const FavouriteStayComp = ({
           </div>
           <button
             onClick={() => {
+              handleClickStayItem(item.id);
               // handleClickStayItem(item.id, checkin, checkout);
             }}
             className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold transform transition-transform hover:scale-95 duration-300"

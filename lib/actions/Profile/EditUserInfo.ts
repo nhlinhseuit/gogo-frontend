@@ -49,8 +49,6 @@ export const editUserInfo = async (
       body: JSON.stringify(updatedData),
     });
 
-    console.log("response", response);
-
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

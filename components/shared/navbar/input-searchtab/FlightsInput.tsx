@@ -16,7 +16,7 @@ import SearchDropdown from "../../SearchDropdown";
 
 const FlightsInput = ({
   isSearchFlight,
-  otherClass,
+  otherClasses,
 
   departure_location,
   arrival_location,
@@ -27,7 +27,7 @@ const FlightsInput = ({
   selectedDateReturnParams,
 }: {
   isSearchFlight?: boolean;
-  otherClass?: string;
+  otherClasses?: string;
 
   departure_location?: string;
   arrival_location?: string;
@@ -267,7 +267,7 @@ const FlightsInput = ({
   return (
     <>
       {/* INPUT */}
-      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClass}`}>
+      <div className={`flex flex-row gap-2 mt-6 mb-4 ${otherClasses}`}>
         <div className="w-[42.5%] flex gap-2 font-normal">
           <div className="flex-grow">
             <SearchDropdown

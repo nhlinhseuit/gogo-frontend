@@ -10,12 +10,12 @@ import { forgotPassword } from "@/lib/actions/Authen/ForgotPassword";
 import { verifyCode } from "@/lib/actions/Authen/VerifyCode";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [code, setCode] = useState("");
   const router = useRouter();
-  
+
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const [otpId, setOtpId] = useState(searchParams.get("otp_id"));
@@ -23,7 +23,6 @@ const page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleResend = async () => {
-    console.log("here");
     setIsLoading(true);
 
     const res = await forgotPassword({ email: email });
@@ -62,7 +61,7 @@ const page = () => {
   return (
     <main>
       <div className="w-full h-screen flex gap-12">
-        <div className="flex-grow flex flex-col items-start justify-center gap-10">
+        <div className="ml-4 flex-grow flex flex-col items-start justify-center gap-10">
           <Image
             src="/assets/icons/logo-header-dark.svg"
             width={80}
@@ -138,4 +137,10 @@ const page = () => {
   );
 };
 
-export default page;
+const SuspendedPage = () => (
+  <Suspense fallback={<p>Loading...</p>}>
+    <Page />
+  </Suspense>
+);
+
+export default SuspendedPage;

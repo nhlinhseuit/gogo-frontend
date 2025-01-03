@@ -6,7 +6,7 @@ const HomeBackground = () => {
   return (
     <div className="absolute top-0 left-0 right-0 -z-10 p-2">
       <Image
-        src={"/assets/images/background.svg"}
+        src={"/assets/images/background-rs.jpg"}
         alt="DevFlow"
         width={0}
         height={0}

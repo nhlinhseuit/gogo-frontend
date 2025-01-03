@@ -14,7 +14,7 @@ import Amenity from "@/types/Amenity";
 import Stay from "@/types/Stay";
 import { convertDataReceive } from "@/utils/util";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 const tabs = [
   {
@@ -31,13 +31,13 @@ const tabs = [
   },
 ];
 
-export default function StaysSearch() {
+function StaysSearch() {
   const [isSelected, setIsSelected] = useState("HOTEL");
   const [stays, setStays] = useState<Stay[]>();
 
   const [isUsingFilter, setIsUsingFilter] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,10 +67,6 @@ export default function StaysSearch() {
     localStorage.setItem("recentSearchs", JSON.stringify(recents));
   };
 
-  useEffect(() => {
-    handleRecentSearch();
-  });
-
   const searchStaysFunc = (params: any, isFilter?: boolean) => {
     if (isFilter) setIsLoadingFilter(true);
     else setIsLoading(true);
@@ -89,6 +85,8 @@ export default function StaysSearch() {
   };
 
   useEffect(() => {
+    handleRecentSearch();
+
     searchStaysFunc(params);
   }, [searchParams]);
 
@@ -286,6 +284,8 @@ export default function StaysSearch() {
                     <FavouriteStayComp
                       key={index}
                       item={stay}
+                      paramsRef={params}
+                      isFavorite
                       // checkin={params["checkin_date"] ?? ""}
                       // checkout={params["checkout_date"] ?? ""}
                     />
@@ -301,5 +301,13 @@ export default function StaysSearch() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function WrappedFlightsSearch() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <StaysSearch />
+    </Suspense>
   );
 }

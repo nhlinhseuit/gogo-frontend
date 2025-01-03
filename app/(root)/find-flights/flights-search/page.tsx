@@ -8,40 +8,47 @@ import DepartureTimeComponent from "@/components/shared/searchFlight/filters/Dep
 import FlightCheckComponent from "@/components/shared/searchFlight/filters/FlightCheckComponent";
 import PriceComponent from "@/components/shared/searchFlight/filters/PriceComponent";
 import RatingComponent from "@/components/shared/searchFlight/filters/RatingComponent";
-import FlightsComp from "@/components/shared/searchFlight/flightComponent/FlightsComp";
+import FlightsComponent from "@/components/shared/searchFlight/flightComponent/FlightsComponent";
 import { fetchAirlines } from "@/lib/actions/Search/FetchAirlines";
 import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Airline from "@/types/Airline";
 import Flight from "@/types/Flight";
-import { convertDataNavigate, convertDataReceive } from "@/utils/util";
-import { useSearchParams } from "next/navigation";
-import router from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { convertDataReceive } from "@/utils/util";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 const trips = ["Round trip", "On Way", "Multi-City"];
 
-export default function FlightsSearch() {
-  const [isSelected, setIsSelected] = useState("Best");
+function FlightsSearch() {
+  //? Thay đổi để custom truyền chọn chuyến đi chuyến về cho roundtrip
+
+  const [isFirstStep, setIsFirstStep] = useState(true);
+  const [selectedOutboundFlightId, setSelectedOutboundFlightId] = useState("");
+
+  const router = useRouter();
+
   const [flights, setFlights] = useState<Flight[]>();
   const [airlines, setAirlines] = useState<Airline[]>();
 
   const [isUsingFilter, setIsUsingFilter] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
 
   const paramsData = convertDataReceive(searchParams);
-  const params = {
-    roundTrip: paramsData.roundTrip,
+
+  //TODO: paramsData.roundTrip just for call api 1 or 2nd time
+  let params = {
+    roundTrip: false,
     departure_location_id: paramsData.departure_location_id,
     arrival_location_id: paramsData.arrival_location_id,
     departure_time_from: paramsData.departure_time_from,
     departure_time_to: paramsData.departure_time_from,
-    return_time_from: paramsData.return_time_from,
-    return_time_to: paramsData.return_time_to,
+    // return_time_from: paramsData.return_time_from,
+    // return_time_to: paramsData.return_time_to,
     seat_classes: paramsData.seat_classes,
     passenger_count: paramsData.passenger_count,
   };
@@ -52,7 +59,6 @@ export default function FlightsSearch() {
 
     searchFlights(params)
       .then((data: any) => {
-        console.log("data flights", data);
         setFlights(data.data);
         if (isFilter) setIsLoadingFilter(false);
         else setIsLoading(false);
@@ -68,7 +74,6 @@ export default function FlightsSearch() {
     setIsLoading(true);
     fetchAirlines()
       .then((data: any) => {
-        console.log("data airlines", data);
         setAirlines(data.data);
         setIsLoading(false);
       })
@@ -80,7 +85,24 @@ export default function FlightsSearch() {
 
   useEffect(() => {
     searchFlightsFunc(params);
-  }, [searchParams]);
+
+    if (!isFirstStep) {
+      params = {
+        roundTrip: paramsData.false,
+        // * đổi thứ tự
+        departure_location_id: paramsData.arrival_location_id,
+        arrival_location_id: paramsData.departure_location_id,
+        departure_time_from: paramsData.return_time_from,
+        departure_time_to: paramsData.return_time_to,
+        // return_time_from: paramsData.return_time_from,
+        // return_time_to: paramsData.return_time_to,
+        seat_classes: paramsData.seat_classes,
+        passenger_count: paramsData.passenger_count,
+      };
+
+      searchFlightsFunc(params);
+    }
+  }, [searchParams, isFirstStep]);
 
   useEffect(() => {
     searchAirlinesFunc();
@@ -119,7 +141,6 @@ export default function FlightsSearch() {
 
   const handleTimeRangeChange = (timeRange: [string, string]) => {
     timeRangeRef.current = timeRange;
-    console.log("Selected Time Range:", timeRange);
   };
 
   //! RATING COMPONENT
@@ -181,7 +202,7 @@ export default function FlightsSearch() {
       <div>
         <FlightsInput
           isSearchFlight
-          otherClass="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
+          otherClasses="bg-white mt-8 px-4 py-6 rounded-lg shadow-full shadow-primary-400"
           departure_location={paramsData.departure_location}
           arrival_location={paramsData.arrival_location}
           tripTypeParams={paramsData.roundTrip}
@@ -250,16 +271,75 @@ export default function FlightsSearch() {
               />
             ) : (
               <div className="w-[70%] ml-4">
-                <div>
-                  {flights?.map((flight) => (
-                    <FlightsComp
-                      item={flight}
-                      departure_time_from={params["departure_time_from"] ?? ""}
-                      departure_time_to={params["departure_time_to"] ?? ""}
-                      passenger_count={params["passenger_count"] ?? ""}
-                    />
-                  ))}
-                </div>
+                {params.roundTrip === false ? (
+                  <div>
+                    {flights?.map((flight, index) => (
+                      <FlightsComponent
+                        type="oneway"
+                        key={`${flight.outbound_flight.id}_${index}`}
+                        isFavorite
+                        item={flight}
+                        flightId={flight.outbound_flight.id}
+                        paramsRef={paramsData}
+                        handleClickFlightItem={() => {
+                          router.push(
+                            `/find-flights/${flight.outbound_flight.id}`
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : isFirstStep ? (
+                  <>
+                    <p className="my-2 paragraph-semibold">
+                      {paramsData.departure_location} ➡{" "}
+                      {paramsData.arrival_location}
+                    </p>
+
+                    <div>
+                      {flights?.map((flight, index) => (
+                        <FlightsComponent
+                          type="outbound"
+                          key={`${flight.outbound_flight.id}_${index}`}
+                          isFavorite
+                          item={flight}
+                          flightId={flight.outbound_flight.id}
+                          paramsRef={paramsData}
+                          handleClickOutboundFlight={() => {
+                            setIsFirstStep(false);
+                            setSelectedOutboundFlightId(
+                              flight.outbound_flight.id
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="my-2 paragraph-semibold">
+                      {paramsData.arrival_location} ➡{" "}
+                      {paramsData.departure_location}
+                    </p>
+                    <div>
+                      {flights?.map((flight, index) => (
+                        <FlightsComponent
+                          type="return"
+                          key={`${flight.outbound_flight.id}_${index}`}
+                          isFavorite
+                          item={flight}
+                          flightId={flight.outbound_flight.id}
+                          paramsRef={paramsData}
+                          handleClickReturnFlight={() => {
+                            router.push(
+                              `/find-flights/${selectedOutboundFlightId}?return_flight=${flight.outbound_flight.id}`
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
 
                 <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
                   <p className="paragraph-semibold text-white">
@@ -272,5 +352,13 @@ export default function FlightsSearch() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function WrappedFlightsSearch() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FlightsSearch />
+    </Suspense>
   );
 }
