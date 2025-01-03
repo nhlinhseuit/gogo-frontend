@@ -6,7 +6,7 @@ import FindHeader from "@/components/shared/details/findComponents/FindHeader";
 import SriLanka from "@/components/shared/details/findComponents/SriLanka";
 import PlaceComponent from "@/components/shared/details/findStays/PlaceComponent";
 import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
-import Location from "@/types/Location";
+import LocationType from "@/types/LocationType";
 import { getRandomImgUrl, imagesBookComponent } from "@/utils/util";
 import { useEffect, useState } from "react";
 import "../../globals.css";
@@ -72,7 +72,7 @@ export default function FindStays() {
   ];
 
   //TODO: locations
-  const [locations, setLocations] = useState<{ data: Location[] }>({
+  const [locations, setLocations] = useState<{ data: LocationType[] }>({
     data: [],
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -92,7 +92,7 @@ export default function FindStays() {
 
   let data: string[] | null = null;
 
-  const [recentLocations, setRecentLocations] = useState<Location[]>([]);
+  const [recentLocations, setRecentLocations] = useState<LocationType[]>([]);
 
   useEffect(() => {
     const getRecentSearchs = () => {
@@ -114,7 +114,7 @@ export default function FindStays() {
   useEffect(() => {
     fetchLocations()
       .then((response: any) => {
-        const locations: Location[] = response.data;
+        const locations: LocationType[] = response.data;
 
         const filteredLocations = locations.filter((item) =>
           data?.includes(item.id.toString())

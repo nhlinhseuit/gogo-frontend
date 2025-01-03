@@ -4,7 +4,7 @@ import BookFlightComponent from "@/components/shared/details/findComponents/Book
 import FindHeader from "@/components/shared/details/findComponents/FindHeader";
 import SriLanka from "@/components/shared/details/findComponents/SriLanka";
 import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
-import Location from "@/types/Location";
+import LocationType from "@/types/LocationType";
 import { imagesBookComponent } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ export default function FindFlights() {
   };
 
   //TODO: locations
-  const [locations, setLocations] = useState<{ data: Location[] }>({
+  const [locations, setLocations] = useState<{ data: LocationType[] }>({
     data: [],
   });
   const [isLoading, setIsLoading] = useState(true);
