@@ -131,6 +131,7 @@ const StayBookingPage: React.FC = () => {
           variant: "success",
           duration: 3000,
         });
+        router.push(`/booking/stay-booking/${bookingData.id}`);
       })
       .catch((error) => {
         toast({
