@@ -1,10 +1,10 @@
 import { BASE_URL } from "@/constants";
-import Location from "@/types/Location";
+import LocationType from "@/types/LocationType";
 import { getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/locations`;
 
-export const fetchLocations = async (): Promise<Location[]> => {
+export const fetchLocations = async (): Promise<LocationType[]> => {
   try {
     const response = await fetch(API_URL, {
       method: "GET",
@@ -17,7 +17,7 @@ export const fetchLocations = async (): Promise<Location[]> => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<Location[]>;
+    return (await response.json()) as Promise<LocationType[]>;
   } catch (error) {
     console.error("Error fetching locations:", error);
     throw error;

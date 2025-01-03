@@ -1,5 +1,5 @@
 import FlightDetails from "./FlightDetails";
-import Location from "./Location";
+import LocationType from "./LocationType";
 import User from "./User";
 
 interface BookingFlight {
@@ -33,7 +33,7 @@ interface Airport {
   id: string;
   code: string;
   name: string;
-  location: Location;
+  location: LocationType;
 }
 
 interface Seat {
