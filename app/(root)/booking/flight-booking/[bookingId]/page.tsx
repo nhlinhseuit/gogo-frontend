@@ -5,7 +5,7 @@ import "@/app/globals.css";
 import FlightTicket from "@/components/FlightTicket";
 import {usePDF} from "react-to-pdf";
 import FlightBooking from "@/types/FlightBooking";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {fetchFlightBooking} from "@/lib/actions/BookingActions";
 import {toast} from "@/hooks/use-toast";
@@ -38,7 +38,6 @@ const FlightBookingInfoPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(flightBookingData);  // This will log the updated data after state change.
   }, [flightBookingData]);
 
 
@@ -48,17 +47,17 @@ const FlightBookingInfoPage = () => {
 
   return (
     <div className="flex flex-col my-4 gap-8">
-      <div className="flex flex-col justify-between md:flex-row">
-        <span
-          className="h2-bold">{flightBookingData.seats[0].seat.flight.name}</span>
+      <div className="flex flex-col justify-between">
+        <span className="h2-bold">{flightBookingData.seats[0].seat.flight.name}</span>
+        <span>{flightBookingData.seats[0].seat.flight.airline.name}</span>
       </div>
 
       <div className="flex flex-col justify-between md:flex-row">
-        <span></span>
         <div className="flex flex-row gap-4">
           <button className="rounded-md px-9 py-4 bg-primary-100" onClick={() => toPDF()}>Download</button>
         </div>
       </div>
+
       <div ref={targetRef}>
         {flightBookingData && <FlightTicket booking={flightBookingData}/>}
       </div>

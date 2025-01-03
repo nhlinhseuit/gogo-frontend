@@ -149,8 +149,10 @@ export const getReviewComment = (rating: number) => {
     return "Very good";
   } else if (rating < 4 && rating >= 3) {
     return "Good";
-  } else {
+  } else if (rating < 3 && rating > 1) {
     return "Average";
+  } else {
+    return "Poor";
   }
 };
 
@@ -319,6 +321,14 @@ export const formatDateInWords = (dateString: string) => {
   const year = date.getFullYear();
 
   return `${dayName}, ${monthName} ${day}, ${year}`;
+
+}
+
+export const formatHHMM = (dateString: string) => {
+  const date = new Date(dateString);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
 }
 export const convertToLocaleDate = (isoString: string): Date => {
   const truncatedString = isoString.replace(/(\.\d{3})\d*/, '$1');
