@@ -5,7 +5,7 @@ import { getCurrentUser, getToken } from "@/utils/util";
 
 const API_URL = `${BASE_URL}/api/v1/flights/favorites`;
 
-export const fetchFavouriteFlights = async (): Promise<FavouriteFlights[]> => {
+export const fetchFavouriteFlights = async (): Promise<FavouriteFlights> => {
   try {
     console.log("fetchFavouriteFlights");
 
@@ -22,7 +22,7 @@ export const fetchFavouriteFlights = async (): Promise<FavouriteFlights[]> => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteFlights[]>;
+    return (await response.json()) as Promise<FavouriteFlights>;
   } catch (error) {
     console.error("Error fetching favourite flights:", error);
     throw error;
@@ -32,7 +32,7 @@ export const fetchFavouriteFlights = async (): Promise<FavouriteFlights[]> => {
 export const favouriteAFlight = async (
   outbound_flight_id: any,
   return_flight_id: any
-): Promise<FavouriteFlight[]> => {
+): Promise<FavouriteFlights> => {
   try {
     console.log("favouriteAFlight");
 
@@ -60,7 +60,7 @@ export const favouriteAFlight = async (
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteFlight[]>;
+    return (await response.json()) as Promise<FavouriteFlights>;
   } catch (error) {
     console.error("Error favouriteAFlight:", error);
     throw error;
@@ -69,7 +69,7 @@ export const favouriteAFlight = async (
 
 export const deleteFavouriteAFlight = async (
   favoriteFlightId: any
-): Promise<FavouriteFlight[]> => {
+) => {
   try {
     console.log("deleteFavouriteAFlight");
 
@@ -89,7 +89,7 @@ export const deleteFavouriteAFlight = async (
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavouriteFlight[]>;
+    return (await response.json());
   } catch (error) {
     console.error("Error deleteFavouriteAFlight:", error);
     throw error;

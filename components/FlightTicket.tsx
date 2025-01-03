@@ -30,7 +30,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
   }, [barcodeRef, flightBookingData]);
 
   return (
-    <div className="flex h-auto flex-row border-2 overflow-hidden rounded-lg w-[1000px]">
+    <div className="flex h-auto flex-row border-2 overflow-hidden rounded-lg">
       <div className="flex flex-col justify-between gap-2 p-8 pr-16 bg-primary-500">
         <div className="flex flex-col">
           <span className="h2-bold">{formatDateInWords(flightBookingData.seats[0].seat.flight.departure_time)}</span>

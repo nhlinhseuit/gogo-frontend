@@ -5,9 +5,9 @@ import React from "react";
 
 const FavoriteCheckFlight = ({ item }: { item: FavouriteFlight }) => {
   const departure_time = extractDateAndTime(
-    item?.outbound_flight.departureTime
+    item?.outbound_flight.departure_time
   );
-  const arrival_time = extractDateAndTime(item?.outbound_flight.arrivalTime);
+  const arrival_time = extractDateAndTime(item?.outbound_flight.arrival_time);
   function subtractTimeStrings(
     time1: string,
     time2: string
@@ -90,7 +90,7 @@ const FavoriteCheckFlight = ({ item }: { item: FavouriteFlight }) => {
           {getDuration(departure_time?.time, arrival_time?.time)}
         </h6>
         <p className="text-gray-400 regular">
-          {item?.outbound_flight.departureAirport.code}
+          {item?.outbound_flight.departure_airport.code}
         </p>
       </div>
     </div>

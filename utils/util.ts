@@ -219,6 +219,7 @@ export const formatDayFromInputToISODateApi = (
   return { startTime, endTime };
 };
 
+
 //? KHI NHẬN GIÁ TRỊ TỪ PARAMS, CONVERT ĐỂ HIỂN THỊ TRÊN FLIGHTSINPUT VÀ STAYSINPUT
 export const parseNormalDateFromSearchParamsToDayOfInput = (
   dateString: string
