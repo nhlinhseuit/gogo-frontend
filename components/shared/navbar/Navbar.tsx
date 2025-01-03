@@ -25,16 +25,13 @@ const Navbar = () => {
   const [avatar, setAvatar] = useState("/assets/images/avt.png");
 
   useEffect(() => {
-    const currentUser = getCurrentUser()
+    const currentUser = getCurrentUser();
 
     if (currentUser) {
       getUserInfo()
         .then((data: any) => {
-          console.log(
-            "(data.data as UserInfo).avatar_url",
-            (data.data as UserInfo).avatar_url
-          );
-          setAvatar((data.data as UserInfo).avatar_url);
+          if ((data.data as UserInfo).avatar_url)
+            setAvatar((data.data as UserInfo).avatar_url ?? "");
         })
         .catch((error) => {});
     }

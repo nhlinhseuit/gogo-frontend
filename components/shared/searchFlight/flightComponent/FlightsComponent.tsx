@@ -111,18 +111,32 @@ const FlightsComponent = ({
         .then((data: any) => {
           // setIsLoading(false);
           setFavFlights((prev) => {
-            if (!prev) return undefined;
+            if (!prev)
+              return {
+                user: data.data.user,
+                flight_favorites: [
+                  {
+                    id: data.data.id, // ID mới của flight favorite
+                    user: data.data.user,
+                    outbound_flight: data.data.outbound_flight,
+                    return_flight: data.data.return_flight,
+                    round_trip: data.data.round_trip,
+                  },
+                ],
+              };
+
+
 
             return {
               ...prev,
               flight_favorites: [
-                ...(prev.flight_favorites || []),
+                ...prev.flight_favorites,
                 {
-                  id: flightId,
-                  user: data.user,
-                  outbound_flight: data.outbound_flight,
-                  return_flight: data.return_flight,
-                  round_trip: data.round_trip,
+                  id: data.data.id, // ID mới của flight favorite
+                  user: data.data.user,
+                  outbound_flight: data.data.outbound_flight,
+                  return_flight: data.data.return_flight,
+                  round_trip: data.data.round_trip,
                 },
               ],
             };
@@ -134,6 +148,8 @@ const FlightsComponent = ({
         });
     }
   };
+
+
 
   const handleClickItem = () => {
     switch (type) {
