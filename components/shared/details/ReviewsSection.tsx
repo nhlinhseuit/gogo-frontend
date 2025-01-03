@@ -4,7 +4,7 @@ import "@/app/globals.css";
 import React from "react";
 import ReviewComponent from "@/components/shared/ReviewComponent";
 import type Review from "@/types/Review";
-import {getReviewComment} from "@/utils/util";
+import {getCurrentUser, getReviewComment} from "@/utils/util";
 
 interface ReviewsSectionProps {
   averageRating: number;
@@ -23,13 +23,15 @@ interface ReviewsSectionProps {
 }
 
 const ReviewsSection: React.FC<ReviewsSectionProps> = (props) => {
-
+  const currentUser = getCurrentUser();
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-row md:items-center justify-between">
         <span className="h2-bold">Reviews</span>
-        <button onClick={props.onGiveReview} className="rounded p-4 bg-primary-100">Give your review</button>
+        <button
+          disabled={!currentUser}
+          onClick={props.onGiveReview} className={`rounded p-4 bg-primary-100 ${!currentUser && `opacity-50`}`}>Give your review</button>
       </div>
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <span className="font-bold text-5xl">{props.averageRating}</span>

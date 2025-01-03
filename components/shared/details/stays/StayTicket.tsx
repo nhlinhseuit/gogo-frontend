@@ -49,7 +49,7 @@ const StayTicket: React.FC<StayTicketProps> = (props) => {
       <div className="flex flex-grow flex-col">
         <div className="flex flex-row items-center justify-between px-8 py-4 bg-primary-100">
           <div className="flex flex-col">
-            <span className="h2-bold">{stayBookingData.first_name} {stayBookingData.lastName}</span>
+            <span className="h2-bold">{stayBookingData.firstName} {stayBookingData.lastName}</span>
           </div>
           <span className="font-bold">{stayBookingData.room.name}</span>
         </div>

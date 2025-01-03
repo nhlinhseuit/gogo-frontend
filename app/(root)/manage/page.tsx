@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import Room from "@/types/Room";
-import RoomTableComponent from "@/components/shared/manage/RoomTableComponent";
-import { getRoomsOfStay, getStayByOwner } from "@/lib/actions/ManageActions";
+import {getStayByOwner} from "@/lib/actions/ManageActions";
 import Stay from "@/types/Stay";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
-import { toast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import {toast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
 
 const StaysManagingPage: React.FC = () => {
   const router = useRouter();
@@ -44,13 +43,18 @@ const StaysManagingPage: React.FC = () => {
   };
 
   if (isLoading || !stays) {
-    return <BigLoadingSpinner />;
+    return <BigLoadingSpinner/>;
   }
 
   return (
     <div className="overflow-x-auto">
-      <h1 className="h2-bold my-8">Manage your Stays</h1>
-
+      <div className="flex flex-row items-center justify-between">
+        <h1 className="h2-bold my-8">Manage your Stays</h1>
+        <button
+          onClick={() => router.push(`/manage/stays/new`)}
+          className="px-4 py-2 bg-primary-100 rounded text-md font-semibold">Add New Stay
+        </button>
+      </div>
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
         <tr className="bg-primary-100">

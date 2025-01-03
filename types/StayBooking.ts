@@ -12,7 +12,7 @@ interface StayBooking {
   room: Room;
   checkinDate: string;
   checkoutDate: string;
-  first_name: string;
+  firstName: string;
   lastName: string;
   email: string;
   phone: string;
