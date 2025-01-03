@@ -27,6 +27,57 @@ const Login = () => {
   const router = useRouter();
   const { toast } = useToast();
 
+  const handleNavigate = () => {
+    //TODO: trang nào đó vào login
+    if (prevRoute) {
+      router.push(`/${prevRoute}`);
+
+      //TODO: tim 1 stay ở search
+    } else if (!prevRoute && prevStaySearch) {
+      router.push(`/find-stays/stays-search?${searchParams}`);
+
+      //TODO: tim 1 flight ở search
+    } else if (!prevRoute && prevFlightSearch) {
+      const paramsData = convertDataReceive(searchParams);
+      const queryString = new URLSearchParams(
+        convertDataNavigate(paramsData)
+      ).toString();
+      
+      router.push(`/find-flights/flights-search?${queryString}`);
+
+      //TODO: vào stay booking
+      //! thay thế 1
+
+    } else if (!prevRoute && 1) {
+      const paramsData = convertDataReceive(searchParams);
+      const queryString = new URLSearchParams(
+        convertDataNavigate(paramsData)
+      ).toString();
+      
+      router.push(`/find-flights/stay-booking?${queryString}`);
+
+      //TODO: vào flight booking
+      //! thay thế 1
+      
+    } else if (!prevRoute && 1) {
+      const paramsData = convertDataReceive(searchParams);
+      const queryString = new URLSearchParams(
+        convertDataNavigate(paramsData)
+      ).toString();
+      
+      router.push(`/find-flights/flight-booking?${queryString}`);
+
+      //TODO: others
+    } else {
+      toast({
+        title: `Login successfully!`,
+        variant: "success",
+        duration: 3000,
+      });
+      router.push(`/`);
+    }
+  };
+
   const handleAuthen = () => {
     if (email === "" && password === "") {
       toast({
@@ -46,27 +97,7 @@ const Login = () => {
             duration: 3000,
           });
         } else {
-          sessionStorage.setItem("authToken", data.token);
-          sessionStorage.setItem("currentUser", JSON.stringify(data.user));
-
-          if (prevRoute) router.push(`/${prevRoute}`);
-          else if (!prevRoute && prevStaySearch) {
-            router.push(`/find-stays/stays-search?${searchParams}`);
-          } else if (!prevRoute && prevFlightSearch) {
-            const paramsData = convertDataReceive(searchParams);
-            const queryString = new URLSearchParams(
-              convertDataNavigate(paramsData)
-            ).toString();
-
-            router.push(`/find-flights/flights-search?${queryString}`);
-          } else {
-            toast({
-              title: `Login successfully!`,
-              variant: "success",
-              duration: 3000,
-            });
-            router.push(`/`);
-          }
+          handleNavigate();
         }
       });
     }
