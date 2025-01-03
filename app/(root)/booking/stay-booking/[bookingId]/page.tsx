@@ -17,7 +17,7 @@ interface StayBookingInfoPageParams {
 }
 
 const StayBookingInfoPage: React.FC = () => {
-  const {toPDF, targetRef} = usePDF({filename: "boarding-pass.pdf"});
+  const {toPDF, targetRef} = usePDF({filename: "stay-ticket.pdf"});
   const {bookingId} = useParams() as unknown as StayBookingInfoPageParams;
 
 
