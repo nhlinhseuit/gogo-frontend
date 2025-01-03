@@ -10,7 +10,7 @@ export const getRoomsOfStay = async (stayId: string): Promise<Room[]> => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        "Authorization": `Bearer ${getToken()}`
+        // "Authorization": `Bearer ${getToken()}`
       }
     });
     if (!response.ok) {

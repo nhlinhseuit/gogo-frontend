@@ -85,7 +85,7 @@ export const fetchStayBooking = async (id: string): Promise<StayBooking> => {
     const response = await fetch(`${API_URL}/stays/booking/${id}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
     });
