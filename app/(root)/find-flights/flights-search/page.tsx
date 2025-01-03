@@ -90,11 +90,11 @@ function FlightsSearch() {
   const getMinMaxFare = (): { minFare: number; maxFare: number } => {
     if (!flights) return { minFare: 0, maxFare: 0 };
     const fares = flights.map((flight) => {
-      const outboundFare = flight.outbound_flight.min_base_fare;
-      const returnFare = flight.round_trip
-        ? flight.return_flight.min_base_fare
+      const outboundFare = flight.outbound_flight.minBaseFare
+        ? flight.return_flight.minBaseFare
         : 0;
-      return outboundFare + returnFare;
+      // return outboundFare + returnFare;
+      return outboundFare;
     });
 
     const minFare = Math.min(...fares);

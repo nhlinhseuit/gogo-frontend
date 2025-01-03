@@ -170,7 +170,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
         <span className="h2-bold">{currentFlightDetails.airline.name} {currentFlightDetails.name}</span>
         <span className="h2-bold text-accent-orange">From ${lowestPrice}</span>
       </div>
-      <LocationComponent location={currentFlightDetails.departure_airport.name}/>
+      <LocationComponent location={currentFlightDetails.departureAirport.name}/>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <RatingSummaryComponent
           rating={currentFlightDetails.airline.rating}
