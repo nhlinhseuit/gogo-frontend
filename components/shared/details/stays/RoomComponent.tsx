@@ -4,6 +4,7 @@ import {requestStayBooking} from "@/lib/actions/BookingActions";
 import {toast} from "@/hooks/use-toast";
 import React from "react";
 import { useRouter } from "next/navigation";
+import {getCurrentUser} from "@/utils/util";
 
 interface RoomProps {
   stayId: string;
@@ -14,8 +15,16 @@ interface RoomProps {
 
 const RoomComponent: React.FC<RoomProps> = (props) => {
   const router = useRouter();
+  const currentUser = getCurrentUser();
   const handleBookNow = (event: any) => {
     event.preventDefault();
+
+    if (!currentUser) {
+      setTimeout(() => {
+        router.push(`/login?ref=find-stays/${props.stayId}&checkin=${props.checkin}&checkout=${props.checkout}`);
+      }, 0);
+      return;
+    }
     requestStayBooking(props.room.id, props.checkin, props.checkout)
       .then((data) => {
         if (data.booking_id) {
@@ -35,7 +44,7 @@ const RoomComponent: React.FC<RoomProps> = (props) => {
         console.error("Error requesting stay booking:", error);
         toast({
           title: "Something went wrong",
-          description: "Please try again later",
+          description: error.message,
           variant: "error",
           duration: 3000,
         });
