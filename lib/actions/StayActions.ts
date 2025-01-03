@@ -14,7 +14,6 @@ export const fetchStay = async (stayId: string): Promise<Stay> => {
       headers: {
         // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
 
       },
     });
@@ -63,7 +62,7 @@ export const fetchAvailableRooms = async (stayId: string, checkin: string, check
     const response = await fetch(`${API_URL}/${stayId}/rooms/available?checkin_date=${checkin}&checkout_date=${checkout}&guests=1`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
     });
