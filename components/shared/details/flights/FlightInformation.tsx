@@ -14,8 +14,8 @@ interface FlightInformationProps {
 
 const FlightInformation: React.FC<FlightInformationProps> = (props) => {
 
-  const departure = new Date(props.flightDetails.departure_time);
-  const arrival = new Date(props.flightDetails.arrival_time);
+  const departure = new Date(props.flightDetails.departureTime);
+  const arrival = new Date(props.flightDetails.arrivalTime);
   const duration = arrival.getTime() - departure.getTime();
   const durationHours = Math.floor(duration / 1000 / 60 / 60);
   const durationMinutes = Math.floor(duration / 1000 / 60) % 60;
@@ -94,7 +94,7 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
             {departure.getUTCHours().toString().padStart(2, "0")}:
             {departure.getUTCMinutes().toString().padStart(2, "0")}
           </span>
-          <span className="font-light">{props.flightDetails.departure_airport.code}</span>
+          <span className="font-light">{props.flightDetails.departureAirport.code}</span>
         </div>
         <img src="/assets/icons/flight-duration.svg" alt="Flight Duration"/>
         <div className="flex flex-row items-center justify-between gap-4">
@@ -102,7 +102,7 @@ const FlightInformation: React.FC<FlightInformationProps> = (props) => {
             {arrival.getUTCHours().toString().padStart(2, "0")}:
             {arrival.getUTCMinutes().toString().padStart(2, "0")}
           </span>
-          <span className="font-light">{props.flightDetails.arrival_airport.code}</span>
+          <span className="font-light">{props.flightDetails.arrivalAirport.code}</span>
         </div>
       </div>
     </div>
