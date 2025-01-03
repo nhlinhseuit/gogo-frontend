@@ -11,7 +11,7 @@ export const fetchUserCards = async (userId: string): Promise<Card[]> => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // "Authorization": `Bearer ${getToken()}`,
+        "Authorization": `Bearer ${getToken()}`,
 
       }
     });
