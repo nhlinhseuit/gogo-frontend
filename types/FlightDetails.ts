@@ -15,7 +15,8 @@ interface FlightDetails {
   arrival_airport: Airport;
   departure_time: string; // ISO 8601 Date string
   arrival_time: string; // ISO 8601 Date string
-    featured_images: Image[];
+  featured_images: Image[];
+  min_base_fare: number;
 }
 
 export default FlightDetails;
