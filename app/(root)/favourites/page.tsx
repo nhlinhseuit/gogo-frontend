@@ -8,7 +8,10 @@ import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
 import FavouriteFlights from "@/types/FavouriteFlights";
 import FavouriteStay from "@/types/FavouriteStay";
-import { getCurrentUser } from "@/utils/util";
+import {
+  formatDayFromInputToNormalDateApi,
+  getCurrentUser,
+} from "@/utils/util";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "../../globals.css";
@@ -27,50 +30,65 @@ const tabs = [
 ];
 
 export default function Favourites() {
-  //? Middleware
-  const router = useRouter();
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      router.push(`/login?ref=favourites`);
-    }
-  }, []);
-
   const [isSelected, setIsSelected] = useState("Flights");
   const [error, setError] = useState<string | null>(null);
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
 
-  const [isDeleteAction, setIsDeleteAction] = useState(false);
-
   const currentUser = getCurrentUser();
 
+  //? Middleware
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const router = useRouter();
   useEffect(() => {
-    fetchFavouriteFlights()
-      .then((data: any) => {
-        setFavFlights(data.data);
+    if (!currentUser) {
+      setIsAuthenticated(false);
+
+      setTimeout(() => {
+        router.push(`/login?ref=favourites`);
+      }, 2300);
+    } else {
+      setIsAuthenticated(true);
+
+      fetchFavouriteFlights()
+        .then((data: any) => {
+          setFavFlights(data.data);
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+
+      fetchFavouriteStays({
+        user_id: currentUser.id ?? "",
+        page: 0,
+        size: 10,
       })
-      .catch((error) => {
-        setError(error.message);
-      });
+        .then((data: any) => {
+          setFavStays(data.data);
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    }
   }, []);
 
-  console.log("favFlights", favFlights);
+  if (isAuthenticated === null) {
+    return (
+      <NoResult
+        title="Checking..."
+        description="We are checking your informations..."
+      />
+    );
+  }
 
-  useEffect(() => {
-    console.log("fetchFavouriteStays again");
-    fetchFavouriteStays({
-      user_id: currentUser.id ?? "",
-      page: 0,
-      size: 10,
-    })
-      .then((data: any) => {
-        setFavStays(data.data);
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
-  }, [isDeleteAction]);
+  if (isAuthenticated === false) {
+    return (
+      <NoResult
+        title="Wait a sec..."
+        description="You will be redirected to login page in just a few seconds..."
+      />
+    );
+  }
 
   return (
     <main>
@@ -103,7 +121,13 @@ export default function Favourites() {
         ) : !favStays || favStays.length === 0 ? (
           <NoResult title="No Favorites Places Found!" description=" " />
         ) : (
-          favStays?.map((item) => <FavouriteStayComp item={item.stay} />)
+          favStays?.map((item) => (
+            <FavouriteStayComp
+              item={item.stay}
+              checkin={formatDayFromInputToNormalDateApi(new Date())}
+              checkout={formatDayFromInputToNormalDateApi(new Date())}
+            />
+          ))
         )}
       </div>
     </main>

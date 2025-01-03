@@ -1,16 +1,16 @@
 "use client";
 
+import BookingStay from "@/types/BookingStay";
 import Image from "next/image";
 import MyIcon from "./MyIcon";
-import BookingFlight from "@/types/BookingFlight";
-import { formatDateToYYYYMMDD } from "@/utils/util";
+import { formatDateInWords, formatDateToYYYYMMDD } from "@/utils/util";
 
-const FlightsItem = ({ item }: { item: BookingFlight }) => {
+const StaysItem = ({ item }: { item: BookingStay }) => {
   return (
     <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[10%] my-4 p-2 flex mr-1 px-3 border border-primary-100 rounded-md justify-center items-center">
         <Image
-          src={item.seats[0].seat.flight.airline.image}
+          src={item.room?.image_url ?? "/assets/images/stay.svg"}
           alt="places"
           width={200}
           height={200}
@@ -23,51 +23,42 @@ const FlightsItem = ({ item }: { item: BookingFlight }) => {
         <div className="flex items-center">
           <>
             <div>
-              <p className="title-medium text-[#112211]">
-                {item.seats[0].seat.flight.timezone}
-              </p>
+              <p className="title-medium text-[#112211]">Check-In</p>
               <p className="paragraph-semibold">
-                {item.seats[0].seat.flight.departureTime}
+                {formatDateInWords(item.checkinDate ?? "")}
               </p>
             </div>
 
             <div className="mx-4">---</div>
 
             <div>
-              <p className="title-medium text-[#112211]">
-                {item.seats[0].seat.flight.timezone}
-              </p>
+              <p className="title-medium text-[#112211]">Check-Out</p>
               <p className="paragraph-semibold">
-                {item.seats[0].seat.flight.arrivalTime}
+                {formatDateInWords(item.checkoutDate ?? "")}
               </p>
             </div>
           </>
 
           <div className="mx-6 w-[1.5px] bg-gray-300 h-[50px]"></div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-6">
             <div className="flex flex-col gap-4">
               <MyIcon
-                icon="/assets/icons/calendar_profile.svg"
-                title="Date"
-                desc={[formatDateToYYYYMMDD(item.bookingDate)]}
+                icon="/assets/icons/time_profile.svg"
+                title="Checkin"
+                desc={[formatDateToYYYYMMDD(item.checkinDate ?? "")]}
               />
               <MyIcon
                 icon="/assets/icons/time_profile.svg"
-                title="Flight time"
-                desc={[item.seats[0].seat.flight.timezone]}
+                title="Checkout"
+                desc={[formatDateToYYYYMMDD(item.checkoutDate ?? "")]}
               />
             </div>
             <div className="flex flex-col gap-4">
               <MyIcon
                 icon="/assets/icons/door_profile.svg"
                 title="Gate"
-                desc={[item.seats[0].seat.flight.gate]}
-              />
-              <MyIcon
-                icon="/assets/icons/seat_profile.svg"
-                title="Seat no."
-                desc={item.seats.map((item) => item.seat.number)}
+                desc={["On arrival"]}
               />
             </div>
           </div>
@@ -84,4 +75,4 @@ const FlightsItem = ({ item }: { item: BookingFlight }) => {
   );
 };
 
-export default FlightsItem;
+export default StaysItem;
