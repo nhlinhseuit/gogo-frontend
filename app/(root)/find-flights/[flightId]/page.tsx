@@ -5,7 +5,7 @@ import LocationComponent from "@/components/shared/details/LocationComponent";
 import RatingSummaryComponent from "@/components/shared/details/RatingSummaryComponent";
 import type FlightDetails from "@/types/FlightDetails";
 import React, {useEffect, useState} from "react";
-import {useSearchParams} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {fetchFlightDetails} from "@/lib/actions/FlightActions";
 import type Seat from "@/types/Seat";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
@@ -22,6 +22,7 @@ interface FlightDetailProps {
 }
 
 const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const passengerCount = parseInt(searchParams.get("passenger_count") || "1", 10);
   const returnFlightId = searchParams.get("return_id");
@@ -31,7 +32,8 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
   const [lowestPrice, setLowestPrice] = useState<number | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [selectedOutboundSeats, setSelectedOutboundSeats] = useState<string[]>([]);
+  const [selectedReturnSeats, setSelectedReturnSeats] = useState<string[]>([]);
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -41,6 +43,38 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
     total_page: 1,
   });
   const [activeTab, setActiveTab] = useState<'outbound' | 'return'>('outbound');
+
+  const handleBooking = () => {
+    const outboundSeats = selectedOutboundSeats.join(",");
+    const returnSeats = selectedReturnSeats.join(",");
+
+    if (activeTab === 'outbound' && selectedOutboundSeats.length === 0) {
+      toast({
+        title: "Please select a seat to book for the outbound flight",
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    if (activeTab === 'return' && selectedReturnSeats.length === 0) {
+      toast({
+        title: "Please select a seat to book for the return flight",
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    const bookingUrl = `/find-flights/flight-booking/${params.flightId}?seat_ids=${outboundSeats}`;
+    const returnBookingUrl = returnFlightId ? `/find-flights/flight-booking/${returnFlightId}?seat_ids=${returnSeats}` : null;
+
+    if (activeTab === 'outbound') {
+      router.push(bookingUrl);
+    } else if (returnBookingUrl) {
+      router.push(returnBookingUrl);
+    }
+  };
 
   useEffect(() => {
     fetchFlightDetails(params.flightId)
@@ -102,19 +136,35 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
 
   const handleClassSelection = (seatClass: string) => {
     setSelectedClass(seatClass === selectedClass ? null : seatClass);
-    setSelectedSeats([]); // Reset seat selection when class changes
+    if (activeTab === 'outbound') {
+      setSelectedOutboundSeats([]); // Reset seat selection when class changes
+    } else {
+      setSelectedReturnSeats([]); // Reset seat selection when class changes
+    }
   };
 
   const handleSeatSelection = (seatId: string) => {
-    setSelectedSeats((prevSeats) => {
-      if (prevSeats.includes(seatId)) {
-        return prevSeats.filter((id) => id !== seatId); // Deselect seat
-      }
-      if (prevSeats.length < passengerCount) {
-        return [...prevSeats, seatId]; // Select seat
-      }
-      return prevSeats; // Do nothing if limit reached
-    });
+    if (activeTab === 'outbound') {
+      setSelectedOutboundSeats((prevSeats) => {
+        if (prevSeats.includes(seatId)) {
+          return prevSeats.filter((id) => id !== seatId); // Deselect seat
+        }
+        if (prevSeats.length < passengerCount) {
+          return [...prevSeats, seatId]; // Select seat
+        }
+        return prevSeats; // Do nothing if limit reached
+      });
+    } else {
+      setSelectedReturnSeats((prevSeats) => {
+        if (prevSeats.includes(seatId)) {
+          return prevSeats.filter((id) => id !== seatId); // Deselect seat
+        }
+        if (prevSeats.length < passengerCount) {
+          return [...prevSeats, seatId]; // Select seat
+        }
+        return prevSeats; // Do nothing if limit reached
+      });
+    }
   };
 
   const onPostReview = (description: string, rating: number) => {
@@ -170,7 +220,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
         <span className="h2-bold">{currentFlightDetails.airline.name} {currentFlightDetails.name}</span>
         <span className="h2-bold text-accent-orange">From ${lowestPrice}</span>
       </div>
-      <LocationComponent location={currentFlightDetails.departureAirport.name}/>
+      <LocationComponent location={currentFlightDetails.departure_airport.name}/>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <RatingSummaryComponent
           rating={currentFlightDetails.airline.rating}
@@ -193,14 +243,17 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
           </button>
           <a
             href={
-              selectedSeats.length > 0
-                ? `/find-flights/flight-booking/${currentFlightDetails.id}?seat_ids=${selectedSeats.join(
-                  ","
-                )}`
-                : "#"
+              activeTab === 'outbound' && selectedOutboundSeats.length > 0
+                ? `/find-flights/flight-booking/${currentFlightDetails.id}?seat_ids=${selectedOutboundSeats.join(",")}`
+                : activeTab === 'return' && selectedReturnSeats.length > 0
+                  ? `/find-flights/flight-booking/${currentFlightDetails.id}?seat_ids=${selectedReturnSeats.join(",")}`
+                  : "#"
             }
             className={`rounded-md px-9 py-4 bg-primary-100 ${
-              selectedSeats.length === 0 && "cursor-not-allowed opacity-50"
+              (activeTab === 'outbound' && selectedOutboundSeats.length === 0) ||
+              (activeTab === 'return' && selectedReturnSeats.length === 0)
+                ? "cursor-not-allowed opacity-50"
+                : ""
             }`}
           >
             Book Now
@@ -246,19 +299,20 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
       <div className="flex flex-row justify-between">
         <span className="h2-bold">Seat Selection</span>
         <span>
-          {selectedSeats.length}/{passengerCount} seats selected
+          {activeTab === 'outbound' ? selectedOutboundSeats.length : selectedReturnSeats.length}/{passengerCount} seats selected
         </span>
       </div>
+
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {sortedSeats.map((seat) => (
           <button
             key={seat.id}
             className={`p-4 rounded-md text-center ${
               seat.available
-                ? selectedSeats.includes(seat.id)
+                ? (activeTab === 'outbound' ? selectedOutboundSeats.includes(seat.id) : selectedReturnSeats.includes(seat.id))
                   ? "bg-accent-blue text-white"
                   : "bg-primary-100"
-                : "bg-gray-300 text-gray-500"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
             onClick={() => seat.available && handleSeatSelection(seat.id)}
             disabled={!seat.available}
@@ -283,7 +337,8 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
         </div>
       </div>
       <FlightInformation flightDetails={currentFlightDetails} className="my-4"/>
-      <ReviewsSection averageRating={currentFlightDetails.airline.rating} reviewCount={currentFlightDetails.airline.review_count}
+      <ReviewsSection averageRating={currentFlightDetails.airline.rating}
+                      reviewCount={currentFlightDetails.airline.review_count}
                       reviews={reviews} type="airline" id={Number(currentFlightDetails.airline.id)}
                       onGiveReview={() => setIsAddReviewModalOpen(true)}
                       paginationModel={paginationModel} onPageChange={onPageChange}/>

@@ -9,7 +9,7 @@ export const fetchUser = async (userId: string): Promise<User> => {
     const response = await fetch(`${API_URL}/${userId}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
     });
