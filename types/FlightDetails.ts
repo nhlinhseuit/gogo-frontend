@@ -11,10 +11,10 @@ import Image from "@/types/Image";
   timezone: string;
   seats: Seat[];
   minBaseFare: number;
-  departureAirport: Airport;
-  arrivalAirport: Airport;
-  departureTime: string; // ISO 8601 Date string
-  arrivalTime: string; // ISO 8601 Date string
+  departure_airport: Airport;
+  arrival_airport: Airport;
+  departure_time: string; // ISO 8601 Date string
+  arrival_time: string; // ISO 8601 Date string
     featured_images: Image[];
 }
 

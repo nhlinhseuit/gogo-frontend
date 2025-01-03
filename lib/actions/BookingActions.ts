@@ -10,6 +10,7 @@ import StayBooking from "@/types/StayBooking";
 const API_URL = `${BASE_URL}/api/v1`
 
 export const requestStayBooking = async (roomId: string, checkin: string, checkout: string) => {
+  console.log(roomId, checkin, checkout)
   try {
     const body = {
       user_id: getCurrentUser().id,

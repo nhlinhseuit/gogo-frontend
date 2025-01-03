@@ -14,9 +14,9 @@ interface RoomProps {
 
 const RoomComponent: React.FC<RoomProps> = (props) => {
   const router = useRouter();
-  const handleBookNow = () => {
+  const handleBookNow = (event: any) => {
+    event.preventDefault();
     requestStayBooking(props.room.id, props.checkin, props.checkout).then((data) => {
-      console.log("booking ", data)
       if (data.booking_id) {
         router.push(`/find-stays/stay-booking/${props.stayId}?booking_id=${data.booking_id}&checkin=${props.checkin}&checkout=${props.checkout}&expiration=${data.lock_expiration}`);
       } else {
@@ -51,9 +51,9 @@ const RoomComponent: React.FC<RoomProps> = (props) => {
         <span className="h2-bold">
           ${props.room.base_fare}<span className="text-sm">/night</span>
         </span>
-        <button onClick={() => {
-          handleBookNow()
-        }} className="rounded-md px-9 py-4 bg-primary-100">Book Now
+        <button onClick={
+          handleBookNow
+        } className="rounded-md px-9 py-4 bg-primary-100">Book Now
         </button>
       </div>
 

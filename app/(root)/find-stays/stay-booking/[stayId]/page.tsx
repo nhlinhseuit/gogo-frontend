@@ -35,7 +35,7 @@ const StayBookingPage: React.FC = () => {
 
   if (!stayId || !checkin || !checkout || !lock_expiration) {
     return <div>
-      Missing required parameters
+      Missing requnpm ired parameters
     </div>
   }
   const targetTime = useMemo(() => convertToLocaleDate(lock_expiration), [lock_expiration]);
