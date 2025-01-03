@@ -296,7 +296,7 @@ function FlightsSearch() {
                   <>
                     <p className="my-2 paragraph-semibold">
                       {paramsData.departure_location} ➡{" "}
-                      {paramsData.arrival_location}
+                      {paramsData.arrival_location} (1)
                     </p>
 
                     <div>
@@ -322,7 +322,7 @@ function FlightsSearch() {
                   <>
                     <p className="my-2 paragraph-semibold">
                       {paramsData.arrival_location} ➡{" "}
-                      {paramsData.departure_location}
+                      {paramsData.departure_location} (2)
                     </p>
                     <div>
                       {flights?.map((flight, index) => (
