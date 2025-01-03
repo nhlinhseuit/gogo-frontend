@@ -391,7 +391,7 @@ const FlightsInput = ({
         <></>
       ) : (
         <div className="flex flex-row justify-end mt-4 mb-2">
-          <div className="flex flex-row justify-center items-center mr-4 cursor-pointer">
+          {/* <div className="flex flex-row justify-center items-center mr-4 cursor-pointer">
             <Image
               src="/assets/icons/add.svg"
               width={20}
@@ -410,7 +410,7 @@ const FlightsInput = ({
             >
               Add Promo Code
             </p>
-          </div>
+          </div> */}
 
           <CustomButton
             srcUrl="/assets/icons/show_flights.svg"

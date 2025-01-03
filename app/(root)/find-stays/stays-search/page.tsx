@@ -291,11 +291,11 @@ function StaysSearch() {
                     />
                 ))}
               </div>
-              <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
+              {/* <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
                 <p className="paragraph-semibold text-white">
                   Show more result
                 </p>
-              </div>
+              </div> */}
             </div>
           )}
         </div>

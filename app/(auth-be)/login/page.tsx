@@ -79,7 +79,6 @@ const Login = () => {
   };
 
   const handleAuthen = () => {
-
     if (email === "" && password === "") {
       toast({
         title: `Login failed!`,
