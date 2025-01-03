@@ -116,7 +116,8 @@ const StayBookingPage: React.FC = () => {
     }
 
     const customerInfo = {
-      customer_name: guestFirstName + " " + guestLastName,
+      first_name: guestFirstName,
+      last_name: guestLastName,
       customer_email: guestEmail,
       customer_phone: guestPhone,
       customer_country: guestCountry,

@@ -49,11 +49,11 @@ export const confirmStayBooking = async (customerInfo: any, card: Card, booking_
   try {
     const body = {
       booking_id: booking_id,
-      email: getCurrentUser().email,
-      phone: customerInfo.customer_name,
-      country: customerInfo.customer_phone,
-      first_name: customerInfo.customer_email,
-      last_name: customerInfo.customer_country,
+      email: customerInfo.customer_email,
+      phone: customerInfo.customer_phone,
+      country: customerInfo.customer_country,
+      first_name: customerInfo.first_name,
+      last_name: customerInfo.last_name,
     }
     console.log(JSON.stringify(body))
     const response = await fetch(`${API_URL}/stays/booking/guest-info`, {
