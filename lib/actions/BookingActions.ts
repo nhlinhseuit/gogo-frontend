@@ -4,7 +4,6 @@ import FlightBooking from "@/types/FlightBooking";
 import Card from "@/types/Card";
 import {createPayment} from "@/lib/actions/PaymentActions";
 import {handleError} from "@/lib/actions/HandleError";
-import {patchConsoleError} from "next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info";
 import StayBooking from "@/types/StayBooking";
 
 const API_URL = `${BASE_URL}/api/v1`
@@ -81,7 +80,7 @@ export const confirmStayBooking = async (customerInfo: any, card: Card, booking_
   }
 }
 
-export const fetchStayBooking= async (id: string): Promise<StayBooking> => {
+export const fetchStayBooking = async (id: string): Promise<StayBooking> => {
   try {
     const response = await fetch(`${API_URL}/stays/booking/${id}`, {
       method: "GET",
@@ -104,6 +103,34 @@ export const fetchStayBooking= async (id: string): Promise<StayBooking> => {
     throw error;
   }
 }
+
+// export const requestFlightBooking = async (seatIds: String[]): Promise<any> => {
+//   try {
+//     const body = {
+//       seatIds: seatIds
+//     }
+//     const response = await fetch(`${API_URL}/flight-booking`, {
+//       method: "POST",
+//       headers: {
+//         "Authorization": `Bearer ${getToken()}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(body)
+//     })
+//
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       const apiError = errorData.apierror;
+//       handleError(apiError);
+//     }
+//
+//     const data = response.json();
+//     return data.id;
+//   } catch (error) {
+//     console.error('Error requesting flight booking:', error);
+//     throw error;
+//   }
+// }
 export const confirmFlightBooking = async (passengerInfo: Array<any>, card: Card, bookingId: string): Promise<FlightBooking> => {
   try {
     const seats = passengerInfo.map((passenger) => {
