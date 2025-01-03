@@ -3,6 +3,7 @@ import AddEmailButton from "@/components/shared/Profile/AddEmailButton";
 import UserInfo from "@/types/UserInfo";
 import EditableField from "../EditableField";
 import { useState, useEffect } from "react";
+import { editUserInfo } from "@/lib/actions/Profile/EditUserInfo";
 
 const AccountInfoSection = ({
   userInfo,
@@ -20,12 +21,8 @@ const AccountInfoSection = ({
 
       // Gọi API PATCH
       try {
-        await fetch("/api/update-user-info", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ [field]: newValue }),
+        editUserInfo(field, newValue).then((data) => {
+          console.log("data", data);
         });
       } catch (error) {
         console.error("Error updating user info:", error);

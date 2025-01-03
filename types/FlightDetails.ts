@@ -10,7 +10,6 @@ interface FlightDetails {
   gate: string;
   timezone: string;
   seats: Seat[];
-  minBaseFare: number;
   departure_airport: Airport;
   arrival_airport: Airport;
   departure_time: string; // ISO 8601 Date string

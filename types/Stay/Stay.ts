@@ -72,7 +72,7 @@ interface Service {
 
 interface UserInfo {
   id: string;
-  firstName: string;
+  first_name: string;
   lastName: string;
 }
 

@@ -6,6 +6,10 @@ const API_URL = `${BASE_URL}/api/v1/flights/filter`;
 
 export const searchFlights = async (body: any): Promise<Flight[]> => {
   try {
+    console.log('searchFlights')
+
+    console.log('body', body)
+    
     // const token = getToken();
     const response = await fetch(API_URL, {
       method: "POST",
@@ -15,6 +19,8 @@ export const searchFlights = async (body: any): Promise<Flight[]> => {
       },
       body: body ? JSON.stringify(body) : null,
     });
+    
+    console.log('response', response)
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
