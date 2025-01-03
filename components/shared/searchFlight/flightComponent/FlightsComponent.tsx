@@ -41,6 +41,8 @@ const FlightsComponent = ({
   const [error, setError] = useState<string | null>(null);
   const currentUser = getCurrentUser();
 
+  console.log("item", item);
+
   //TODO: XÀI TẠM THỜI
   // const userId = "3";
 

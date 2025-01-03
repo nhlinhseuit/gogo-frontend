@@ -3,9 +3,9 @@ import User from "@/types/User";
 
 interface BookingInfo {
   id: string;
-  totalDiscount: number;
-  totalBill: number;
-  bookingData: string
+  total_discount: number;
+  total_bill: number;
+  bookingData: string;
 }
 
 interface Payment {

@@ -22,8 +22,8 @@ interface BookingStay {
 }
 
 interface SeatBookingStay {
-  seatNumber: string; 
-  seatType: string; 
+  seatNumber: string;
+  seatType: string;
 }
 
 export default BookingStay;

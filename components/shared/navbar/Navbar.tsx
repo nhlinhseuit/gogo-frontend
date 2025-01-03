@@ -10,6 +10,8 @@ import StaysBackground from "./background-searchtab/StaysBackground";
 import { getCurrentUser } from "@/utils/util";
 import MyProfileAvatar from "../MyProfileAvatar";
 import { useToast } from "@/hooks/use-toast";
+import UserInfo from "@/types/UserInfo";
+import { getUserInfo } from "@/lib/actions/Profile/GetUserInfo";
 
 const Navbar = () => {
   const pathName = usePathname();
@@ -17,11 +19,27 @@ const Navbar = () => {
   const { toast } = useToast();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [avatar, setAvatar] = useState("/assets/images/avt.png");
+
   useEffect(() => {
-    setCurrentUser(getCurrentUser());
+    const currentUser = getCurrentUser()
+
+    if (currentUser) {
+      getUserInfo()
+        .then((data: any) => {
+          console.log(
+            "(data.data as UserInfo).avatar_url",
+            (data.data as UserInfo).avatar_url
+          );
+          setAvatar((data.data as UserInfo).avatar_url);
+        })
+        .catch((error) => {});
+    }
+
+    setCurrentUser(currentUser);
     setIsMounted(true);
   }, []);
 
@@ -60,15 +78,14 @@ const Navbar = () => {
         `}
       >
         {/* Background Components */}
-        {isMounted && (
-          pathName === "/" ? (
+        {isMounted &&
+          (pathName === "/" ? (
             <HomeBackground />
           ) : pathName === "/find-flights" ? (
             <FlightsBackground />
           ) : pathName === "/find-stays" ? (
             <StaysBackground />
-          ) : null
-        )}
+          ) : null)}
 
         {/* Navigation Links */}
         <div className="flex flex-row items-center gap-6 h-full">
@@ -205,11 +222,11 @@ const Navbar = () => {
 
           {/* Auth Section */}
           <div className="flex gap-2 items-center relative">
-            {isMounted && (
-              currentUser ? (
+            {isMounted &&
+              (currentUser ? (
                 <>
                   <div onClick={toggleDropdown} className="cursor-pointer">
-                    <MyProfileAvatar img="/assets/images/avatar.JPG" />
+                    <MyProfileAvatar img={avatar} />
                   </div>
                   {isDropdownOpen && (
                     <div className="absolute top-full right-0 mt-2 bg-white shadow-lg border rounded-lg w-48 p-2 z-50">
@@ -245,8 +262,7 @@ const Navbar = () => {
                 >
                   Login
                 </p>
-              )
-            )}
+              ))}
           </div>
         </div>
       </nav>

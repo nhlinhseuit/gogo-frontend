@@ -1,11 +1,14 @@
 import { editUserAvatar } from "@/lib/actions/Profile/EditUserAvatar";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import BigLoadingSpinner from "./BigLoadingSpinner";
+import LoadingSpinner from "./LoadingSpinner";
 
 const MyAvatar = ({ img }: { img: string | undefined }) => {
   const [avatarSrc, setAvatarSrc] = useState("/assets/images/avt.png");
   const [tempAvatarFile, setTempAvatarFile] = useState<File | null>(null);
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Cập nhật avatarSrc khi `img` thay đổi
   useEffect(() => {
@@ -43,9 +46,14 @@ const MyAvatar = ({ img }: { img: string | undefined }) => {
       const formData = new FormData();
       formData.append("file", tempAvatarFile);
 
-      await editUserAvatar(formData); // Gửi form data chứa file avatar
-      setTempAvatarFile(null);
-      alert("Avatar updated successfully!");
+      setIsLoading(true);
+
+      // Gửi form data chứa file avatar
+      editUserAvatar(formData).then((data) => {
+        setIsLoading(false);
+        setTempAvatarFile(null);
+        alert("Avatar updated successfully!");
+      });
     } catch (error) {
       console.error("Error updating avatar picture:", error);
       alert("Failed to update avatar.");
@@ -95,16 +103,22 @@ const MyAvatar = ({ img }: { img: string | undefined }) => {
         }}
         onClick={handleEditClick}
       >
-        <Image
-          src={
-            isEditingAvatar
-              ? `/assets/icons/save.svg`
-              : `/assets/icons/edit-profile.svg`
-          }
-          width={16}
-          height={16}
-          alt={isEditingAvatar ? "Save" : "Edit"}
-        />
+        {isLoading ? (
+          <div className="mb-4 mr-1">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <Image
+            src={
+              isEditingAvatar
+                ? `/assets/icons/save.svg`
+                : `/assets/icons/edit-profile.svg`
+            }
+            width={16}
+            height={16}
+            alt={isEditingAvatar ? "Save" : "Edit"}
+          />
+        )}
       </div>
 
       {/* Hidden File Input */}
