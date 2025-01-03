@@ -286,10 +286,10 @@ function StaysSearch() {
                       item={stay}
                       paramsRef={params}
                       isFavorite
-                      // checkin={params["checkin_date"] ?? ""}
-                      // checkout={params["checkout_date"] ?? ""}
+                      checkin={params["checkin_date"] ?? ""}
+                      checkout={params["checkout_date"] ?? ""}
                     />
-                  ))}
+                ))}
               </div>
               <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
                 <p className="paragraph-semibold text-white">

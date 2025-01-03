@@ -14,7 +14,7 @@ import {useParams, useRouter, useSearchParams} from "next/navigation";
 import Price from "@/types/Price";
 import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
-import {convertToLocaleDate, getCurrentUser} from "@/utils/util";
+import {convertDataReceive, convertToLocaleDate, getCurrentUser} from "@/utils/util";
 import {confirmStayBooking, fetchStayBooking} from "@/lib/actions/BookingActions";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import {toast} from "@/hooks/use-toast";
@@ -57,6 +57,7 @@ const StayBookingPage: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
+  const currentUser = getCurrentUser();
 
   const fetchCards = () => {
     fetchUserCards(getCurrentUser().id).then((data) => {
@@ -69,7 +70,24 @@ const StayBookingPage: React.FC = () => {
     });
   }
 
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
   useEffect(() => {
+    //? Middleware
+    if (!currentUser) {
+      setIsAuthenticated(false);
+
+      const params = convertDataReceive(searchParams);
+      const queryString = new URLSearchParams(params).toString();
+
+      setTimeout(() => {
+        router.push(`/login?${queryString}`);
+      }, 2300);
+      return;
+
+    } else {
+      setIsAuthenticated(true);
+
     fetchStayBooking(bookingId!).then((data) => {
       setBookingData(data);
       setRoomData(data.room);
@@ -93,6 +111,8 @@ const StayBookingPage: React.FC = () => {
     });
 
     fetchCards();
+
+  }
   }, []);
 
   const onSelectCountry = (country: string) => {

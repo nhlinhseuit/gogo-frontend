@@ -7,8 +7,8 @@ interface BookingStay {
   user: User;
   status: string;
   bookingDate: string;
-  updateDate: string;
-  seats: SeatBookingStay[];
+  updateDate?: string;
+  seats?: SeatBookingStay[];
   room?: Room;
   checkinDate?: string;
   checkoutDate?: string;
