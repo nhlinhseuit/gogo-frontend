@@ -10,7 +10,7 @@ export const fetchRoom = async (roomId: string): Promise<Room> => {
     const response = await fetch(`${API_URL}/${roomId}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
         "Content-Type": "application/json",
       },
     });
