@@ -105,6 +105,8 @@ const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
         });
     }
   };
+  
+console.log('item', item)
 
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
