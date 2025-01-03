@@ -167,9 +167,7 @@ export const createNewStay = async (formData: FormData): Promise<Stay> => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      const apiError = errorData.apierror;
-      handleError(apiError);
+      throw new Error('Failed to create stay');
     }
 
     const data = await response.json();
@@ -198,9 +196,7 @@ export const getAllBookings = async (
     );
 
     if (!response.ok) {
-      const errorData = await response.json();
-      const apiError = errorData.apierror;
-      handleError(apiError);
+      throw new Error('Failed to get bookings');
     }
 
     const data = await response.json();

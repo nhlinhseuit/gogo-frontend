@@ -129,7 +129,7 @@ const BookingsTable: React.FC<BookingTableProps> = (props) => {
                 {booking.id}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {`${booking.first_name ?? ""} ${booking.lastName ?? ""}`}
+                {`${booking.firstName ?? ""} ${booking.lastName ?? ""}`}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {booking.room.id}

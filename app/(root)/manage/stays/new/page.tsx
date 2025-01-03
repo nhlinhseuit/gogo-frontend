@@ -3,6 +3,7 @@ import React, {FormEvent, useEffect, useState} from 'react';
 import {createNewStay, getAllAmenities, getAllLocations} from '@/lib/actions/ManageActions';
 import Amenity from "@/types/Amenity";
 import LocationType from "@/types/LocationType";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 const AddNewStay: React.FC = () => {
   const [locations, setLocations] = useState<LocationType[]>([]);
@@ -19,7 +20,7 @@ const AddNewStay: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
   const [latitude, setLatitude] = useState('0');
   const [longitude, setLongitude] = useState('0');
-  const [isLoading, setisLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Fetch locations and amenities on component mount
   useEffect(() => {
@@ -58,12 +59,13 @@ const AddNewStay: React.FC = () => {
   // Submit form
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setisLoading(true);
+    setIsLoading(true);
     const formData = new FormData();
     formData.append('name', name);
     formData.append('address', address);
     formData.append('location_id', locationId);
     formData.append('star_rating', starRating.toString());
+    formData.append('status', 'ACTIVE');
     formData.append('stay_type', stayType);
     formData.append('overview', overview);
     formData.append('latitude', '0');
@@ -81,8 +83,12 @@ const AddNewStay: React.FC = () => {
     } catch (error) {
       console.error('Failed to create stay', error);
     }
-    setisLoading(false);
+    setIsLoading(false);
   };
+
+  if(isLoading) {
+    return <BigLoadingSpinner/>;
+  }
 
   return (
     <div>

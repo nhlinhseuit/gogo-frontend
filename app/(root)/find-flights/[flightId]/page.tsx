@@ -62,7 +62,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
     fetchFlightDetails(params.flightId)
       .then((data) => {
         setOutboundFlightDetails(data);
-        setMainImage(data.featured_images[0]?.url || "");
+        setMainImage(data.featured_images[0]?.url || "/assets/images/bg-flights-rs.jpg");
         setLowestPrice(
           Math.min(...data.seats.map((seat) => seat.base_fare))
         );
@@ -85,7 +85,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
   useEffect(() => {
     const currentFlightDetails = activeTab === 'outbound' ? outboundFlightDetails : returnFlightDetails;
     if (currentFlightDetails) {
-      setMainImage(currentFlightDetails.featured_images[0]?.url || "");
+      setMainImage(currentFlightDetails.featured_images[0]?.url || "/assets/images/bg-flights-rs.jpg");
       fetchReviews(currentFlightDetails.airline.id);
     }
   }, [activeTab, outboundFlightDetails, returnFlightDetails]);
@@ -209,6 +209,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
             />
           </button>
           <button
+            className="p-4 px-8 rounded-md bg-primary-100"
             onClick={handleBooking}
           >
             Book Now
@@ -216,7 +217,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
         </div>
       </div>
       <img
-        src={mainImage ?? ""}
+        src={mainImage ?? "/assets/images/bg-flights-rs.jpg"}
         className="w-full h-[650px] object-cover"
         alt="Flight"
       />
