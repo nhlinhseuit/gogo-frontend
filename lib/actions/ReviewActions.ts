@@ -22,7 +22,7 @@ export const fetchServiceReview = async (serviceId: string, page: number = 0, si
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
       },
     });
 
