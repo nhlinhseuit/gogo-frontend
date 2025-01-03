@@ -1,5 +1,6 @@
 import User from "@/types/User";
 import Room from "@/types/Room";
+import Stay from "@/types/Stay";
 
 interface StayBooking {
   id: string;
@@ -16,6 +17,7 @@ interface StayBooking {
   email: string;
   phone: string;
   country: string;
+  stay: Stay;
 }
 
 export default StayBooking;

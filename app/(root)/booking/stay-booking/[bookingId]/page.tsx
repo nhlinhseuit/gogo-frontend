@@ -43,13 +43,12 @@ const StayBookingInfoPage: React.FC = () => {
 
   return (
     <div className="flex flex-col my-4 gap-8">
-      <div className="flex flex-col justify-between md:flex-row">
-        {/*<span className="h2-bold">{stayBookingData}</span>*/}
+      <div className="flex flex-col justify-between">
+        <span className="h2-bold">{stayBookingData.stay.name}</span>
+        <span>{stayBookingData.stay.location.city}</span>
       </div>
 
       <div className="flex flex-col justify-between md:flex-row">
-        {/*TODO: LOCATION*/}
-        {/*<span></span>*/}
         <div className="flex flex-row gap-4">
           <button className="rounded-md px-9 py-4 bg-primary-100" onClick={() => toPDF()}>Download</button>
         </div>

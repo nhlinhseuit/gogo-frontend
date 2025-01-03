@@ -28,13 +28,13 @@ const StayTicket: React.FC<StayTicketProps> = (props) => {
         format: "CODE128",
         displayValue: false,
         height: 60,
-        width: 2
+        width: 1
       });
     }
   }, [barcodeRef, stayBookingData]);
 
   return (
-    <div className="flex h-auto flex-row border-2 overflow-hidden rounded-lg w-[900px]">
+    <div className="flex h-auto w-50 flex-row overflow-hidden rounded-lg border-2">
       <div className="flex flex-col justify-between gap-2 p-8 pr-16 bg-primary-500">
         <div className="flex flex-col">
           <span className="h2-bold">{stayBookingData.checkinDate}</span>
@@ -53,8 +53,8 @@ const StayTicket: React.FC<StayTicketProps> = (props) => {
           </div>
           <span className="font-bold">{stayBookingData.room.name}</span>
         </div>
-        <div className="flex flex-col gap-16 h-full justify-between p-8">
-          <div className="flex flex-row justify-between items-center">
+        <div className="flex h-full flex-col justify-between gap-16 p-8">
+          <div className="flex flex-row items-center gap-24">
             <div className="flex flex-row gap-2">
               <img src="/assets/icons/time-icon.svg" alt="time" className="flex-grow size-12" />
               <div className="flex flex-col">
@@ -80,8 +80,7 @@ const StayTicket: React.FC<StayTicketProps> = (props) => {
             </div>
           </div>
 
-          <div className="flex flex-row items-center justify-between">
-            <div className="h2-bold">{stayBookingData.id}</div>
+          <div className="flex flex-row justify-end">
             <svg ref={barcodeRef}></svg>
           </div>
         </div>
