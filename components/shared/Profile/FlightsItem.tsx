@@ -5,11 +5,35 @@ import { formatDateToYYYYMMDD } from "@/utils/util";
 import Image from "next/image";
 import { usePDF } from "react-to-pdf";
 import MyIcon from "./MyIcon";
+import { useEffect, useState } from "react";
+import { fetchFlightBooking } from "@/lib/actions/BookingActions";
+import { toast } from "@/hooks/use-toast";
+import FlightTicket from "@/components/FlightTicket";
 
 const FlightsItem = ({ item }: { item: FlightBooking }) => {
-  const { toPDF, targetRef } = usePDF({ filename: "stay-ticket.pdf" });
+  const { toPDF, targetRef } = usePDF({ filename: "flight-ticket.pdf" });
+
+  const [flightBookingData, setFlightBookingData] =
+    useState<FlightBooking | null>(null);
+
+  useEffect(() => {
+    fetchFlightBooking(item.id)
+      .then((data) => {
+        setFlightBookingData(data);
+        console.log(flightBookingData);
+      })
+      .catch((error) => {
+        console.error("Error fetching flight booking:", error);
+        toast({
+          title: `Error fetching Booking: ${error}`,
+          variant: "error",
+          duration: 3000,
+        });
+      });
+  }, []);
 
   return (
+    <>
       <div className="relative w-full">
         {/* Ticket content for PDF */}
         <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
@@ -88,7 +112,10 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
         </button>
       </div>
 
-      
+      <div ref={targetRef}>
+        {flightBookingData && <FlightTicket booking={flightBookingData} />}
+      </div>
+    </>
   );
 };
 

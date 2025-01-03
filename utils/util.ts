@@ -206,18 +206,19 @@ export const formatDayFromInputToNormalDateApi = (date: Date): string => {
 export const formatDayFromInputToISODateApi = (
   date: Date
 ): { startTime: string; endTime: string } => {
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
-  // (6h sáng)
-  const startTime = `${year}-${month}-${day}T06:00:00Z`;
+  // Bắt đầu từ 0h sáng
+  const startTime = `${year}-${month}-${day}T00:00:00Z`;
 
-  // (10h tối)
-  const endTime = `${year}-${month}-${day}T22:00:00Z`;
+  // Kết thúc lúc 23:59:59
+  const endTime = `${year}-${month}-${day}T23:59:59Z`;
 
   return { startTime, endTime };
 };
+
 
 //? KHI NHẬN GIÁ TRỊ TỪ PARAMS, CONVERT ĐỂ HIỂN THỊ TRÊN FLIGHTSINPUT VÀ STAYSINPUT
 export const parseNormalDateFromSearchParamsToDayOfInput = (

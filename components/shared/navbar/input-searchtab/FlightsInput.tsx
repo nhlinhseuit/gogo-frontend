@@ -218,6 +218,7 @@ const FlightsInput = ({
   const validateAndNavigateWithParams = ({ replace }: { replace: boolean }) => {
     if (!handleValid()) return;
 
+
     const params = {
       // page: 0,
       roundTrip: tripType === "Round trip",
