@@ -14,6 +14,7 @@ export const fetchStay = async (stayId: string): Promise<Stay> => {
       headers: {
         // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
+        // "Authorization": `Bearer ${getToken()}`,
 
       },
     });
@@ -38,7 +39,7 @@ export const fetchStays = async (): Promise<Stay[]> => {
       headers: {
         // "Authorization": `Bearer ${getCurrentUser().token}`,
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
 
       },
     });

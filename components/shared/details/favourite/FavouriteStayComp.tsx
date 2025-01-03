@@ -15,8 +15,12 @@ const FavouriteStayComp = ({
   item,
   paramsRef,
   isFavorite,
+  checkin,
+  checkout
 }: {
   item: Stay;
+  checkin: string;
+  checkout: string;
   paramsRef?: any;
   isFavorite?: boolean;
 }) => {
@@ -108,13 +112,13 @@ const FavouriteStayComp = ({
   const router = useRouter();
 
   const handleClickStayItem = (
-    stayId: string
-    // checkin: string,
-    // checkout: string
+    stayId: string,
+    checkin: string,
+    checkout: string,
   ) => {
-    // router.push(
-    //   `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
-    // );
+    router.push(
+      `/find-stays/${stayId}?checkin=${checkin}&checkout=${checkout}`
+    );
   };
 
   return (
@@ -239,8 +243,8 @@ const FavouriteStayComp = ({
           </div>
           <button
             onClick={() => {
-              handleClickStayItem(item.id);
-              // handleClickStayItem(item.id, checkin, checkout);
+              // handleClickStayItem(item.id);
+              handleClickStayItem(item.id, checkin, checkout);
             }}
             className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold transform transition-transform hover:scale-95 duration-300"
           >

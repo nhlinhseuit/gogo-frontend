@@ -13,16 +13,23 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "../../globals.css";
+import NoResult from "@/components/shared/NoResult";
 
 export default function Profile() {
-  //? Middleware
-  const router = useRouter();
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      router.replace(`/login?ref=profile`);
-    }
-  }, []);
+  const tabs = [
+    {
+      type: "Account",
+      title: "Account",
+    },
+    {
+      type: "Tickets/Bookings",
+      title: "Tickets/Bookings",
+    },
+    {
+      type: "Payment methods",
+      title: "Payment methods",
+    },
+  ];
 
   const [isSelected, setIsSelected] = useState("Account");
   const [userInfo, setUserInfo] = useState<UserInfo>();
@@ -37,19 +44,33 @@ export default function Profile() {
 
   const [isEditingCover, setIsEditingCover] = useState(false);
 
-  //! xem lại sd tempcoverimg
-  //! sửa lại hiển thị image từ API, hiển thị được hình, sửa cho avatar
+  //? Middleware
+  const currentUser = getCurrentUser();
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    getUserInfo()
-      .then((data: any) => {
-        setUserInfo(data.data);
-        // setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        // setIsLoading(false);
-      });
+    if (!currentUser) {
+      setIsAuthenticated(false);
+
+      setTimeout(() => {
+        router.push(`/login?ref=profile`);
+      }, 2300);
+    } else {
+      setIsAuthenticated(true);
+
+      getUserInfo()
+        .then((data: any) => {
+          setUserInfo(data.data);
+          // setIsLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
+    }
   }, []);
 
   const [coverImage, setCoverImage] = useState("/assets/images/bg.png");
@@ -69,9 +90,6 @@ export default function Profile() {
     try {
       const formData = new FormData();
       formData.append("file", tempCoverImage); // Thêm file ảnh vào form data
-
-      console.log("File in FormData:", formData.get("file"));
-
       await editUserCoverPicture(formData); // Gửi form data qua API
       alert("Avatar updated successfully!");
     } catch (error) {
@@ -125,20 +143,23 @@ export default function Profile() {
     else return <PaymentInfoSection />;
   };
 
-  const tabs = [
-    {
-      type: "Account",
-      title: "Account",
-    },
-    {
-      type: "Tickets/Bookings",
-      title: "Tickets/Bookings",
-    },
-    {
-      type: "Payment methods",
-      title: "Payment methods",
-    },
-  ];
+  if (isAuthenticated === null) {
+    return (
+      <NoResult
+        title="Checking..."
+        description="We are checking your informations..."
+      />
+    );
+  }
+
+  if (isAuthenticated === false) {
+    return (
+      <NoResult
+        title="Wait a sec..."
+        description="You will be redirected to login page in just a few seconds..."
+      />
+    );
+  }
 
   return (
     <main className="mb-16">

@@ -3,7 +3,7 @@ import Seat from "@/types/Seat";
 import Airport from "@/types/Airport";
 import Image from "@/types/Image";
 
-  interface FlightDetails {
+interface FlightDetails {
   id: string;
   name: string;
   airline: Airline;
