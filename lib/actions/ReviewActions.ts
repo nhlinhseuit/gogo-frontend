@@ -55,7 +55,7 @@ export const fetchServiceReview = async (serviceId: string, page: number = 0, si
       total_page: data.total_page,
     };
   } catch (error) {
-    console.error('Error fetching service reviews:', error);
+    console.error('Error fetching reviews:', error);
     throw error;
   }
 };
