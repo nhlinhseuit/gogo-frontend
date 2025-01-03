@@ -77,3 +77,29 @@ export const updateRoom = async (room: Room): Promise<Room> => {
     throw error;
   }
 }
+
+export const createRoom = async (formData: FormData): Promise<Room> => {
+  try {
+    console.log(formData)
+    const response = await fetch(`${API_URL}/rooms/admin`, {
+      method: "POST",
+      headers: {
+        // No 'Content-Type' header is needed for FormData
+        "Authorization": `Bearer ${getToken()}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      const apiError = errorData.apierror;
+      handleError(apiError);
+    }
+
+    const data = await response.json();
+    return data.data as Room;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

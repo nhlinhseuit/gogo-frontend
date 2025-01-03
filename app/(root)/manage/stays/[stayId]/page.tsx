@@ -51,7 +51,15 @@ const ManageStayPage: React.FC = () => {
   }
 
   return (
-    <RoomTableComponent rooms={rooms} onEdit={onEdit} onDelete={onDelete}/>
+    <div className="flex flex-col gap-8 py-8">
+      <div className="flex flex-row items-center justify-between">
+      <h1 className="h2-bold">Manage Your Stays</h1>
+        <button
+          onClick={() => router.push(`/manage/stays/${stayId}/rooms/new`)}
+          className="px-4 py-2 bg-primary-100 rounded text-md font-semibold">Add New Room</button>
+      </div>
+      <RoomTableComponent rooms={rooms} onEdit={onEdit} onDelete={onDelete}/>
+    </div>
   )
 }
 

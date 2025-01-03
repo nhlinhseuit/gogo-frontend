@@ -36,17 +36,6 @@ const ShowRoomPage: React.FC = () => {
       });
   }, [roomId]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const {name, value, type} = e.target;
-    setRoom((prevRoom) => {
-      if (!prevRoom) return null; // Ensure prevRoom is not null
-      return {
-        ...prevRoom,
-        [name]: type === "number" ? Number(value) : value,
-      };
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (room) {
@@ -76,13 +65,26 @@ const ShowRoomPage: React.FC = () => {
     })
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    setRoom((prevRoom) => {
+      if (!prevRoom) return null; // Ensure prevRoom is not null
+      return {
+        ...prevRoom,
+        [name]: type === "number" ? (value === "" ? 0 : Number(value)) : value, // Set to 0 if empty
+      };
+    });
+  };
+
   if (isLoading || !room) {
     return <BigLoadingSpinner/>;
   }
 
+
+
   return (
     <div>
-      <h1>Show Room</h1>
+      <h1 className="h2-bold py-8">{room.name}</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-medium">Name</label>
@@ -96,37 +98,22 @@ const ShowRoomPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block font-medium">Type</label>
-          <select
-            name="type"
-            value={room.type}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          >
-            <option value="Standard">Standard</option>
-            <option value="Deluxe">Deluxe</option>
-            <option value="Suite">Suite</option>
-            <option value="Family">Family</option>
-            <option value="Presidential">Presidential</option>
-          </select>
-        </div>
-        <div>
           <label className="block font-medium">Base Fare</label>
           <input
             type="number"
             name="base_fare"
-            value={room.base_fare}
+            value={room.base_fare || ""} // Use || "" to handle 0 case
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
             required
           />
         </div>
         <div>
-          <label className="block font-medium">Discount (%)</label>
+          <label className="block font-medium">Discount ($)</label>
           <input
             type="number"
             name="discount"
-            value={room.discount}
+            value={room.discount || ""} // Use || "" to handle 0 case
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
@@ -136,7 +123,7 @@ const ShowRoomPage: React.FC = () => {
           <input
             type="number"
             name="tax"
-            value={room.tax}
+            value={room.tax || ""} // Use || "" to handle 0 case
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
@@ -146,61 +133,31 @@ const ShowRoomPage: React.FC = () => {
           <input
             type="number"
             name="service_fee"
-            value={room.service_fee}
+            value={room.service_fee || ""} // Use || "" to handle 0 case
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
-        </div>
-        <div>
-          <label className="block font-medium">Available</label>
-          <select
-            name="is_available"
-            value={String(room.is_available)}
-            onChange={(e) =>
-              setRoom((prevRoom) => {
-                if (!prevRoom) return null;
-                return {
-                  ...prevRoom,
-                  is_available: e.target.value === "true",
-                };
-              })
-            }
-            className="w-full p-2 border border-gray-300 rounded"
-          >
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
         </div>
         <div>
           <label className="block font-medium">Max Guests</label>
           <input
             type="number"
             name="max_guests"
-            value={room.max_guests}
+            value={room.max_guests || ""} // Use || "" to handle 0 case
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
-        <div>
-          <label className="block font-medium">Image URL</label>
-          <input
-            type="text"
-            name="image_url"
-            value={room.image_url}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-center space-x-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded"
+            className="px-4 py-2 bg-primary-100 w-full rounded"
           >
             Save
           </button>
         </div>
+        <img src={room.image_url} alt="" className="mx-auto"/>
       </form>
-      {/*<RoomAvailabilityComponent roomId={"1"}/>*/}
     </div>
   );
 };
