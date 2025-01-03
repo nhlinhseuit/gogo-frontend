@@ -155,6 +155,8 @@ const FlightBookingPage: React.FC = () => {
       }, 2300);
       return;
     } else {
+      setIsAuthenticated(true);
+
     fetchFlightDetails(flightId).then((data) => {
       setFlightDetails(data);
     }).catch((error) => {
