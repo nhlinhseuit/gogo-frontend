@@ -3,6 +3,7 @@
 import FavouriteFlightComp from "@/components/shared/details/favourite/FavouriteFlightComp";
 import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
 import Tab from "@/components/shared/details/favourite/Tab";
+import NoResult from "@/components/shared/NoResult";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
 import FavouriteFlights from "@/types/FavouriteFlights";
@@ -25,79 +26,6 @@ const tabs = [
   },
 ];
 
-// const MockFlightData = [
-//   {
-//     id: 1,
-//     isFavourite: true,
-//     img: "/assets/images/favourite.svg",
-//     title: "Eresin Hotels - Boutique Class",
-//     address: "Chiet Giang, Trung Quoc",
-//     star: 5,
-//     aminities: "20+",
-//     rating: 4.2,
-//     review: "Very Good",
-//     countReview: 371,
-//     price: 240,
-//   },
-
-//   {
-//     id: 2,
-//     isFavourite: true,
-//     img: "/assets/images/favourite.svg",
-//     title: "Eresin Hotels - Boutique Class",
-//     address: "Chiet Giang, Trung Quoc",
-//     star: 5,
-//     aminities: "20+",
-//     rating: 4.2,
-//     review: "Very Good",
-//     countReview: 371,
-//     price: 240,
-//   },
-//   {
-//     id: 3,
-//     isFavourite: true,
-//     img: "/assets/images/favourite.svg",
-//     title: "Eresin Hotels - Boutique Class",
-//     address: "Chiet Giang, Trung Quoc",
-//     star: 5,
-//     aminities: "20+",
-//     rating: 4.2,
-//     review: "Very Good",
-//     countReview: 371,
-//     price: 240,
-//   },
-// ];
-
-// const MockPlaceData = [
-//   {
-//     id: 1,
-//     isFavourite: true,
-//     img: "/assets/images/favourite.svg",
-//     title: "Eresin Hotels - Boutique Class",
-//     address: "Chiet Giang, Trung Quoc",
-//     star: 5,
-//     aminities: "20+",
-//     rating: 4.2,
-//     review: "Very Good",
-//     countReview: 371,
-//     price: 2400,
-//   },
-
-//   {
-//     id: 2,
-//     isFavourite: true,
-//     img: "/assets/images/favourite.svg",
-//     title: "Eresin Hotels - Boutique Class",
-//     address: "Chiet Giang, Trung Quoc",
-//     star: 5,
-//     aminities: "20+",
-//     rating: 4.2,
-//     review: "Very Good",
-//     countReview: 371,
-//     price: 240,
-//   },
-// ];
-
 export default function Favourites() {
   //? Middleware
   const router = useRouter();
@@ -113,15 +41,12 @@ export default function Favourites() {
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
 
-  const params = {
-    user_id: "2",
-    page: 0,
-    size: 10,
-  };
+  const [isDeleteAction, setIsDeleteAction] = useState(false);
 
-  const userId = "2";
+  const currentUser = getCurrentUser();
+
   useEffect(() => {
-    fetchFavouriteFlights(userId)
+    fetchFavouriteFlights()
       .then((data: any) => {
         setFavFlights(data.data);
       })
@@ -130,15 +55,22 @@ export default function Favourites() {
       });
   }, []);
 
+  console.log("favFlights", favFlights);
+
   useEffect(() => {
-    fetchFavouriteStays(params)
+    console.log("fetchFavouriteStays again");
+    fetchFavouriteStays({
+      user_id: currentUser.id ?? "",
+      page: 0,
+      size: 10,
+    })
       .then((data: any) => {
         setFavStays(data.data);
       })
       .catch((error) => {
         setError(error.message);
       });
-  }, []);
+  }, [isDeleteAction]);
 
   return (
     <main>
@@ -149,7 +81,8 @@ export default function Favourites() {
             key={index}
             type={item.type}
             title={item.title}
-            count={item.count}
+            countFlights={favFlights?.flight_favorites.length ?? 0}
+            countPlaces={favStays?.length ?? 0}
             isSelected={isSelected}
             onClick={() => {
               setIsSelected(item.type);
@@ -159,11 +92,19 @@ export default function Favourites() {
       </div>
 
       <div className="mt-10 flex flex-col gap-8">
-        {isSelected === "Flights"
-          ? favFlights?.flight_favorites.map((item, index) => (
+        {isSelected === "Flights" ? (
+          !favFlights || favFlights?.flight_favorites.length === 0 ? (
+            <NoResult title="No Favorites Flights Found!" description=" " />
+          ) : (
+            favFlights?.flight_favorites.map((item, index) => (
               <FavouriteFlightComp key={index} item={item} />
             ))
-          : favStays?.map((item) => <FavouriteStayComp item={item.stay} />)}
+          )
+        ) : !favStays || favStays.length === 0 ? (
+          <NoResult title="No Favorites Places Found!" description=" " />
+        ) : (
+          favStays?.map((item) => <FavouriteStayComp item={item.stay} />)
+        )}
       </div>
     </main>
   );

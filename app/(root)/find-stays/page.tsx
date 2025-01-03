@@ -108,8 +108,7 @@ export default function FindStays() {
       return [];
     };
 
-    data = getRecentSearchs(); // Lấy dữ liệu từ localStorage
-    console.log("data", data); // Log ra mảng ["6", "7"]
+    data = getRecentSearchs();
   }, []);
 
   useEffect(() => {
@@ -117,7 +116,6 @@ export default function FindStays() {
       .then((response: any) => {
         const locations: Location[] = response.data;
 
-        // Lọc các địa điểm dựa trên ID có trong `data`
         const filteredLocations = locations.filter((item) =>
           data?.includes(item.id.toString())
         );
@@ -129,18 +127,16 @@ export default function FindStays() {
       });
   }, []);
 
-  console.log("recentLocations", recentLocations);
-
   return (
     <main className="p-4">
       <div className="mt-16">
         <h1 className="mb-2 h2-bold tracking-normal">Your recent searches</h1>
         <div className="flex flex-wrap justify-start gap-10">
-          {recentLocations.map((item) => (
+          {recentLocations.map((item, index) => (
             <PlaceComponent
               key={item.id}
               id={item.id}
-              imgUrl={item.imageUrl ?? getRandomImgUrl()}
+              imgUrl={item.imageUrl ?? getRandomImgUrl(index)}
               city={item.city}
               country={item.country}
             />

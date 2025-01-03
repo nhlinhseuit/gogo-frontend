@@ -3,13 +3,15 @@ import React from "react";
 const Tab = ({
   type,
   title,
-  count,
+  countFlights,
+  countPlaces,
   isSelected,
   onClick,
 }: {
   type: string;
   title: string;
-  count: number;
+  countFlights: number;
+  countPlaces: number;
   isSelected: string;
   onClick: () => void;
 }) => {
@@ -29,7 +31,13 @@ const Tab = ({
       >
         <div className="pl-2">
           <h6 className="font-semibold">{title}</h6>
-          <p className="text-gray-400 font-thin">{count} marked</p>
+
+          {title === "Flights" && (
+            <p className="text-gray-400 font-thin">{countFlights} marked</p>
+          )}
+          {title === "Places" && (
+            <p className="text-gray-400 font-thin">{countPlaces} marked</p>
+          )}
         </div>
       </div>
     </>

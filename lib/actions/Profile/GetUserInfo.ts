@@ -10,9 +10,6 @@ export const getUserInfo = async (): Promise<UserInfo[]> => {
   const userInfo = getCurrentUser();
   const userId = userInfo?.["id"] ?? "";
 
-  console.log("token", token);
-  console.log("userId", userId);
-
   try {
     const response = await fetch(API_URL + userId, {
       method: "GET",

@@ -18,7 +18,6 @@ export const requestStayBooking = async (roomId: string, checkin: string, checko
       checkin_date: checkin,
       checkout_date: checkout,
     }
-    console.log(JSON.stringify(body))
     const response = await fetch(`${API_URL}/stays/booking`, {
       method: "POST",
       headers: {
@@ -117,7 +116,6 @@ export const confirmFlightBooking = async (passengerInfo: Array<any>, card: Card
       seats: seats,
       user_id: getCurrentUser().id,
     }
-    console.log(JSON.stringify(body))
     const response = await fetch(`${API_URL}/flight-booking/confirm`, {
       method: "POST",
       headers: {
