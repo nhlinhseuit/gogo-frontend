@@ -1,4 +1,3 @@
-
 "use client";
 
 import "@/app/globals.css";
@@ -21,7 +20,6 @@ import { Suspense, useEffect, useRef, useState } from "react";
 const trips = ["Round trip", "On Way", "Multi-City"];
 
 function FlightsSearch() {
-
   //? Thay đổi để custom truyền chọn chuyến đi chuyến về cho roundtrip
 
   const [isFirstStep, setIsFirstStep] = useState(true);

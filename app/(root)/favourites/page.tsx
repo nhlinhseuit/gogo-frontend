@@ -3,6 +3,7 @@
 import FavouriteFlightComp from "@/components/shared/details/favourite/FavouriteFlightComp";
 import FavouriteStayComp from "@/components/shared/details/favourite/FavouriteStayComp";
 import Tab from "@/components/shared/details/favourite/Tab";
+import NoResult from "@/components/shared/NoResult";
 import { fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
 import { fetchFavouriteStays } from "@/lib/actions/FavouriteStaysActions";
 import FavouriteFlights from "@/types/FavouriteFlights";
@@ -11,7 +12,6 @@ import { getCurrentUser } from "@/utils/util";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "../../globals.css";
-import NoResult from "@/components/shared/NoResult";
 
 const tabs = [
   {
@@ -55,6 +55,8 @@ export default function Favourites() {
       });
   }, []);
 
+  console.log("favFlights", favFlights);
+
   useEffect(() => {
     console.log("fetchFavouriteStays again");
     fetchFavouriteStays({
@@ -79,7 +81,8 @@ export default function Favourites() {
             key={index}
             type={item.type}
             title={item.title}
-            count={item.count}
+            countFlights={favFlights?.flight_favorites.length ?? 0}
+            countPlaces={favStays?.length ?? 0}
             isSelected={isSelected}
             onClick={() => {
               setIsSelected(item.type);
