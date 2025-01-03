@@ -36,7 +36,8 @@ const FlightBookingPage: React.FC = () => {
   const searchParams = useSearchParams();
   const seatIds = searchParams.get("seat_ids")?.split(",") || [];
 
-  const [targetTimeLeft, setTargetTimeLeft] = useState<Date>(new Date());
+
+  // const [targetTimeLeft, setTargetTimeLeft] = useState<Date>(new Date());
   const [price, setPrice] = useState<Price | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [bookingId, setBookingId] = useState<string>("");
@@ -134,9 +135,10 @@ const FlightBookingPage: React.FC = () => {
         variant: "error",
         duration: 3000,
       });
+    }).finally(() => {
+      setIsLoading(false);
     });
 
-    setIsLoading(false);
   }
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -205,28 +207,29 @@ const FlightBookingPage: React.FC = () => {
     setPassengerDetails(initialPassengers);
   }, [seats]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetTimeLeft.getTime() - now;
-
-      if (distance < 0) {
-        clearInterval(interval);
-        setTimeLeft("Time's up!");
-        router.back();
-      } else {
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        setTimeLeft(`${minutes}m ${seconds}s`);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [targetTimeLeft]);
-
-  if (!flightId || seatIds.length === 0) {
-    return <div>Missing required parameters</div>;
-  }
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const now = new Date().getTime();
+  //     const distance = targetTimeLeft.getTime() - now;
+  //
+  //     if (distance < 0) {
+  //       clearInterval(interval);
+  //       setTimeLeft("Time's up!");
+  //       router.back();
+  //     } else {
+  //       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  //       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  //       setTimeLeft(`${minutes}m ${seconds}s`);
+  //     }
+  //   }, 1000);
+  //
+  //   return () => clearInterval(interval);
+  // }, [targetTimeLeft]);
+  //
+  // if (!flightId || seatIds.length === 0) {
+  //   return <div>Missing required parameters</div>;
+  // }
+  //
 
   if (!flightDetails || seats.length === 0 || !price || isLoading) {
     return <BigLoadingSpinner/>;
@@ -252,12 +255,12 @@ const FlightBookingPage: React.FC = () => {
 
   return (
     <main className="flex w-full flex-col gap-4">
-      <div
-        className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
-        <span>We are holding the seats ...</span>
-        <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>
-        <span>{timeLeft}</span>
-      </div>
+      {/*<div*/}
+      {/*  className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">*/}
+      {/*  <span>We are holding the seats ...</span>*/}
+      {/*  <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>*/}
+      {/*  <span>{timeLeft}</span>*/}
+      {/*</div>*/}
 
       <div className="grid w-full grid-cols-5 gap-8 mt-">
         <div className="col-span-3 flex flex-col gap-8">

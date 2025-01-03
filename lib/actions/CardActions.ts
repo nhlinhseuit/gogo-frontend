@@ -38,7 +38,7 @@ export const fetchCardWithId = async (cardId: string): Promise<Card> => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
 
       }
     });

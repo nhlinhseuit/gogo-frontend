@@ -13,7 +13,7 @@ export const fetchFlightDetails = async (flightId: string): Promise<FlightDetail
     const response = await fetch(`${API_URL}/${flightId}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${getToken()}`,
+        // "Authorization": `Bearer ${getToken()}`,
 
         "Content-Type": "application/json",
       },

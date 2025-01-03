@@ -137,7 +137,7 @@ export default function StayDetail({params}: StayDetailProp) {
     });
   }
 
-  if (isLoading) {
+  if (isLoading || !stayData) {
     return <BigLoadingSpinner/>;
   }
 

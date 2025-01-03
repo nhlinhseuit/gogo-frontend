@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import type Room from "@/types/Room";
-import { requestStayBooking } from "@/lib/actions/BookingActions";
-import { toast } from "@/hooks/use-toast";
+import {requestStayBooking} from "@/lib/actions/BookingActions";
+import {toast} from "@/hooks/use-toast";
 import React from "react";
 import { useRouter } from "next/navigation";
 
