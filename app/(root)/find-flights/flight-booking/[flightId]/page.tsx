@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import PriceDetailsComponent from "@/components/shared/details/PriceDetailsComponent";
-import {useParams, useSearchParams} from "next/navigation";
+import {useParams, useRouter, useSearchParams} from "next/navigation";
 import Price from "@/types/Price";
 import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
@@ -30,6 +30,7 @@ interface PassengerDetail {
 }
 
 const FlightBookingPage: React.FC = () => {
+  const router = useRouter();
   const {flightId} = useParams() as unknown as PageParams;
   const searchParams = useSearchParams();
   const seatIds = searchParams.get("seat_ids")?.split(",") || [];
@@ -123,6 +124,8 @@ const FlightBookingPage: React.FC = () => {
         variant: "success",
         duration: 3000,
       });
+      router.push(`/booking/flight-booking/${data.id}`);
+
     }).catch((error) => {
       console.error('Error confirming flight booking:', error)
       toast({
@@ -191,6 +194,7 @@ const FlightBookingPage: React.FC = () => {
       if (distance < 0) {
         clearInterval(interval);
         setTimeLeft("Time's up!");
+        router.back();
       } else {
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);

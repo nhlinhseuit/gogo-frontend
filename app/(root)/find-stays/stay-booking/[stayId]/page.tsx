@@ -1,7 +1,7 @@
 "use client";
 
 import "@/app/globals.css";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import PaymentOptions from "@/components/shared/details/PaymentOptions";
 import PaymentCardSelection from "@/components/shared/details/PaymentCardSelection";
 import PriceDetailsComponent from "@/components/shared/details/PriceDetailsComponent";
@@ -10,32 +10,43 @@ import type Stay from "@/types/Stay";
 import type Room from "@/types/Room";
 import {fetchStay} from "@/lib/actions/StayActions";
 import CountriesDropdown from "@/components/shared/CountriesDropdown";
-import {useParams, useSearchParams} from "next/navigation";
-import {fetchRoom} from "@/lib/actions/RoomActions";
+import {useParams, useRouter, useSearchParams} from "next/navigation";
 import Price from "@/types/Price";
 import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
-import {getCurrentUser} from "@/utils/util";
-import {requestStayBooking} from "@/lib/actions/BookingActions";
+import {convertToLocaleDate, getCurrentUser} from "@/utils/util";
+import {confirmStayBooking, fetchStayBooking} from "@/lib/actions/BookingActions";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
+import {toast} from "@/hooks/use-toast";
 
 interface PageParams {
   stayId: string;
 }
 
 const StayBookingPage: React.FC = () => {
+  const router = useRouter();
   const {stayId} = useParams() as unknown as PageParams;
   const searchParams = useSearchParams();
-  const roomId = searchParams.get("room_id");
   const checkin = searchParams.get("checkin");
   const checkout = searchParams.get("checkout");
+  const bookingId = searchParams.get("booking_id");
+  const lock_expiration = searchParams.get("expiration");
 
-  const [targetTimeLeft, setTargetTimeLeft] = useState<Date>(new Date());
-  const [price, setPrice] = useState<Price | null>(null);
+
+  if (!stayId || !checkin || !checkout || !lock_expiration) {
+    return <div>
+      Missing required parameters
+    </div>
+  }
+  const targetTime = useMemo(() => convertToLocaleDate(lock_expiration), [lock_expiration]);
+
   const [timeLeft, setTimeLeft] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [price, setPrice] = useState<Price | null>(null);
   const [stayData, setStayData] = useState<Stay | null>(null);
   const [roomData, setRoomData] = useState<Room | null>(null);
-  const [bookingId, setBookingId] = useState<string>("");
+  const [bookingData, setBookingData] = useState<any | null>(null);
 
   const [guestFirstName, setGuestFirstName] = useState<string>(getCurrentUser().name);
   const [guestLastName, setGuestLastName] = useState<string>("");
@@ -45,6 +56,7 @@ const StayBookingPage: React.FC = () => {
 
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+
 
   const fetchCards = () => {
     fetchUserCards(getCurrentUser().id).then((data) => {
@@ -58,33 +70,82 @@ const StayBookingPage: React.FC = () => {
   }
 
   useEffect(() => {
+    fetchStayBooking(bookingId!).then((data) => {
+      setBookingData(data);
+      setRoomData(data.room);
+
+    }).catch((error) => {
+      toast({
+        title: `Error fetching booking: ${error}`,
+        variant: "error",
+        duration: 3000,
+      });
+    });
+
     fetchStay(stayId).then((data) => {
       setStayData(data);
     }).catch((error) => {
-      console.error('Error fetching stay:', error);
-    });
-    fetchRoom(roomId!).then((data) => {
-      setRoomData(data);
-    }).catch((error) => {
-      console.error('Error fetching room:', error);
-    })
-    if (checkin != null && checkout != null) {
-      requestStayBooking(stayId, roomId!, checkin, checkout).then((data) => {
-        console.log(data)
-        setTargetTimeLeft(new Date(data.lock_expiration));
-      }).catch((error) => {
-        console.error('Error requesting booking:', error);
+      toast({
+        title: `Error fetching stay: ${error}`,
+        variant: "error",
+        duration: 3000,
       });
-    }
+    });
 
     fetchCards();
-
   }, []);
-
 
   const onSelectCountry = (country: string) => {
     setGuestCountry(country);
   }
+
+  if (!stayId || !checkin || !checkout || !targetTime) {
+    return <div>
+      Missing required parameters
+    </div>
+  }
+
+  const handleBooking = () => {
+    if (!selectedCard) {
+      toast({
+        title: "Please select a card",
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    const customerInfo = {
+      first_name: guestFirstName,
+      last_name: guestLastName,
+      customer_email: guestEmail,
+      customer_phone: guestPhone,
+      customer_country: guestCountry,
+    };
+
+    setIsLoading(true);
+
+    confirmStayBooking(customerInfo, selectedCard, bookingData.id)
+      .then(() => {
+        toast({
+          title: "Booking successful",
+          variant: "success",
+          duration: 3000,
+        });
+        router.push(`/booking/stay-booking/${bookingData.id}`);
+      })
+      .catch((error) => {
+        toast({
+          title: `Error confirming booking: ${error}`,
+          variant: "error",
+          duration: 3000,
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
   useEffect(() => {
     if (roomData) {
       setPrice({
@@ -101,45 +162,44 @@ const StayBookingPage: React.FC = () => {
     }
   }, [roomData]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetTimeLeft.getTime() - now;
 
-      if (distance < 0) {
-        clearInterval(interval);
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const distance = targetTime.getTime() - now;
+      if (distance <= 0) {
+        clearInterval(timer);
         setTimeLeft("Time's up!");
+        router.back();
       } else {
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
         setTimeLeft(`${minutes}m ${seconds}s`);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(interval);
-  }, [targetTimeLeft]);
+    const timer = setInterval(updateTimer, 1000);
+    updateTimer(); // Call immediately to avoid delay
 
-  if (!stayId || !roomId || !checkin || !checkout) {
-    return <div>Missing required parameters</div>;
-  }
+    return () => clearInterval(timer); // Cleanup interval on unmount
+  }, [targetTime]);
 
-  if (!stayData || !roomData) {
+  if (!stayData || !roomData || isLoading) {
     return <BigLoadingSpinner/>
   }
-
 
   return (
     <main className="flex w-full flex-col gap-4">
       <div
         className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">
-        <span>We are holding this room...</span>
+        <span>We are holding this room. Please finish your booking in </span>
         <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>
         <span>{timeLeft}</span>
       </div>
 
       <div className="grid w-full grid-cols-5 gap-8 mt-">
         <div className="col-span-3 flex flex-col gap-8">
-          <StayInformationComponent checkin={checkin} checkout={checkout} stayId={stayId} roomId={roomId}/>
+          <StayInformationComponent checkin={checkin} checkout={checkout} stayId={stayId} roomId={roomData.id}/>
           <div className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
             <span className="h2-bold">Who is the lead guest?</span>
             <form action="" className="grid grid-cols-2 gap-4">
@@ -176,7 +236,7 @@ const StayBookingPage: React.FC = () => {
           <PaymentOptions total={price?.total ?? 0}/>
           <PaymentCardSelection cards={cards} fetchCards={fetchCards} onSelectCard={setSelectedCard}
                                 selectedCard={selectedCard}/>
-          <button className="w-full rounded-lg p-4 bg-primary-100">Book</button>
+          <button onClick={() => handleBooking()} className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
           <PriceDetailsComponent room={roomData} stay={stayData} seats={[]} flight={null} price={price!}/>

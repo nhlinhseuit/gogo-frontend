@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -7,21 +8,25 @@ import FlightsBackground from "./background-searchtab/FlightsBackground";
 import HomeBackground from "./background-searchtab/HomeBackground";
 import StaysBackground from "./background-searchtab/StaysBackground";
 import { getCurrentUser } from "@/utils/util";
-import MyAvatar from "../MyAvatar";
 import MyProfileAvatar from "../MyProfileAvatar";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const pathName = usePathname();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+    setIsMounted(true);
+  }, []);
+
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-
   const indicatorClass = "!border-primary-100";
-
-  const currentUser = getCurrentUser();
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
@@ -36,10 +41,7 @@ const Navbar = () => {
     router.push("/login");
   };
 
-  const { toast } = useToast();
-
   return (
-    // 60vh của background đè navbar, 144px phần dư ra của  searchtab
     <div
       className={`relative z-50 ${
         (pathName === "/" ||
@@ -57,23 +59,24 @@ const Navbar = () => {
           dark:shadow-none sm:px-12
         `}
       >
-        {/* HOME BACKGROUND + HOME SEARCHTAB */}
-        {pathName === "/" ? (
-          <HomeBackground />
-        ) : pathName === "/find-flights" ? (
-          <FlightsBackground />
-        ) : pathName === "/find-stays" ? (
-          <StaysBackground />
-        ) : (
-          <></>
+        {/* Background Components */}
+        {isMounted && (
+          pathName === "/" ? (
+            <HomeBackground />
+          ) : pathName === "/find-flights" ? (
+            <FlightsBackground />
+          ) : pathName === "/find-stays" ? (
+            <StaysBackground />
+          ) : null
         )}
 
-        {/* NAVBAR */}
-        <div className={"flex flex-row items-center gap-6 h-full"}>
+        {/* Navigation Links */}
+        <div className="flex flex-row items-center gap-6 h-full">
+          {/* Find Flights Link */}
           <div
             className={`h-full flex items-center justify-center box-border border-b-4 border-transparent ${
               pathName.includes("/find-flights") || pathName === "/find-flights"
-                ? `${indicatorClass} border-b-4 border-transparent`
+                ? indicatorClass
                 : ""
             }`}
           >
@@ -91,19 +94,21 @@ const Navbar = () => {
                 />
                 <p
                   className={`
-          font-inter 
-          ml-1
-          body-semibold 
-          ${pathName === "/" ? "text-white" : "text-dark-100"}
-          dark:text-light-900 
-          max-sm:hidden
-        `}
+                    font-inter 
+                    ml-1
+                    body-semibold 
+                    ${pathName === "/" ? "text-white" : "text-dark-100"}
+                    dark:text-light-900 
+                    max-sm:hidden
+                  `}
                 >
                   Find Flights
                 </p>
               </div>
             </Link>
           </div>
+
+          {/* Find Stays Link */}
           <div
             className={`h-full flex items-center justify-center box-border border-b-4 border-transparent ${
               (pathName.includes("/find-stays") && "/find-stays".length > 1) ||
@@ -113,7 +118,6 @@ const Navbar = () => {
             }`}
           >
             <Link href="/find-stays">
-              {/* FIND STAYS */}
               <div className="flex flex-col h-full">
                 <div className="flex flex-row items-center">
                   <Image
@@ -128,12 +132,13 @@ const Navbar = () => {
                   />
                   <p
                     className={`
-            font-inter 
-            ml-1
-            body-semibold 
-            ${pathName === "/" ? "text-white" : "text-dark-100"}
-            dark:text-light-900 
-            max-sm:hidden`}
+                      font-inter 
+                      ml-1
+                      body-semibold 
+                      ${pathName === "/" ? "text-white" : "text-dark-100"}
+                      dark:text-light-900 
+                      max-sm:hidden
+                    `}
                   >
                     Find Stays
                   </p>
@@ -143,7 +148,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* LOGO */}
+        {/* Logo */}
         <Link
           href="/"
           className="flex items-center gap-1 absolute left-[50%] translate-x-[-50%]"
@@ -156,19 +161,21 @@ const Navbar = () => {
             }`}
             width={60}
             height={60}
-            alt="DevFlow"
+            alt="Logo"
           />
         </Link>
+
+        {/* Right Section */}
         <div className="flex-between gap-5 h-full">
+          {/* Favourites Link */}
           <Link href="/favourites">
-            <div className="flex flex-col ">
-              {/* FAVOURITES */}
+            <div className="flex flex-col">
               <div
                 className={`
-              flex flex-row items-center border-r-[1.5px] pr-3 
-              
-              ${pathName === "/" ? "border-white " : "border-black "}
-              border-opacity-70 h-3`}
+                  flex flex-row items-center border-r-[1.5px] pr-3 
+                  ${pathName === "/" ? "border-white" : "border-black"}
+                  border-opacity-70 h-3
+                `}
               >
                 <Image
                   src={`${
@@ -182,72 +189,63 @@ const Navbar = () => {
                 />
                 <p
                   className={`
-            font-inter 
-            ml-1
-            body-semibold 
-             ${pathName === "/" ? "text-white" : "text-dark-100"}
-            dark:text-light-900 
-            max-sm:hidden`}
+                    font-inter 
+                    ml-1
+                    body-semibold 
+                    ${pathName === "/" ? "text-white" : "text-dark-100"}
+                    dark:text-light-900 
+                    max-sm:hidden
+                  `}
                 >
                   Favourites
                 </p>
               </div>
-
-              {/* <div
-                className={`${
-                  (pathName.includes("/favourites") &&
-                    "/favourites".length > 1) ||
-                  pathName === "/favourites"
-                    ? indicatorClass
-                    : ""
-                } `}
-              ></div> */}
             </div>
           </Link>
 
-          {/* AVATAR */}
-
+          {/* Auth Section */}
           <div className="flex gap-2 items-center relative">
-            {currentUser ? (
-              <>
-                <div onClick={toggleDropdown} className="cursor-pointer">
-                  <MyProfileAvatar img="/assets/images/avatar.JPG" />
-                </div>
-
-                {/* Tooltip / Dropdown */}
-                {isDropdownOpen && (
-                  <div className="absolute top-full right-0 mt-2 bg-white shadow-lg border rounded-lg w-48 p-2 z-50">
-                    <p
-                      onClick={() => {
-                        router.push("/profile");
-                        setIsDropdownOpen(false);
-                      }}
-                      className="cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-md"
-                    >
-                      View Profile
-                    </p>
-                    <p
-                      onClick={handleLogout}
-                      className="cursor-pointer px-4 py-2 text-red-500 hover:bg-gray-100 rounded-md"
-                    >
-                      Logout
-                    </p>
+            {isMounted && (
+              currentUser ? (
+                <>
+                  <div onClick={toggleDropdown} className="cursor-pointer">
+                    <MyProfileAvatar img="/assets/images/avatar.JPG" />
                   </div>
-                )}
-              </>
-            ) : (
-              <p
-                onClick={() => router.push("/login")}
-                className={`
-        cursor-pointer
-        font-inter 
-        body-semibold 
-        ${pathName === "/" ? "text-white" : "text-dark-100"}
-        dark:text-light-900 
-        max-sm:hidden`}
-              >
-                Login
-              </p>
+                  {isDropdownOpen && (
+                    <div className="absolute top-full right-0 mt-2 bg-white shadow-lg border rounded-lg w-48 p-2 z-50">
+                      <p
+                        onClick={() => {
+                          router.push("/profile");
+                          setIsDropdownOpen(false);
+                        }}
+                        className="cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-md"
+                      >
+                        View Profile
+                      </p>
+                      <p
+                        onClick={handleLogout}
+                        className="cursor-pointer px-4 py-2 text-red-500 hover:bg-gray-100 rounded-md"
+                      >
+                        Logout
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p
+                  onClick={() => router.push("/login")}
+                  className={`
+                    cursor-pointer
+                    font-inter 
+                    body-semibold 
+                    ${pathName === "/" ? "text-white" : "text-dark-100"}
+                    dark:text-light-900 
+                    max-sm:hidden
+                  `}
+                >
+                  Login
+                </p>
+              )
             )}
           </div>
         </div>

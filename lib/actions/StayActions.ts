@@ -58,12 +58,7 @@ export const fetchStays = async (): Promise<Stay[]> => {
 
 export const fetchAvailableRooms = async (stayId: string, checkin: string, checkout: string): Promise<Room[]> => {
   try {
-    // const response = await fetch(`${API_URL}/${stayId}/rooms`, {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
+    console.log(`${API_URL}/${stayId}/rooms/available?checkin_date=${checkin}&checkout_date=${checkout}&guests=1`)
 
     const response = await fetch(`${API_URL}/${stayId}/rooms/available?checkin_date=${checkin}&checkout_date=${checkout}&guests=1`, {
       method: "GET",

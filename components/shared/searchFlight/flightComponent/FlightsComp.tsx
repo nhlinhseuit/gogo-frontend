@@ -196,7 +196,7 @@ const FlightsComponent = ({
               <h1 className="h2-bold">
                 $
                 {formatCurrency({
-                  price: item?.outbound_flight.min_base_fare,
+                  price: item?.outbound_flight.minBaseFare,
                 })}
               </h1>
             </div>

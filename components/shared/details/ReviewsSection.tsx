@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import React from "react";
 import ReviewComponent from "@/components/shared/ReviewComponent";
 import type Review from "@/types/Review";
+import {getReviewComment} from "@/utils/util";
 
 interface ReviewsSectionProps {
   averageRating: number;
@@ -33,7 +34,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = (props) => {
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <span className="font-bold text-5xl">{props.averageRating}</span>
         <div className="flex flex-col gap-2">
-          <span>Very good</span>
+          <span>{getReviewComment(props.averageRating)}</span>
           <span>{props.reviewCount} verified reviews</span>
         </div>
       </div>
