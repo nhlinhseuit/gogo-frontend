@@ -62,7 +62,6 @@ export const fetchServiceReview = async (serviceId: string, page: number = 0, si
 
 export const postReview = async (serviceId: string, description: string, rating: number, serviceType: string): Promise<Review> => {
   try {
-    console.log(getToken())
     const body = {
       user_id: getCurrentUser().id,
       service_id: serviceId,
@@ -70,7 +69,6 @@ export const postReview = async (serviceId: string, description: string, rating:
       rating,
       service_type: serviceType,
     }
-    console.log(JSON.stringify(body));
     const response = await fetch(`${API_URL}`, {
       method: "POST",
       headers: {
