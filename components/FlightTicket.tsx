@@ -33,13 +33,13 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
     <div className="flex h-auto flex-row border-2 overflow-hidden rounded-lg w-[1000px]">
       <div className="flex flex-col justify-between gap-2 p-8 pr-16 bg-primary-500">
         <div className="flex flex-col">
-          <span className="h2-bold">{formatDateInWords(flightBookingData.seats[0].seat.flight.departureTime)}</span>
-          <span>{flightBookingData.seats[0].seat.flight.departureAirport.code}</span>
+          <span className="h2-bold">{formatDateInWords(flightBookingData.seats[0].seat.flight.departure_time)}</span>
+          <span>{flightBookingData.seats[0].seat.flight.departure_airport.code}</span>
         </div>
         <img src="/assets/icons/flight-ticker-icon.svg" alt="" className="h-24 w-fit"/>
         <div className="flex flex-col">
-          <span className="h2-bold">{formatDateInWords(flightBookingData.seats[0].seat.flight.arrivalTime)}</span>
-          <span>{flightBookingData.seats[0].seat.flight.arrivalAirport.code}</span>
+          <span className="h2-bold">{formatDateInWords(flightBookingData.seats[0].seat.flight.arrival_time)}</span>
+          <span>{flightBookingData.seats[0].seat.flight.arrival_airport.code}</span>
         </div>
       </div>
       <div className="flex flex-grow flex-col">
@@ -56,7 +56,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
               <img src="/assets/icons/calendar-icon.svg" alt="date" className="flex-grow size-12"/>
               <div className="flex flex-col">
                 <span className="text-gray-500">Date</span>
-                <span>{formatDateToYYYYMMDD(flightBookingData.seats[0].seat.flight.departureTime)}</span>
+                <span>{formatDateToYYYYMMDD(flightBookingData.seats[0].seat.flight.departure_time)}</span>
               </div>
             </div>
 
@@ -64,7 +64,7 @@ const FlightTicket: React.FC<FlightTicketProps> = (props) => {
               <img src="/assets/icons/time-icon.svg" alt="time" className="flex-grow size-12"/>
               <div className="flex flex-col">
                 <span className="text-gray-500">Flight time</span>
-                <span>{formatHHMM(flightBookingData.seats[0].seat.flight.departureTime)}</span>
+                <span>{formatHHMM(flightBookingData.seats[0].seat.flight.departure_time)}</span>
               </div>
             </div>
 
