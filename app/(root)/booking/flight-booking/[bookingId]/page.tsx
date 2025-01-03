@@ -56,10 +56,7 @@ const FlightBookingInfoPage = () => {
       <div className="flex flex-col justify-between md:flex-row">
         <span></span>
         <div className="flex flex-row gap-4">
-          <button><img className="rounded-md p-4 border-primary-100 border-[1px]" src="/assets/icons/share.svg"
-                       alt="Favorite"/></button>
           <button className="rounded-md px-9 py-4 bg-primary-100" onClick={() => toPDF()}>Download</button>
-
         </div>
       </div>
       <div ref={targetRef}>
