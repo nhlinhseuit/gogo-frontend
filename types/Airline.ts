@@ -9,9 +9,10 @@ interface Airline {
   amenities: Amenity[];
   image: string
   policies: Policy[];
-  reviews: Review[];
+  // reviews: Review[];
   rating: number;
   featured_images: Image[];
+  review_count: number;
 }
 
 export default Airline;

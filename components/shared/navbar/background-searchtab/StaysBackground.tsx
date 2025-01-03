@@ -6,7 +6,7 @@ const StaysBackground = () => {
   return (
     <div className="absolute top-0 left-0 right-0 -z-10 mt-20">
       <Image
-        src={"/assets/images/background_stays.svg"}
+        src={"/assets/images/bg-stays-rs.jpg"}
         alt="DevFlow"
         width={0}
         height={0}

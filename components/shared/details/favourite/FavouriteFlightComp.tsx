@@ -1,13 +1,22 @@
 "use client";
 
-import FavouriteFlights from "@/types/FavouriteFlights";
+import FavouriteFlight from "@/types/FavouriteFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import FavoriteCheckFlight from "../../searchFlight/flightComponent/FavoriteCheckFlight";
-import FavouriteFlight from "@/types/FavouriteFlight";
 
 const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
-  console.log("Flight Item", item);
+
+  const handleClickFlightItem = (flightId: string) => {
+    // const queryString = new URLSearchParams({
+    //   departure_time_from,
+    //   departure_time_to,
+    //   passenger_count,
+    // }).toString();
+
+    // router.push(`/find-flights/${flightId}?${queryString}`);
+  };
+
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
       <div className="w-[30%] p-3">
@@ -34,7 +43,7 @@ const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
                 </p>
                 <p>
                   <span className="paragraph-regular mr-1">
-                    {item?.outbound_flight.airline.reviews[0].rating}
+                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
                   </span>
                   reviews
                 </p>
@@ -58,12 +67,7 @@ const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
         </div>
 
         <div className="flex w-full pt-5 border-t-[1px]">
-          <div
-            onClick={() => {
-              // handleClick(item.id);
-            }}
-            className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer"
-          >
+          <div className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer">
             <Image
               src="/assets/icons/Heart.svg"
               alt="Anh heart"

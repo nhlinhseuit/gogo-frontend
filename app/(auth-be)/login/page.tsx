@@ -3,17 +3,23 @@
 import One from "@/components/gallery/one";
 import MyInput from "@/components/shared/MyInput";
 import MyPasswordInput from "@/components/shared/MyPasswordInput";
-import SocialIcon from "@/components/shared/SocialIcon";
 import { useToast } from "@/hooks/use-toast";
 import { authenticate } from "@/lib/actions/Authen/AuthenActions";
-import { validateEmail, validatePassword } from "@/utils/util";
+import {
+  convertDataNavigate,
+  convertDataReceive,
+  validateEmail,
+  validatePassword,
+} from "@/utils/util";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const Login = () => {
   const searchParams = useSearchParams();
-  const prevRoute = searchParams.get('ref');
+  const prevRoute = searchParams.get("ref");
+  const prevStaySearch = searchParams.get("location_id");
+  const prevFlightSearch = searchParams.get("departure_location_id");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,7 +50,16 @@ const Login = () => {
           sessionStorage.setItem("currentUser", JSON.stringify(data.user));
 
           if (prevRoute) router.push(`/${prevRoute}`);
-          else {
+          else if (!prevRoute && prevStaySearch) {
+            router.push(`/find-stays/stays-search?${searchParams}`);
+          } else if (!prevRoute && prevFlightSearch) {
+            const paramsData = convertDataReceive(searchParams);
+            const queryString = new URLSearchParams(
+              convertDataNavigate(paramsData)
+            ).toString();
+
+            router.push(`/find-flights/flights-search?${queryString}`);
+          } else {
             toast({
               title: `Login successfully!`,
               variant: "success",
@@ -60,7 +75,7 @@ const Login = () => {
   return (
     <main>
       <div className="w-full h-screen flex gap-12">
-        <div className="flex-grow flex flex-col items-start justify-center gap-6">
+        <div className="ml-4 flex-grow flex flex-col items-start justify-center gap-6">
           <Image
             src="/assets/icons/logo-header-dark.svg"
             width={80}
@@ -170,4 +185,10 @@ const Login = () => {
   );
 };
 
-export default Login;
+const SuspendedLogin = () => (
+  <Suspense fallback={<p>Loading...</p>}>
+    <Login />
+  </Suspense>
+);
+
+export default SuspendedLogin;

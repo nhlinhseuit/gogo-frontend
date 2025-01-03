@@ -46,9 +46,23 @@ const images = [
   "/assets/images/stay.svg",
 ];
 
-export function getRandomImgUrl() {
-  const randomIndex = Math.floor(Math.random() * images.length);
+export function getRandomImgUrl(index: number) {
+  const randomIndex = index % images.length;
   return images[randomIndex];
+}
+
+export function getNumberFromId(id: string) {
+  const sumOfChars = Array.from(id).reduce(
+    (sum, char) => sum + char.charCodeAt(0),
+    0
+  );
+
+  const rangeStart = 90;
+  const rangeEnd = 200;
+  const normalizedNumber =
+    (sumOfChars % (rangeEnd - rangeStart + 1)) + rangeStart;
+
+  return normalizedNumber;
 }
 
 export const imagesBookComponent = [
@@ -287,4 +301,53 @@ export const formatCurrency = ({ price }: { price: number }) => {
   }
 
   return formattedPrice;
+};
+
+export const formatDateToMMYY = (dateString: string) => {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
+  const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
+  return `${month}/${year}`;
+};
+
+export const formatDateToYYYYMMDD = (dateString: string) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so add 1
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+export const formatDateInWords = (dateString: string) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const date = new Date(dateString);
+  const dayName = days[date.getDay()];
+  const monthName = months[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  return `${dayName}, ${monthName} ${day}, ${year}`;
 };

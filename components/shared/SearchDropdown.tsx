@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import CustomNumberInput from "./CustomNumberInput";
 import { normalizeSearchItem } from "@/utils/util";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface SearchDropdownProps {
   label: string;
@@ -254,7 +255,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
               ) : null}
 
               {isLoading ? (
-                <div className="py-16 text-center">Loading...</div>
+                <BigLoadingSpinner/>
               ) : error ? (
                 <div className="py-16 text-center text-red-500">{error}</div>
               ) : (

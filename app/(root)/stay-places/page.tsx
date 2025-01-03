@@ -6,68 +6,13 @@ import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
 import Location from "@/types/Location";
 import {
   convertDataNavigate,
-  formatDayFromInputToISODateApi,
+  defaultSearchStayParams,
+  getRandomImgUrl
 } from "@/utils/util";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const page = () => {
-  const MockPlacesData = [
-    {
-      id: 1,
-      imgUrl: "/assets/images/Turkey.svg",
-      placeTitle: "Istanbul, Turkey",
-    },
-    {
-      id: 2,
-      imgUrl: "/assets/images/Australia.svg",
-      placeTitle: "Sydney, Australia",
-    },
-    {
-      id: 3,
-      imgUrl: "/assets/images/Azerbaijan.svg",
-      placeTitle: "Baku, Azerbaijan",
-    },
-    {
-      id: 4,
-      imgUrl: "/assets/images/Maldives.svg",
-      placeTitle: "Malé, Maldives",
-    },
-    {
-      id: 5,
-      imgUrl: "/assets/images/France.svg",
-      placeTitle: "Paris, France",
-    },
-    {
-      id: 6,
-      imgUrl: "/assets/images/US.svg",
-      placeTitle: "New York, US",
-    },
-    {
-      id: 7,
-      imgUrl: "/assets/images/UK.svg",
-      placeTitle: "London, UK",
-    },
-    {
-      id: 8,
-      imgUrl: "/assets/images/Japan.svg",
-      placeTitle: "Tokyo, Japan",
-    },
-    {
-      id: 9,
-      imgUrl: "/assets/images/UAE.svg",
-      placeTitle: "Dubai, UAE",
-    },
-  ];
-
-  function getRandomImgUrl() {
-    if (!MockPlacesData || MockPlacesData.length === 0) {
-      throw new Error("The data array is empty or undefined.");
-    }
-    const randomIndex = Math.floor(Math.random() * MockPlacesData.length);
-    return MockPlacesData[randomIndex].imgUrl;
-  }
-
   const [locations, setLocations] = useState<{ data: Location[] }>({
     data: [],
   });
@@ -88,20 +33,13 @@ const page = () => {
 
   const router = useRouter();
 
-  const handleNavigateFlight = () => {
-    // const params = {
-    //   roundTrip: paramsData.roundTrip,
-    //   departure_location_id: paramsData.departure_location_id,
-    //   arrival_location_id: paramsData.arrival_location_id,
-    //   departure_time_from: formatDayFromInputToISODateApi(Date.now()),
-    //   departure_time_to: paramsData.departure_time_from,
-    //   return_time_from: paramsData.return_time_from,
-    //   return_time_to: paramsData.return_time_to,
-    //   seat_classes: paramsData.seat_classes,
-    //   passenger_count: paramsData.passenger_count,
-    // };
+  const handleNavigateStay = (locationName: string, locationId: string) => {
+    const params = defaultSearchStayParams(locationName, locationId);
 
-    router.push(`/find-flights/flights-search?${queryString}`);
+    const formattedParams: Record<string, string> = convertDataNavigate(params);
+
+    const queryString = new URLSearchParams(formattedParams).toString();
+    router.push(`/find-stays/stays-search?${queryString}`);
   };
 
   return (
@@ -119,13 +57,13 @@ const page = () => {
         <BigLoadingSpinner />
       ) : locations.data.length > 0 ? (
         <div className="flex flex-wrap justify-start gap-x-10 gap-y-6 mt-8">
-          {locations.data.map((item) => (
+          {locations.data.map((item, index) => (
             <PlacesComponent
               key={item.id}
-              imgUrl={item.imageUrl ?? getRandomImgUrl()}
+              imgUrl={item.imageUrl ?? getRandomImgUrl(index)}
               placeTitle={`${item.city}, ${item.country}`}
               onClick={() => {
-                handleNavigateFlight(item.id);
+                handleNavigateStay(item.city, item.id);
               }}
             />
           ))}

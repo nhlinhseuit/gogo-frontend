@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "@/types/Image";
 import {fetchStay} from "@/lib/actions/StayActions";
 import Stay from "@/types/Stay";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
 interface ImageModalProps {
   stayId: string;
@@ -32,7 +33,7 @@ const ImageModal: React.FC<ImageModalProps> = (props) => {
   if (isLoading) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-600 bg-opacity-50">
-        <span>Loading...</span>
+        <BigLoadingSpinner/>
       </div>
     );
   }
