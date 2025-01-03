@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type Room from "@/types/Room";
+import RoomAvailabilityComponent from "@/components/shared/manage/RoomAvailabilityComponent";
 
 interface RoomTableComponentProps {
   rooms: Room[];
@@ -42,7 +43,7 @@ const RoomTableComponent: React.FC<RoomTableComponentProps> = ({ rooms, onEdit, 
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
-        <tr className="bg-gray-100">
+        <tr className="bg-primary-100">
           <th
             className="px-4 py-2 text-left cursor-pointer"
             onClick={() => handleSort("name")}
@@ -112,17 +113,18 @@ const RoomTableComponent: React.FC<RoomTableComponentProps> = ({ rooms, onEdit, 
               >
                 Edit
               </button>
-              <button
-                onClick={() => onDelete(room.id)}
-                className="text-red-600 hover:underline ml-4"
-              >
-                Delete
-              </button>
+              {/*<button*/}
+              {/*  onClick={() => onDelete(room.id)}*/}
+              {/*  className="text-red-600 hover:underline ml-4"*/}
+              {/*>*/}
+              {/*  Delete*/}
+              {/*</button>*/}
             </td>
           </tr>
         ))}
         </tbody>
       </table>
+
     </div>
   );
 };
