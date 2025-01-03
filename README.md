@@ -1,38 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 🚀 Gogo Travel
 
-## Getting Started
+🌍 Your Ultimate Travel Companion
+Gogo Travel is a modern web application designed to simplify travel planning and booking. Whether you're exploring destinations, managing flight itineraries, or searching for the best travel deals, Gogo Travel has you covered.
 
-First, run the development server:
+🌍 Built for the Web Technology Course at UIT-VNU, this project showcases a sleek, user-friendly interface powered by Next.js.
+<br/>
+
+![image](https://github.com/user-attachments/assets/dd3ba6c7-e06c-46e3-a9cd-284fc00b292d)
+
+
+<br/>
+<br/>
+
+## 🔧 How to run Gogo Travel
+
+1. Install packages:
+```bash
+npm install
+```
+
+2. To run the project, use one of the following commands:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
+Once the server is running, open http://localhost:3000 in your browser to see Gogo Travel app in action.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# gogo-frontend
-NextJS project for Web Technology Course at UIT-VNU
+Happy exploring! 🌟
