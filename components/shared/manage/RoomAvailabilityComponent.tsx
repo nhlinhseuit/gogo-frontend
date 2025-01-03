@@ -90,6 +90,7 @@ const RoomAvailabilityComponent: React.FC<RoomAvailabilityComponentProps> = ({
   };
 
   return (
+    <div>
     <div className="h-[600px]">
       <Calendar
         localizer={localizer}
@@ -110,6 +111,8 @@ const RoomAvailabilityComponent: React.FC<RoomAvailabilityComponentProps> = ({
         defaultDate={new Date()} // Ensures the initial display is correct
       />
     </div>
+    </div>
+
   );
 };
 

@@ -5,13 +5,13 @@ import AccountInfoSection from "@/components/shared/Profile/AccountInfoSection";
 import AccountTab from "@/components/shared/Profile/AccountTab";
 import HistoryInfoSection from "@/components/shared/Profile/HistoryInfoSection";
 import PaymentInfoSection from "@/components/shared/Profile/PaymentInfoSection";
-import { editUserCoverPicture } from "@/lib/actions/Profile/EditUserCoverPicture";
-import { getUserInfo } from "@/lib/actions/Profile/GetUserInfo";
+import {editUserCoverPicture} from "@/lib/actions/Profile/EditUserCoverPicture";
+import {getUserInfo} from "@/lib/actions/Profile/GetUserInfo";
 import UserInfo from "@/types/UserInfo";
-import { getCurrentUser } from "@/utils/util";
+import {getCurrentUser} from "@/utils/util";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
 import "../../globals.css";
 import NoResult from "@/components/shared/NoResult";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
@@ -50,7 +50,8 @@ export default function Profile() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+  }, []);
 
   useEffect(() => {
     if (!currentUser) {
@@ -96,7 +97,7 @@ export default function Profile() {
       editUserCoverPicture(formData).then((data) => {
         setIsLoading(false);
         alert("Cover image successfully!");
-        setCoverImage((data.data as UserInfo).cover_url);
+        setCoverImage((data.data as UserInfo).cover_url || "/assets/images/avatar.JPG");
       });
     } catch (error) {
       console.error("Error updating cover picture:", error);
@@ -144,9 +145,9 @@ export default function Profile() {
 
   const renderComponent = () => {
     if (isSelected === "Account")
-      return <AccountInfoSection userInfo={userInfo} />;
-    else if (isSelected === "Tickets/Bookings") return <HistoryInfoSection />;
-    else return <PaymentInfoSection />;
+      return <AccountInfoSection userInfo={userInfo}/>;
+    else if (isSelected === "Tickets/Bookings") return <HistoryInfoSection/>;
+    else return <PaymentInfoSection/>;
   };
 
   if (isAuthenticated === null) {
@@ -206,7 +207,7 @@ export default function Profile() {
                 >
                   {isLoading ? (
                     <div className="mb-4 mr-1">
-                      <LoadingSpinner />
+                      <LoadingSpinner/>
                     </div>
                   ) : (
                     <Image
@@ -256,7 +257,7 @@ export default function Profile() {
           </div>
 
           <div className="absolute -translate-y-[35%] left-[50%] transform -translate-x-[50%]">
-            <MyAvatar img={userInfo?.avatar_url} />
+            <MyAvatar img={userInfo?.avatar_url}/>
             <div className="mt-4 flex flex-col gap-2 text-center justify-center items-center ">
               <p className="paragraph-semibold">{userInfo?.full_name}</p>
               <p className="body-medium text-[#112211]">{userInfo?.email}</p>
