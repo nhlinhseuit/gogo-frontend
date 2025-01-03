@@ -1,5 +1,6 @@
 import { deleteFavouriteAFlight } from "@/lib/actions/FavouriteFlightsActions";
 import {
+  deleteFavouriteAStay,
   favouriteAStay,
   fetchFavouriteStays,
 } from "@/lib/actions/FavouriteStaysActions";
@@ -12,14 +13,10 @@ import { useEffect, useState } from "react";
 
 const FavouriteStayComp = ({
   item,
-  // checkin,
-  // checkout,
   paramsRef,
   isFavorite,
 }: {
   item: Stay;
-  // checkin: string;
-  // checkout: string;
   paramsRef?: any;
   isFavorite?: boolean;
 }) => {
@@ -64,13 +61,15 @@ const FavouriteStayComp = ({
     checkIsCurrentUser();
 
     if (getIsFavoriteItem()) {
-      const result = favStays?.find((stay) => stay.id === item.id);
+      const result = favStays?.find((favStay) => favStay.stay.id === item.id);
 
-      deleteFavouriteAFlight(result?.id)
+      deleteFavouriteAStay(result?.id ?? "")
         .then((data: any) => {
           // setIsLoading(false);
+
           setFavStays(
-            (prev) => prev?.filter((item) => item.id !== stay_id) || []
+            (prev) =>
+              prev?.filter((favStay) => favStay.stay.id !== stay_id) || []
           );
         })
         .catch((error) => {
@@ -80,13 +79,15 @@ const FavouriteStayComp = ({
     } else {
       favouriteAStay(stay_id)
         .then((data: any) => {
+          console.log("favouriteAStay data", data);
+
           // setIsLoading(false);
           setFavStays((prev) => [
             ...(prev || []),
             {
-              id: stay_id,
-              user: data.user,
-              stay: data.stay,
+              id: data.data.id,
+              user: currentUser,
+              stay: data.data.stay,
             },
           ]);
         })
@@ -98,7 +99,8 @@ const FavouriteStayComp = ({
   };
 
   const getIsFavoriteItem = () => {
-    const result = favStays?.find((stay) => stay.id === item.id);
+    const result = favStays?.find((favStay) => favStay.stay.id == item.id);
+
     if (result != undefined) return true;
     return false;
   };
@@ -116,18 +118,20 @@ const FavouriteStayComp = ({
   };
 
   return (
-    <div className="flex w-[100%] mb-6 rounded-lg shadow-full shadow-primary-400">
-      {/* <div className="w-[40%]">
-        {item.featured_images.length === 0 ? null : (
-          <Image
-            src={item.featured_images[0].url}
-            alt="Ảnh hotel"
-            width={200}
-            height={200}
-            className="w-full rounded-tl-lg"
-          />
-        )}
-      </div> */}
+    <div className="flex gap-10 w-[100%] mb-6 rounded-lg shadow-full shadow-primary-400">
+      <div className="w-[33%]">
+        <Image
+          src={
+            item.featured_images && item.featured_images.length > 0
+              ? item.featured_images[0]?.url
+              : "/assets/images/stay.svg"
+          }
+          alt="Ảnh hotel"
+          width={200}
+          height={200}
+          className="w-full rounded-tl-lg"
+        />
+      </div>
 
       <div className="w-[60%] p-5">
         <div className="flex justify-between">
@@ -198,7 +202,10 @@ const FavouriteStayComp = ({
             </div>
             <div className="flex items-baseline text-[#FF8682]">
               <h1 className="h2-bold">
-                ${formatCurrency({ price: item.min_price })}
+                <span>$</span>
+                {item.min_price === null
+                  ? "0"
+                  : formatCurrency({ price: item.min_price })}
               </h1>
               <h1 className="body-semibold">/night</h1>
             </div>

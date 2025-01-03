@@ -23,7 +23,6 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleResend = async () => {
-    console.log("here");
     setIsLoading(true);
 
     const res = await forgotPassword({ email: email });

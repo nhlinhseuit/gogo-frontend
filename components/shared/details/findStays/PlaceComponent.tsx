@@ -1,7 +1,7 @@
 import {
   convertDataNavigate,
   defaultSearchStayParams,
-  getRandomNumber,
+  getNumberFromId,
 } from "@/utils/util";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -43,7 +43,9 @@ const PlaceComponent = ({
         <h6 className="paragraph-semibold tracking-wide">
           {city}, {country}
         </h6>
-        <p className="body-regular text-gray-500">{getRandomNumber()} places</p>
+        <p className="body-regular text-gray-500">
+          {getNumberFromId(id)} places
+        </p>
       </div>
     </div>
   );

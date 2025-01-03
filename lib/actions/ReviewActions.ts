@@ -69,7 +69,6 @@ export const postReview = async (serviceId: string, description: string, rating:
       rating,
       service_type: serviceType,
     }
-    console.log(JSON.stringify(body));
     const response = await fetch(`${API_URL}`, {
       method: "POST",
       headers: {
