@@ -177,7 +177,7 @@ const FlightsComponent = ({
                 </p>
                 <p>
                   <span className="paragraph-regular mr-1">
-                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
+                    {item?.outbound_flight.airline.review_count}
                   </span>
                   reviews
                 </p>
@@ -196,7 +196,7 @@ const FlightsComponent = ({
               <h1 className="h2-bold">
                 $
                 {formatCurrency({
-                  price: item?.outbound_flight.minBaseFare,
+                  price: item?.outbound_flight.min_base_fare,
                 })}
               </h1>
             </div>

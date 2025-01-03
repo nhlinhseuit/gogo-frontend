@@ -4,18 +4,94 @@ import FavouriteFlight from "@/types/FavouriteFlight";
 import { formatCurrency, getReviewComment } from "@/utils/util";
 import Image from "next/image";
 import FavoriteCheckFlight from "../../searchFlight/flightComponent/FavoriteCheckFlight";
+import { useEffect, useState } from "react";
+import { deleteFavouriteAFlight, favouriteAFlight, fetchFavouriteFlights } from "@/lib/actions/FavouriteFlightsActions";
+import FavouriteFlights from "@/types/FavouriteFlights";
+import { useRouter } from "next/navigation";
 
 const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
+  const [favFlights, setFavFlights] = useState<FavouriteFlights>();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleClickFlightItem = (flightId: string) => {
-    // const queryString = new URLSearchParams({
-    //   departure_time_from,
-    //   departure_time_to,
-    //   passenger_count,
-    // }).toString();
+  const router = useRouter()
 
-    // router.push(`/find-flights/${flightId}?${queryString}`);
+  const handleClickFlightItem = () => {
+    router.push(
+      `/find-flights/${item.outbound_flight.id}`
+    );
   };
+  
+
+  useEffect(() => {
+      fetchFavouriteFlights()
+        .then((data: any) => {
+          setFavFlights(data.data);
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    }, []);
+  
+    const getIsFavoriteItem = () => {
+      const result = favFlights?.flight_favorites.find(
+        (flight) => flight.outbound_flight.id === item.outbound_flight.id
+      );
+      if (result != undefined) return true;
+      return false;
+    };
+
+      const handleFavAFlight = () => {
+        if (getIsFavoriteItem()) {
+          const result = favFlights?.flight_favorites.find(
+            (flight) => flight.outbound_flight.id === item.outbound_flight.id
+          );
+    
+          deleteFavouriteAFlight(result?.id)
+            .then((data: any) => {
+              // setIsLoading(false);
+              setFavFlights((prev) => {
+                if (!prev) return undefined;
+    
+                return {
+                  ...prev,
+                  flight_favorites: prev.flight_favorites.filter(
+                    (item) => item.outbound_flight.id !== item.outbound_flight.id
+                  ),
+                };
+              });
+            })
+            .catch((error) => {
+              setError(error.message);
+              // setIsLoading(false);
+            });
+        } else {
+          favouriteAFlight(item.outbound_flight.id, null)
+            .then((data: any) => {
+              // setIsLoading(false);
+              setFavFlights((prev) => {
+                if (!prev) return undefined;
+    
+                return {
+                  ...prev,
+                  flight_favorites: [
+                    ...(prev.flight_favorites || []),
+                    {
+                      id: item.outbound_flight.id,
+                      user: data.user,
+                      outbound_flight: data.outbound_flight,
+                      return_flight: data.return_flight,
+                      round_trip: data.round_trip,
+                    },
+                  ],
+                };
+              });
+            })
+            .catch((error) => {
+              setError(error.message);
+              // setIsLoading(false);
+            });
+        }
+      };
 
   return (
     <div className="flex p-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
@@ -43,7 +119,7 @@ const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
                 </p>
                 <p>
                   <span className="paragraph-regular mr-1">
-                    {/* {item?.outbound_flight.airline.reviews[0].rating} */}
+                    {item?.outbound_flight.airline.review_count}
                   </span>
                   reviews
                 </p>
@@ -67,15 +143,27 @@ const FavouriteFlightComp = ({ item }: { item: FavouriteFlight }) => {
         </div>
 
         <div className="flex w-full pt-5 border-t-[1px]">
-          <div className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer">
-            <Image
-              src="/assets/icons/Heart.svg"
-              alt="Anh heart"
-              width={20}
-              height={20}
-            />
+          <div 
+            onClick={() => handleFavAFlight()}
+          
+          className="flex px-3 mr-4 border border-primary-100 rounded-md justify-center items-center cursor-pointer">
+            {getIsFavoriteItem() ? (
+                          <Image
+                            src="/assets/icons/Heart.svg"
+                            alt="Anh heart"
+                            width={20}
+                            height={20}
+                          />
+                        ) : (
+                          <Image
+                            src="/assets/icons/flightHeart.svg"
+                            alt="Anh heart"
+                            width={20}
+                            height={20}
+                          />
+                        )}
           </div>
-          <button className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
+          <button onClick={handleClickFlightItem} className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold">
             View Deals
           </button>
         </div>
