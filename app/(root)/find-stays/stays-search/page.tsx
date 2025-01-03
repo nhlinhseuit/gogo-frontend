@@ -282,7 +282,7 @@ function StaysSearch() {
                   ?.filter((item) => item.stay_type === isSelected)
                   .map((stay, index) => (
                     <FavouriteStayComp
-                      key={index}
+                    key={index}
                       item={stay}
                       paramsRef={params}
                       isFavorite

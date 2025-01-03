@@ -1,3 +1,4 @@
+
 "use client";
 
 import "@/app/globals.css";
@@ -14,12 +15,20 @@ import { searchFlights } from "@/lib/actions/Search/SearchFlightActions";
 import Airline from "@/types/Airline";
 import Flight from "@/types/Flight";
 import { convertDataReceive } from "@/utils/util";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 
 const trips = ["Round trip", "On Way", "Multi-City"];
 
 function FlightsSearch() {
+
+  //? Thay đổi để custom truyền chọn chuyến đi chuyến về cho roundtrip
+
+  const [isFirstStep, setIsFirstStep] = useState(true);
+  const [selectedOutboundFlightId, setSelectedOutboundFlightId] = useState("");
+
+  const router = useRouter();
+
   const [flights, setFlights] = useState<Flight[]>();
   const [airlines, setAirlines] = useState<Airline[]>();
 
@@ -33,14 +42,15 @@ function FlightsSearch() {
 
   const paramsData = convertDataReceive(searchParams);
 
-  const params = {
-    roundTrip: paramsData.roundTrip,
+  //TODO: paramsData.roundTrip just for call api 1 or 2nd time
+  let params = {
+    roundTrip: false,
     departure_location_id: paramsData.departure_location_id,
     arrival_location_id: paramsData.arrival_location_id,
     departure_time_from: paramsData.departure_time_from,
     departure_time_to: paramsData.departure_time_from,
-    return_time_from: paramsData.return_time_from,
-    return_time_to: paramsData.return_time_to,
+    // return_time_from: paramsData.return_time_from,
+    // return_time_to: paramsData.return_time_to,
     seat_classes: paramsData.seat_classes,
     passenger_count: paramsData.passenger_count,
   };
@@ -77,7 +87,24 @@ function FlightsSearch() {
 
   useEffect(() => {
     searchFlightsFunc(params);
-  }, [searchParams]);
+
+    if (!isFirstStep) {
+      params = {
+        roundTrip: paramsData.false,
+        // * đổi thứ tự
+        departure_location_id: paramsData.arrival_location_id,
+        arrival_location_id: paramsData.departure_location_id,
+        departure_time_from: paramsData.return_time_from,
+        departure_time_to: paramsData.return_time_to,
+        // return_time_from: paramsData.return_time_from,
+        // return_time_to: paramsData.return_time_to,
+        seat_classes: paramsData.seat_classes,
+        passenger_count: paramsData.passenger_count,
+      };
+
+      searchFlightsFunc(params);
+    }
+  }, [searchParams, isFirstStep]);
 
   useEffect(() => {
     searchAirlinesFunc();
@@ -246,20 +273,75 @@ function FlightsSearch() {
               />
             ) : (
               <div className="w-[70%] ml-4">
-                <div>
-                  {flights?.map((flight, index) => (
-                    <FlightsComponent
-                      key={`${flight.outbound_flight.id}_${index}`}
-                      isFavorite
-                      item={flight}
-                      outbound_flight_id={flight.outbound_flight.id}
-                      departure_time_from={params["departure_time_from"] ?? ""}
-                      departure_time_to={params["departure_time_to"] ?? ""}
-                      passenger_count={params["passenger_count"] ?? ""}
-                      paramsRef={paramsData}
-                    />
-                  ))}
-                </div>
+                {params.roundTrip === false ? (
+                  <div>
+                    {flights?.map((flight, index) => (
+                      <FlightsComponent
+                        type="oneway"
+                        key={`${flight.outbound_flight.id}_${index}`}
+                        isFavorite
+                        item={flight}
+                        flightId={flight.outbound_flight.id}
+                        paramsRef={paramsData}
+                        handleClickFlightItem={() => {
+                          router.push(
+                            `/find-flights/${flight.outbound_flight.id}`
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : isFirstStep ? (
+                  <>
+                    <p className="my-2 paragraph-semibold">
+                      {paramsData.departure_location} ➡{" "}
+                      {paramsData.arrival_location}
+                    </p>
+
+                    <div>
+                      {flights?.map((flight, index) => (
+                        <FlightsComponent
+                          type="outbound"
+                          key={`${flight.outbound_flight.id}_${index}`}
+                          isFavorite
+                          item={flight}
+                          flightId={flight.outbound_flight.id}
+                          paramsRef={paramsData}
+                          handleClickOutboundFlight={() => {
+                            setIsFirstStep(false);
+                            setSelectedOutboundFlightId(
+                              flight.outbound_flight.id
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="my-2 paragraph-semibold">
+                      {paramsData.arrival_location} ➡{" "}
+                      {paramsData.departure_location}
+                    </p>
+                    <div>
+                      {flights?.map((flight, index) => (
+                        <FlightsComponent
+                          type="return"
+                          key={`${flight.outbound_flight.id}_${index}`}
+                          isFavorite
+                          item={flight}
+                          flightId={flight.outbound_flight.id}
+                          paramsRef={paramsData}
+                          handleClickReturnFlight={() => {
+                            router.push(
+                              `/find-flights/${selectedOutboundFlightId}?return_flight=${flight.outbound_flight.id}`
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
 
                 <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
                   <p className="paragraph-semibold text-white">

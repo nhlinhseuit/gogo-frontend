@@ -9,6 +9,8 @@ export const fetchFavouriteStays = async (
   params: any
 ): Promise<FavouriteStay[]> => {
   try {
+    console.log("fetchFavouriteStays");
+
     const queryString = new URLSearchParams(params).toString();
     const urlWithParams = `${API_URL}?${queryString}`;
 
@@ -21,7 +23,6 @@ export const fetchFavouriteStays = async (
         Authorization: `Bearer ${token ?? ""}`,
       },
     });
-    console.log("response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -35,8 +36,10 @@ export const fetchFavouriteStays = async (
 
 export const favouriteAStay = async (
   stay_id: any
-): Promise<FavoriteAStayResult[]> => {
+): Promise<FavoriteAStayResult> => {
   try {
+    console.log("favouriteAStay");
+
     const user = getCurrentUser();
     const userId = user["id"] ?? "";
 
@@ -44,8 +47,6 @@ export const favouriteAStay = async (
       user_id: userId,
       stay_id: stay_id,
     };
-
-    console.log("body", body);
 
     const token = getToken();
 
@@ -57,22 +58,21 @@ export const favouriteAStay = async (
       },
       body: body ? JSON.stringify(body) : null,
     });
-    console.log("response: ", response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<FavoriteAStayResult[]>;
+    return (await response.json()) as Promise<FavoriteAStayResult>;
   } catch (error) {
     console.error("Error favouriteAStay:", error);
     throw error;
   }
 };
 
-export const deleteFavouriteAStay = async (
-  id: any
-)=> {
+export const deleteFavouriteAStay = async (id: any) => {
   try {
+    console.log("deleteFavouriteAStay");
+
     const token = getToken();
 
     const response = await fetch(API_URL + `/${id}`, {
@@ -87,7 +87,7 @@ export const deleteFavouriteAStay = async (
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json());
+    return await response.json();
   } catch (error) {
     console.error("Error deleteFavouriteAStay:", error);
     throw error;

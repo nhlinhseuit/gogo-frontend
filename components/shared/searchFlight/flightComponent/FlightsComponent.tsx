@@ -19,21 +19,23 @@ import { useRouter } from "next/navigation";
 import { favouriteAFlight } from "@/lib/actions/FavouriteFlightsActions";
 
 const FlightsComponent = ({
+  type,
   item,
-  outbound_flight_id,
-  departure_time_from,
-  departure_time_to,
-  passenger_count,
+  flightId,
   paramsRef,
   isFavorite,
+  handleClickFlightItem,
+  handleClickReturnFlight,
+  handleClickOutboundFlight,
 }: {
+  type: string;
   item: Flight;
-  outbound_flight_id: string;
-  departure_time_from: string;
-  departure_time_to: string;
-  passenger_count: string;
+  flightId: string;
   paramsRef: any;
   isFavorite?: boolean;
+  handleClickFlightItem?: () => void;
+  handleClickReturnFlight?: () => void;
+  handleClickOutboundFlight?: () => void;
 }) => {
   const [favFlights, setFavFlights] = useState<FavouriteFlights>();
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +49,7 @@ const FlightsComponent = ({
   useEffect(() => {
     if (isFavorite && !currentUser) return;
 
-    fetchFavouriteFlights(currentUser.id ?? "")
+    fetchFavouriteFlights()
       .then((data: any) => {
         setFavFlights(data.data);
       })
@@ -62,16 +64,6 @@ const FlightsComponent = ({
     );
     if (result != undefined) return true;
     return false;
-  };
-
-  const handleClickFlightItem = (flightId: string) => {
-    const queryString = new URLSearchParams({
-      departure_time_from,
-      departure_time_to,
-      passenger_count,
-    }).toString();
-
-    router.push(`/find-flights/${flightId}?${queryString}`);
   };
 
   const checkIsCurrentUser = () => {
@@ -98,13 +90,12 @@ const FlightsComponent = ({
         .then((data: any) => {
           // setIsLoading(false);
           setFavFlights((prev) => {
-            console.log("prev 1", prev);
             if (!prev) return undefined;
 
             return {
               ...prev,
               flight_favorites: prev.flight_favorites.filter(
-                (item) => item.outbound_flight.id !== outbound_flight_id
+                (item) => item.outbound_flight.id !== flightId
               ),
             };
           });
@@ -114,11 +105,10 @@ const FlightsComponent = ({
           // setIsLoading(false);
         });
     } else {
-      favouriteAFlight(outbound_flight_id, null)
+      favouriteAFlight(flightId, null)
         .then((data: any) => {
           // setIsLoading(false);
           setFavFlights((prev) => {
-            console.log("prev 2", prev);
             if (!prev) return undefined;
 
             return {
@@ -126,7 +116,7 @@ const FlightsComponent = ({
               flight_favorites: [
                 ...(prev.flight_favorites || []),
                 {
-                  id: outbound_flight_id,
+                  id: flightId,
                   user: data.user,
                   outbound_flight: data.outbound_flight,
                   return_flight: data.return_flight,
@@ -140,6 +130,22 @@ const FlightsComponent = ({
           setError(error.message);
           // setIsLoading(false);
         });
+    }
+  };
+
+  const handleClickItem = () => {
+    switch (type) {
+      case "oneway":
+        handleClickFlightItem && handleClickFlightItem();
+        break;
+      case "outbound":
+        handleClickOutboundFlight && handleClickOutboundFlight();
+        break;
+      case "return":
+        handleClickReturnFlight && handleClickReturnFlight();
+        break;
+      default:
+        break;
     }
   };
 
@@ -217,9 +223,7 @@ const FlightsComponent = ({
             )}
           </div>
           <button
-            onClick={() => {
-              handleClickFlightItem(item.outbound_flight.id);
-            }}
+            onClick={handleClickItem}
             className="w-[90%] py-3 rounded-md bg-primary-100 font-semibold"
           >
             View Deals

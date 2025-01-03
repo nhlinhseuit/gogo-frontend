@@ -1,5 +1,6 @@
 import { deleteFavouriteAFlight } from "@/lib/actions/FavouriteFlightsActions";
 import {
+  deleteFavouriteAStay,
   favouriteAStay,
   fetchFavouriteStays,
 } from "@/lib/actions/FavouriteStaysActions";
@@ -12,14 +13,10 @@ import { useEffect, useState } from "react";
 
 const FavouriteStayComp = ({
   item,
-  // checkin,
-  // checkout,
   paramsRef,
   isFavorite,
 }: {
   item: Stay;
-  // checkin: string;
-  // checkout: string;
   paramsRef?: any;
   isFavorite?: boolean;
 }) => {
@@ -28,6 +25,8 @@ const FavouriteStayComp = ({
   const [favStays, setFavStays] = useState<FavouriteStay[]>();
 
   const currentUser = getCurrentUser();
+
+  console.log("favStays", favStays);
 
   useEffect(() => {
     if (isFavorite && !currentUser) return;
@@ -64,13 +63,16 @@ const FavouriteStayComp = ({
     checkIsCurrentUser();
 
     if (getIsFavoriteItem()) {
-      const result = favStays?.find((stay) => stay.id === item.id);
+      const result = favStays?.find((favStay) => favStay.stay.id === item.id);
 
-      deleteFavouriteAFlight(result?.id)
+      deleteFavouriteAStay(result?.id ?? "")
         .then((data: any) => {
           // setIsLoading(false);
+
+
           setFavStays(
-            (prev) => prev?.filter((item) => item.id !== stay_id) || []
+            (prev) =>
+              prev?.filter((favStay) => favStay.stay.id !== stay_id) || []
           );
         })
         .catch((error) => {
@@ -80,13 +82,15 @@ const FavouriteStayComp = ({
     } else {
       favouriteAStay(stay_id)
         .then((data: any) => {
+          console.log("favouriteAStay data", data);
+
           // setIsLoading(false);
           setFavStays((prev) => [
             ...(prev || []),
             {
-              id: stay_id,
-              user: data.user,
-              stay: data.stay,
+              id: data.data.id,
+              user: currentUser,
+              stay: data.data.stay,
             },
           ]);
         })
@@ -98,7 +102,8 @@ const FavouriteStayComp = ({
   };
 
   const getIsFavoriteItem = () => {
-    const result = favStays?.find((stay) => stay.id === item.id);
+    const result = favStays?.find((favStay) => favStay.stay.id == item.id);
+
     if (result != undefined) return true;
     return false;
   };
