@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import "../../globals.css";
 import { useEffect, useState } from "react";
 import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
-import Location from "@/types/Location";
+import LocationType from "@/types/LocationType";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import {
   convertDataNavigate,
@@ -94,7 +94,7 @@ export default function Home() {
 
   // TODO: locations
 
-  const [locations, setLocations] = useState<{ data: Location[] }>({
+  const [locations, setLocations] = useState<{ data: LocationType[] }>({
     data: [],
   });
   const [isLoading, setIsLoading] = useState(true);

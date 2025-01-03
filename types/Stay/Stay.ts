@@ -1,4 +1,4 @@
-import Location from "../Location";
+import LocationType from "../LocationType";
 
 type StayType = "HOTEL" | "HOSTEL" | "RESORT" | "VILLA"; // Example types
 type ServiceType = "AIRLINE" | "TRAIN" | "CAR_RENTAL"; // Example types
@@ -8,7 +8,7 @@ interface Stay {
   name: string;
   amenities: Amenity[];
   address: string;
-  location: Location;
+  location: LocationType;
   rating: number;
   overview: string;
   latitude: number;
@@ -37,7 +37,7 @@ interface NestedStay {
   name: string;
   amenities: NestedAmenity[];
   address: string;
-  location: Location;
+  location: LocationType;
   rating: number;
   overview: string;
   latitude: number;

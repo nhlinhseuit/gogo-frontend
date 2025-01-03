@@ -42,13 +42,14 @@ const FlightBookingPage: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [bookingId, setBookingId] = useState<string>("");
   const [seats, setSeats] = useState<Seat[]>([]);
-
   const [flightDetails, setFlightDetails] = useState<FlightDetails | null>(null);
 
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<Record<string, PassengerDetail>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const currentUser = getCurrentUser();
+
 
   const fetchCards = () => {
     fetchUserCards(getCurrentUser().id).then((data) => {
@@ -82,8 +83,8 @@ const FlightBookingPage: React.FC = () => {
     setSeats(fetchedSeats);
   };
 
-  const handleBooking = async () => {
-
+  const handleBooking = async (event: any) => {
+    event.preventDefault()
     if (!cards || cards.length === 0) {
       toast({
         title: `Please add a card!`,
@@ -102,7 +103,7 @@ const FlightBookingPage: React.FC = () => {
       return;
     }
 
-    if(Object.values(passengerDetails).some((passenger) => !passenger.name || !passenger) || !passengerDetails) {
+    if (Object.values(passengerDetails).some((passenger) => !passenger.name || !passenger) || !passengerDetails) {
       toast({
         title: `Please fill in all passenger details!`,
         variant: "error",
@@ -138,26 +139,18 @@ const FlightBookingPage: React.FC = () => {
     }).finally(() => {
       setIsLoading(false);
     });
-
   }
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const currentUser = getCurrentUser();
+
 
   useEffect(() => {
     //? Middleware
     if (!currentUser) {
-      setIsAuthenticated(false);
-
-      const params = convertDataReceive(searchParams);
-      const queryString = new URLSearchParams(params).toString();
-
       setTimeout(() => {
-        router.push(`/login?${queryString}`);
+        router.push(`/login?ref=find-flights/flight-booking/${flightId}&seats=${seatIds.join(",")}`);
       }, 2300);
       return;
-    } else {
-      setIsAuthenticated(true);
+    }
 
     fetchFlightDetails(flightId).then((data) => {
       setFlightDetails(data);
@@ -169,7 +162,7 @@ const FlightBookingPage: React.FC = () => {
       fetchAllSeats(seatIds);
     }
 
-    fetchCards();}
+    fetchCards();
   }, []);
 
   useEffect(() => {
@@ -235,7 +228,7 @@ const FlightBookingPage: React.FC = () => {
     return <BigLoadingSpinner/>;
   }
 
-  if (isAuthenticated === null) {
+  if (currentUser === null) {
     return (
       <NoResult
         title="Checking..."
@@ -244,7 +237,7 @@ const FlightBookingPage: React.FC = () => {
     );
   }
 
-  if (isAuthenticated === false) {
+  if (!currentUser) {
     return (
       <NoResult
         title="Wait a sec..."
@@ -328,7 +321,7 @@ const FlightBookingPage: React.FC = () => {
             onSelectCard={setSelectedCard}
             selectedCard={selectedCard}
           />
-          <button onClick={() => handleBooking()} className="w-full rounded-lg p-4 bg-primary-100">Book</button>
+          <button onClick={handleBooking} className="w-full rounded-lg p-4 bg-primary-100">Book</button>
         </div>
         <div className="col-span-2">
           <PriceDetailsComponent
