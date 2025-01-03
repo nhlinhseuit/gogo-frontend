@@ -1,4 +1,4 @@
-import {ReadonlyURLSearchParams} from "next/navigation";
+import { ReadonlyURLSearchParams } from "next/navigation";
 
 export const defaultSearchFlightParams = (
   locationName: string,
@@ -42,8 +42,6 @@ const images = [
   "/assets/images/US.svg",
   "/assets/images/UK.svg",
   "/assets/images/Japan.svg",
-  "/assets/images/flight.svg",
-  "/assets/images/stay.svg",
 ];
 
 export function getRandomImgUrl(index: number) {
@@ -218,7 +216,7 @@ export const formatDayFromInputToISODateApi = (
   // (10h tối)
   const endTime = `${year}-${month}-${day}T22:00:00Z`;
 
-  return {startTime, endTime};
+  return { startTime, endTime };
 };
 
 //? KHI NHẬN GIÁ TRỊ TỪ PARAMS, CONVERT ĐỂ HIỂN THỊ TRÊN FLIGHTSINPUT VÀ STAYSINPUT
@@ -286,7 +284,7 @@ export const normalizeSearchItem = (term: string | number) => {
   return normalizedTerm.replace(/[^a-z0-9\s]/g, "");
 };
 
-export const formatCurrency = ({price}: { price: number }) => {
+export const formatCurrency = ({ price }: { price: number }) => {
   if (price === 0) return `0`;
 
   const absPrice = Math.abs(price);
@@ -304,7 +302,6 @@ export const formatCurrency = ({price}: { price: number }) => {
 
   return formattedPrice;
 };
-
 
 export const formatDateToMMYY = (dateString: string) => {
   const date = new Date(dateString);
@@ -353,22 +350,21 @@ export const formatDateInWords = (dateString: string) => {
   const year = date.getFullYear();
 
   return `${dayName}, ${monthName} ${day}, ${year}`;
-
-}
+};
 
 export const formatHHMM = (dateString: string) => {
   const date = new Date(dateString);
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
-}
+};
 export const convertToLocaleDate = (isoString: string): Date => {
-  const truncatedString = isoString.replace(/(\.\d{3})\d*/, '$1');
+  const truncatedString = isoString.replace(/(\.\d{3})\d*/, "$1");
 
   const date = new Date(truncatedString);
 
   if (isNaN(date.getTime())) {
-    throw new Error('Invalid ISO string');
+    throw new Error("Invalid ISO string");
   }
 
   const adjustedTime = date.getTime() + 7 * 60 * 60 * 1000;

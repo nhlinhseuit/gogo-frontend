@@ -5,6 +5,7 @@ import BookingStay from "@/types/BookingStay";
 import { useEffect, useState } from "react";
 import AccountTab from "./AccountTab";
 import FlightsItem from "./FlightsItem";
+import StaysItem from "./StaysItem";
 
 const HistoryInfoSection = () => {
   const [bookingFlights, setBookingFlights] = useState<{
@@ -35,23 +36,20 @@ const HistoryInfoSection = () => {
     },
   ];
 
-  const renderData = () => {
-    if (isSelected === "Flights") return bookingFlights.data;
-    else return bookingStays.data;
-  };
-
   const fetchFlights = async () => {
+    console.log('fetchFlights')
+
     setIsLoading(true);
     try {
       fetchMyFlights()
-      .then((data: any) => {
-        setBookingFlights(data);
-        // setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        // setIsLoading(false);
-      })
+        .then((data: any) => {
+          setBookingFlights(data);
+          // setIsLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -63,14 +61,16 @@ const HistoryInfoSection = () => {
     setIsLoading(true);
     try {
       fetchMyStays()
-      .then((data: any) => {
-        setBookingStays(data);
-        // setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        // setIsLoading(false);
-      })
+        .then((data: any) => {
+          console.log("fetchMyStays data", data);
+
+          setBookingStays(data);
+          // setIsLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          // setIsLoading(false);
+        });
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -83,11 +83,8 @@ const HistoryInfoSection = () => {
   }, []);
 
   useEffect(() => {
-    if (isSelected === "Stays" && !bookingStays) fetchStays();
+    if (isSelected === "Stays" && bookingStays.data.length === 0) fetchStays();
   }, [isSelected]);
-
-  console.log('bookingFlights', bookingFlights)
-  console.log('bookingStays', bookingStays)
 
   return (
     <>
@@ -124,9 +121,13 @@ const HistoryInfoSection = () => {
       </div>
 
       <div>
-        {renderData().map((item: any) => (
-          <FlightsItem key={item.id} item={item} />
-        ))}
+        {isSelected === "Flights"
+          ? bookingFlights.data.map((item: any) => (
+              <FlightsItem key={item.id} item={item} />
+            ))
+          : bookingStays.data.map((item: any) => (
+              <StaysItem key={item.id} item={item} />
+            ))}
       </div>
     </>
   );

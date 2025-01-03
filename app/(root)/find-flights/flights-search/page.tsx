@@ -115,8 +115,8 @@ function FlightsSearch() {
   const getMinMaxFare = (): { minFare: number; maxFare: number } => {
     if (!flights) return { minFare: 0, maxFare: 0 };
     const fares = flights.map((flight) => {
-      const outboundFare = flight.outbound_flight.minBaseFare
-        ? flight.return_flight.minBaseFare
+      const outboundFare = flight.outbound_flight.min_base_fare
+        ? flight.outbound_flight.min_base_fare
         : 0;
       // return outboundFare + returnFare;
       return outboundFare;

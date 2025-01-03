@@ -6,12 +6,12 @@ import Image from "@/types/Image";
 interface Airline {
   id: string;
   name: string;
-  amenities: Amenity[];
+  amenities?: Amenity[];
   image: string
   policies: Policy[];
   // reviews: Review[];
   rating: number;
-  featured_images: Image[];
+  featured_images?: Image[];
   review_count: number;
 }
 
