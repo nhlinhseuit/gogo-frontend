@@ -18,6 +18,7 @@ import {convertDataReceive, convertToLocaleDate, getCurrentUser} from "@/utils/u
 import {confirmStayBooking, fetchStayBooking} from "@/lib/actions/BookingActions";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import {toast} from "@/hooks/use-toast";
+import NoResult from "@/components/shared/NoResult";
 
 interface PageParams {
   stayId: string;
@@ -82,7 +83,7 @@ const StayBookingPage: React.FC = () => {
 
       setTimeout(() => {
         router.push(`/login?${queryString}`);
-      }, 2300);
+      }, 2300); 
       return;
 
     } else {
@@ -206,6 +207,24 @@ const StayBookingPage: React.FC = () => {
 
   if (!stayData || !roomData || isLoading) {
     return <BigLoadingSpinner/>
+  }
+
+  if (isAuthenticated === null) {
+    return (
+      <NoResult
+        title="Checking..."
+        description="We are checking your informations..."
+      />
+    );
+  }
+
+  if (isAuthenticated === false) {
+    return (
+      <NoResult
+        title="Wait a sec..."
+        description="You will be redirected to login page in just a few seconds..."
+      />
+    );
   }
 
   return (

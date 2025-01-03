@@ -9,7 +9,7 @@ import {useParams, useRouter, useSearchParams} from "next/navigation";
 import Price from "@/types/Price";
 import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
-import {getCurrentUser} from "@/utils/util";
+import {convertDataReceive, getCurrentUser} from "@/utils/util";
 import FlightDetails from "@/types/FlightDetails";
 import {fetchFlightDetails} from "@/lib/actions/FlightActions";
 import Seat from "@/types/Seat";
@@ -18,6 +18,7 @@ import FlightInformation from "@/components/shared/details/flights/FlightInforma
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import {confirmFlightBooking} from "@/lib/actions/BookingActions";
 import {toast} from "@/hooks/use-toast";
+import NoResult from "@/components/shared/NoResult";
 
 interface PageParams {
   flightId: string;
@@ -137,7 +138,23 @@ const FlightBookingPage: React.FC = () => {
 
     setIsLoading(false);
   }
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const currentUser = getCurrentUser();
+
   useEffect(() => {
+    //? Middleware
+    if (!currentUser) {
+      setIsAuthenticated(false);
+
+      const params = convertDataReceive(searchParams);
+      const queryString = new URLSearchParams(params).toString();
+
+      setTimeout(() => {
+        router.push(`/login?${queryString}`);
+      }, 2300);
+      return;
+    } else {
     fetchFlightDetails(flightId).then((data) => {
       setFlightDetails(data);
     }).catch((error) => {
@@ -148,7 +165,7 @@ const FlightBookingPage: React.FC = () => {
       fetchAllSeats(seatIds);
     }
 
-    fetchCards();
+    fetchCards();}
   }, []);
 
   useEffect(() => {
@@ -211,6 +228,24 @@ const FlightBookingPage: React.FC = () => {
 
   if (!flightDetails || seats.length === 0 || !price || isLoading) {
     return <BigLoadingSpinner/>;
+  }
+
+  if (isAuthenticated === null) {
+    return (
+      <NoResult
+        title="Checking..."
+        description="We are checking your informations..."
+      />
+    );
+  }
+
+  if (isAuthenticated === false) {
+    return (
+      <NoResult
+        title="Wait a sec..."
+        description="You will be redirected to login page in just a few seconds..."
+      />
+    );
   }
 
   return (
