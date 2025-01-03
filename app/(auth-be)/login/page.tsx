@@ -27,7 +27,11 @@ const Login = () => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleNavigate = () => {
+  const handleNavigate = (data: any) => {
+    sessionStorage.setItem("authToken", data.token);
+    sessionStorage.setItem("currentUser", JSON.stringify(data.user));
+
+
     //TODO: trang nào đó vào login
     if (prevRoute) {
       router.push(`/${prevRoute}`);
@@ -48,27 +52,29 @@ const Login = () => {
       //TODO: vào stay booking
       //! thay thế 1
 
-    } else if (!prevRoute && 1) {
-      const paramsData = convertDataReceive(searchParams);
-      const queryString = new URLSearchParams(
-        convertDataNavigate(paramsData)
-      ).toString();
+    }
+    //  else if (!prevRoute && 1) {
+    //   const paramsData = convertDataReceive(searchParams);
+    //   const queryString = new URLSearchParams(
+    //     convertDataNavigate(paramsData)
+    //   ).toString();
       
-      router.push(`/find-flights/stay-booking?${queryString}`);
+    //   router.push(`/find-flights/stay-booking?${queryString}`);
 
-      //TODO: vào flight booking
-      //! thay thế 1
+    //   //TODO: vào flight booking
+    //   //! thay thế 1
       
-    } else if (!prevRoute && 1) {
-      const paramsData = convertDataReceive(searchParams);
-      const queryString = new URLSearchParams(
-        convertDataNavigate(paramsData)
-      ).toString();
+    // } else if (!prevRoute && 1) {
+    //   const paramsData = convertDataReceive(searchParams);
+    //   const queryString = new URLSearchParams(
+    //     convertDataNavigate(paramsData)
+    //   ).toString();
       
-      router.push(`/find-flights/flight-booking?${queryString}`);
+    //   router.push(`/find-flights/flight-booking?${queryString}`);
 
-      //TODO: others
-    } else {
+    //   //TODO: others
+    // } 
+    else {
       toast({
         title: `Login successfully!`,
         variant: "success",
@@ -97,7 +103,7 @@ const Login = () => {
             duration: 3000,
           });
         } else {
-          handleNavigate();
+          handleNavigate(data);
         }
       });
     }

@@ -1,6 +1,6 @@
 import { fetchMyFlights } from "@/lib/actions/MyBooking/FetchMyFlights";
 import { fetchMyStays } from "@/lib/actions/MyBooking/FetchMyStays";
-import BookingFlight from "@/types/BookingFlight";
+import FlightBooking from "@/types/FlightBooking";
 import BookingStay from "@/types/BookingStay";
 import { useEffect, useState } from "react";
 import AccountTab from "./AccountTab";
@@ -9,7 +9,7 @@ import StaysItem from "./StaysItem";
 
 const HistoryInfoSection = () => {
   const [bookingFlights, setBookingFlights] = useState<{
-    data: BookingFlight[];
+    data: FlightBooking[];
   }>({
     data: [],
   });
@@ -37,7 +37,7 @@ const HistoryInfoSection = () => {
   ];
 
   const fetchFlights = async () => {
-    console.log('fetchFlights')
+    console.log("fetchFlights");
 
     setIsLoading(true);
     try {
@@ -85,6 +85,8 @@ const HistoryInfoSection = () => {
   useEffect(() => {
     if (isSelected === "Stays" && bookingStays.data.length === 0) fetchStays();
   }, [isSelected]);
+
+  console.log("bookingStays", bookingStays);
 
   return (
     <>

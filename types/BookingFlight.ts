@@ -1,4 +1,6 @@
+import FlightDetails from "./FlightDetails";
 import Location from "./Location";
+import User from "./User";
 
 interface BookingFlight {
   id: string;
@@ -34,28 +36,6 @@ interface Airport {
   location: Location;
 }
 
-interface FlightDetails {
-  id: string;
-  name: string;
-  amenities: Amenity[];
-  airline: {
-    id: string;
-    name: string;
-    image: string;
-    policies: AirlinePolicy[];
-  };
-  departureAirport: Airport;
-  arrivalAirport: Airport;
-  gate: string;
-  timezone: string;
-  departureTime: string;
-  arrivalTime: string;
-  featured_images: {
-    id: string;
-    url: string;
-  }[];
-}
-
 interface Seat {
   id: string;
   seat: {
@@ -73,27 +53,16 @@ interface Seat {
       id: string;
       email: string;
       address: string;
-      full_name: string;
+      fullName: string;
       phone_number: string;
       date_of_birth: string;
       avatar_url: string;
       cover_url: string;
     };
     status: string;
-    bookingDate: string;
-    updateDate: string;
+    booking_date: string;
+    update_date: string;
   };
   citizen_id: string;
   citizen_name: string;
-}
-
-interface User {
-  id: string;
-  email: string;
-  address: string;
-  full_name: string;
-  phone_number: string;
-  date_of_birth: string;
-  avatar_url: string;
-  cover_url: string;
 }

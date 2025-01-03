@@ -3,6 +3,7 @@ import AddEmailButton from "@/components/shared/Profile/AddEmailButton";
 import PaymentCard from "./PaymentCard";
 
 const PaymentInfoSection = () => {
+  
   return (
     <>
       <p className="ml-2 mt-10 text-[24px] font-semibold leading-[20.8px]">

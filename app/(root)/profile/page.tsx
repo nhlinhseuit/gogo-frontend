@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "../../globals.css";
 import NoResult from "@/components/shared/NoResult";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 export default function Profile() {
   const tabs = [
@@ -34,7 +35,7 @@ export default function Profile() {
   const [isSelected, setIsSelected] = useState("Account");
   const [userInfo, setUserInfo] = useState<UserInfo>();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
@@ -90,12 +91,17 @@ export default function Profile() {
     try {
       const formData = new FormData();
       formData.append("file", tempCoverImage); // Thêm file ảnh vào form data
-      await editUserCoverPicture(formData); // Gửi form data qua API
-      alert("Avatar updated successfully!");
+
+      setIsLoading(true);
+      editUserCoverPicture(formData).then((data) => {
+        setIsLoading(false);
+        alert("Cover image successfully!");
+        setCoverImage((data.data as UserInfo).cover_url);
+      });
     } catch (error) {
       console.error("Error updating cover picture:", error);
       alert("Failed to update cover.");
-      setCoverImage("/assets/images/background_avatar.svg");
+      setCoverImage("/assets/images/bg.png");
     }
   };
 
@@ -198,12 +204,19 @@ export default function Profile() {
                   htmlFor="cover-upload"
                   className="bg-primary-100 py-2 px-3 rounded-md cursor-pointer flex items-center gap-2"
                 >
-                  <Image
-                    src={`/assets/icons/upload.svg`}
-                    width={16}
-                    height={16}
-                    alt="Upload"
-                  />
+                  {isLoading ? (
+                    <div className="mb-4 mr-1">
+                      <LoadingSpinner />
+                    </div>
+                  ) : (
+                    <Image
+                      src={`/assets/icons/upload.svg`}
+                      width={16}
+                      height={16}
+                      alt="Upload"
+                    />
+                  )}
+
                   <p className="body-medium">Upload new cover</p>
                 </label>
               ) : (
@@ -225,6 +238,7 @@ export default function Profile() {
                     className="flex items-center gap-2 cursor-pointer bg-gray-300 text-white py-2 px-3 rounded-md"
                     onClick={() => {
                       setTempCoverImage(null); // Xóa ảnh tạm thời
+                      setTempCoverImageURL(null); // Xóa ảnh tạm thời
                       setIsEditingCover(false); // Thoát trạng thái chỉnh sửa
                     }}
                   >
