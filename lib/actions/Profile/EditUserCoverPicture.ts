@@ -6,7 +6,7 @@ const API_URL = `${BASE_URL}/api/v1/users/`;
 
 export const editUserCoverPicture = async (
   formData: FormData
-): Promise<UserInfo[]> => {
+): Promise<{data: UserInfo}> => {
   try {
     const token = getToken();
     const userInfo = getCurrentUser();
@@ -25,7 +25,7 @@ export const editUserCoverPicture = async (
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return (await response.json()) as Promise<UserInfo[]>;
+    return (await response.json()) as Promise<{data: UserInfo}>;
   } catch (error) {
     console.error("Error editing user cover picture:", error);
     throw error;

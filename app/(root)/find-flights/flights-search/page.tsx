@@ -39,6 +39,7 @@ function FlightsSearch() {
   const searchParams = useSearchParams();
 
   const paramsData = convertDataReceive(searchParams);
+  console.log("paramsData", paramsData);
 
   //TODO: paramsData.roundTrip just for call api 1 or 2nd time
   let params = {
@@ -46,12 +47,14 @@ function FlightsSearch() {
     departure_location_id: paramsData.departure_location_id,
     arrival_location_id: paramsData.arrival_location_id,
     departure_time_from: paramsData.departure_time_from,
-    departure_time_to: paramsData.departure_time_from,
+    departure_time_to: paramsData.departure_time_to,
     // return_time_from: paramsData.return_time_from,
     // return_time_to: paramsData.return_time_to,
     seat_classes: paramsData.seat_classes,
     passenger_count: paramsData.passenger_count,
   };
+
+  console.log("params", params);
 
   const searchFlightsFunc = (params: any, isFilter?: boolean) => {
     if (isFilter) setIsLoadingFilter(true);
@@ -84,11 +87,9 @@ function FlightsSearch() {
   };
 
   useEffect(() => {
-    searchFlightsFunc(params);
-
     if (!isFirstStep) {
       params = {
-        roundTrip: paramsData.false,
+        roundTrip: false,
         // * đổi thứ tự
         departure_location_id: paramsData.arrival_location_id,
         arrival_location_id: paramsData.departure_location_id,
@@ -100,6 +101,8 @@ function FlightsSearch() {
         passenger_count: paramsData.passenger_count,
       };
 
+      searchFlightsFunc(params);
+    } else {
       searchFlightsFunc(params);
     }
   }, [searchParams, isFirstStep]);
@@ -271,7 +274,7 @@ function FlightsSearch() {
               />
             ) : (
               <div className="w-[70%] ml-4">
-                {params.roundTrip === false ? (
+                {paramsData.roundTrip === false ? (
                   <div>
                     {flights?.map((flight, index) => (
                       <FlightsComponent
@@ -283,7 +286,7 @@ function FlightsSearch() {
                         paramsRef={paramsData}
                         handleClickFlightItem={() => {
                           router.push(
-                            `/find-flights/${flight.outbound_flight.id}`
+                            `/find-flights/${flight.outbound_flight.id}?passenger_count=${paramsData.passenger_count}`
                           );
                         }}
                       />
@@ -332,7 +335,7 @@ function FlightsSearch() {
                           paramsRef={paramsData}
                           handleClickReturnFlight={() => {
                             router.push(
-                              `/find-flights/${selectedOutboundFlightId}?return_flight=${flight.outbound_flight.id}`
+                              `/find-flights/${selectedOutboundFlightId}?return_id=${flight.outbound_flight.id}?passenger_count=${paramsData.passenger_count}`
                             );
                           }}
                         />
@@ -341,11 +344,11 @@ function FlightsSearch() {
                   </>
                 )}
 
-                <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
+                {/* <div className="flex justify-center items-center h-[48px] bg-[#112211] mt-8 rounded-md cursor-pointer">
                   <p className="paragraph-semibold text-white">
                     Show more result
                   </p>
-                </div>
+                </div> */}
               </div>
             )}
           </div>
