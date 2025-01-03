@@ -66,13 +66,13 @@ const RoomTableComponent: React.FC<RoomTableComponentProps> = ({ rooms, onEdit, 
             className="px-4 py-2 text-right cursor-pointer"
             onClick={() => handleSort("discount")}
           >
-            Discount (%) {sortColumn === "discount" && (sortDirection === "asc" ? "▲" : "▼")}
+            Discount ($) {sortColumn === "discount" && (sortDirection === "asc" ? "▲" : "▼")}
           </th>
           <th
             className="px-4 py-2 text-right cursor-pointer"
             onClick={() => handleSort("tax")}
           >
-            Tax (%) {sortColumn === "tax" && (sortDirection === "asc" ? "▲" : "▼")}
+            Tax ($) {sortColumn === "tax" && (sortDirection === "asc" ? "▲" : "▼")}
           </th>
           <th
             className="px-4 py-2 text-right cursor-pointer"
@@ -91,10 +91,10 @@ const RoomTableComponent: React.FC<RoomTableComponentProps> = ({ rooms, onEdit, 
           <tr key={room.id} className="border-t">
             <td className="px-4 py-2">{room.name}</td>
             <td className="px-4 py-2">{room.type}</td>
-            <td className="px-4 py-2 text-right">${room.base_fare.toFixed(2)}</td>
-            <td className="px-4 py-2 text-right">${room.discount}</td>
-            <td className="px-4 py-2 text-right">${room.tax}</td>
-            <td className="px-4 py-2 text-right">${room.service_fee.toFixed(2)}</td>
+            <td className="px-4 py-2 text-right">${room.base_fare ?? 0}</td>
+            <td className="px-4 py-2 text-right">${room.discount ?? 0}</td>
+            <td className="px-4 py-2 text-right">${room.tax ?? 0}</td>
+            <td className="px-4 py-2 text-right">${room.service_fee ?? 0}</td>
             <td className="px-4 py-2 text-center">
               {room.is_available ? "Yes" : "No"}
             </td>
