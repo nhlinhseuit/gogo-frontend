@@ -37,12 +37,12 @@ const StayTicket: React.FC<StayTicketProps> = (props) => {
     <div className="flex h-auto w-50 flex-row overflow-hidden rounded-lg border-2">
       <div className="flex flex-col justify-between gap-2 p-8 pr-16 bg-primary-500">
         <div className="flex flex-col">
-          <span className="h2-bold">{stayBookingData.checkin_date}</span>
+          <span className="h2-bold">{stayBookingData.checkinDate}</span>
           <span>Check-in</span>
         </div>
         <img src="/assets/icons/stay-booking-icon.svg" alt="" className="h-24 w-fit" />
         <div className="flex flex-col">
-          <span className="h2-bold">{stayBookingData.checkout_date}</span>
+          <span className="h2-bold">{stayBookingData.checkoutDate}</span>
           <span>Check-out</span>
         </div>
       </div>

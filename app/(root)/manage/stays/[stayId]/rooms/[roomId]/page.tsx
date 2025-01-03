@@ -6,6 +6,7 @@ import {useParams} from "next/navigation";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 import {toast} from "@/hooks/use-toast";
 import {updateRoom} from "@/lib/actions/ManageActions";
+import BookingsTable from "@/components/shared/manage/BookingTable";
 
 interface ShowRoomPageParams {
   roomId: string;
@@ -158,6 +159,7 @@ const ShowRoomPage: React.FC = () => {
         </div>
         <img src={room.image_url} alt="" className="mx-auto"/>
       </form>
+      <BookingsTable roomId={roomId} />
     </div>
   );
 };

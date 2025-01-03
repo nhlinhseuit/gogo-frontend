@@ -7,11 +7,11 @@ interface StayBooking {
   user: User;
   total_discount: number;
   total_bill: 0;
-  booking_date: string;
+  bookingDate: string;
   status: string;
   room: Room;
-  checkin_date: string;
-  checkout_date: string;
+  checkinDate: string;
+  checkoutDate: string;
   first_name: string;
   lastName: string;
   email: string;
