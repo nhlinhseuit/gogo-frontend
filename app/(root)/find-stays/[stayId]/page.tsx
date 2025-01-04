@@ -160,20 +160,20 @@ export default function StayDetail({params}: StayDetailProp) {
         {/*TODO: Replace with number of reviews*/}
         <RatingSummaryComponent rating={stayData?.rating || 0} numberOfReviews={0}/>
         <div className="flex flex-row gap-4">
-          <button>
-            <img
-              className="rounded-md p-4 border-primary-100 border-[1px]"
-              src="/assets/icons/favorite-outlined.svg"
-              alt="Favorite"
-            />
-          </button>
-          <button>
-            <img
-              className="rounded-md p-4 border-primary-100 border-[1px]"
-              src="/assets/icons/share.svg"
-              alt="Share"
-            />
-          </button>
+          {/*<button>*/}
+          {/*  <img*/}
+          {/*    className="rounded-md p-4 border-primary-100 border-[1px]"*/}
+          {/*    src="/assets/icons/favorite-outlined.svg"*/}
+          {/*    alt="Favorite"*/}
+          {/*  />*/}
+          {/*</button>*/}
+          {/*<button>*/}
+          {/*  <img*/}
+          {/*    className="rounded-md p-4 border-primary-100 border-[1px]"*/}
+          {/*    src="/assets/icons/share.svg"*/}
+          {/*    alt="Share"*/}
+          {/*  />*/}
+          {/*</button>*/}
           <a href="#available-rooms" className="rounded-md px-9 py-4 bg-primary-100">Book Now</a>
         </div>
       </div>
