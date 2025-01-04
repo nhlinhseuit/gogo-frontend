@@ -32,13 +32,13 @@ const PaymentCardSelectionProfile: React.FC<
   };
 
   return (
-    <div className="w-full flex gap-4 items-center rounded-lg p-4">
+    <div className="w-full grid grid-cols-3 gap-4 rounded-lg p-4">
       {/* Render Saved Cards */}
       {cards.map((card) => (
         <label
           key={card.id}
           htmlFor={`card-${card.id}`}
-          className={`h-[180px] just w-[30%] block p-3 rounded-xl cursor-pointer ${
+          className={`h-[180px] block p-3 rounded-xl cursor-pointer ${
             selectedCard?.id === card?.id
               ? "bg-primary-100"
               : "border border-gray-300"
@@ -51,7 +51,7 @@ const PaymentCardSelectionProfile: React.FC<
                   **** {getLastFourDigits(card.number)}
                 </div>
               </div>
-              {/* Thay thế icon bin bằng radio button */}
+              {/* Radio button */}
               <div className="relative">
                 <input
                   type="radio"
@@ -96,7 +96,7 @@ const PaymentCardSelectionProfile: React.FC<
       {/* Add New Card Option */}
       <label
         htmlFor="add-new-card"
-        className={`h-[180px] just w-[30%] block p-8 border-2 border-dashed rounded-xl text-center cursor-pointer ${
+        className={`h-[180px] block p-8 border-2 border-dashed rounded-xl text-center cursor-pointer ${
           selectedCard === null
             ? "bg-green-100 border-primary-100"
             : "border-[#8dd3bb]"

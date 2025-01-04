@@ -43,21 +43,55 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
   });
   const [activeTab, setActiveTab] = useState<'outbound' | 'return'>('outbound');
   const handleBooking = () => {
-    if (selectedSeats.length === 0) {
+    const outboundSeats = selectedSeats.filter(seat => seat.startsWith('outbound'));
+    const returnSeats = selectedSeats.filter(seat => seat.startsWith('return'));
+
+    // Check if seats are selected for outbound flight
+    if (outboundSeats.length === 0) {
       toast({
-        title: "Please select at least one seat to book",
+        title: "Please select seats for your outbound flight",
         variant: "error",
         duration: 3000,
       });
       return;
     }
 
+    // If there's a return flight, check if return seats are selected
+    if (returnFlightId && returnSeats.length === 0) {
+      toast({
+        title: "Please select seats for your return flight",
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Check if correct number of seats are selected for both flights
+    if (outboundSeats.length !== passengerCount) {
+      toast({
+        title: `Please select ${passengerCount} seats for your outbound flight`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    if (returnFlightId && returnSeats.length !== passengerCount) {
+      toast({
+        title: `Please select ${passengerCount} seats for your return flight`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Combine all seat IDs into a single parameter
     const seatsParam = selectedSeats.map(seat => seat.split('-')[1]).join(",");
-    const bookingUrl = `/find-flights/flight-booking/${params.flightId}?seat_ids=${seatsParam}`;
+
+    const bookingUrl = `/find-flights/flight-booking/${params.flightId}?seat_ids=${seatsParam}&return_id=${returnFlightId}`;
 
     router.push(bookingUrl);
   };
-
   useEffect(() => {
     fetchFlightDetails(params.flightId)
       .then((data) => {
@@ -102,11 +136,12 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
         });
       })
       .catch((error) => {
-        toast({
-          title: `Error fetching reviews: ${error}`,
-          variant: "error",
-          duration: 3000,
-        });
+        // toast({
+        //   title: `Error fetching reviews: ${error}`,
+        //   variant: "error",
+        //   duration: 3000,
+        // });
+        console.log(`Error fetching reviews: ${error}`);
       });
   };
 
@@ -194,20 +229,21 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
           numberOfReviews={currentFlightDetails.airline.review_count}
         />
         <div className="flex flex-row gap-4">
-          <button>
-            <img
-              className="rounded-md p-4 border-primary-100 border-[1px]"
-              src="/assets/icons/favorite-outlined.svg"
-              alt="Favorite"
-            />
-          </button>
-          <button>
-            <img
-              className="rounded-md p-4 border-primary-100 border-[1px]"
-              src="/assets/icons/share.svg"
-              alt="Share"
-            />
-          </button>
+          {/*<button>*/}
+          {/*  <img*/}
+          {/*    className="rounded-md p-4 border-primary-100 border-[1px]"*/}
+          {/*    src="/assets/icons/favorite-outlined.svg"*/}
+          {/*    alt="Favorite"*/}
+          {/*  />*/}
+
+          {/*</button>*/}
+          {/*<button>*/}
+          {/*  <img*/}
+          {/*    className="rounded-md p-4 border-primary-100 border-[1px]"*/}
+          {/*    src="/assets/icons/share.svg"*/}
+          {/*    alt="Share"*/}
+          {/*  />*/}
+          {/*</button>*/}
           <button
             className="p-4 px-8 rounded-md bg-primary-100"
             onClick={handleBooking}

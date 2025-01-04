@@ -1,7 +1,6 @@
 import "@/app/globals.css"
 import Room from "@/types/Room";
 import type Seat from "@/types/Seat";
-
 import React from "react";
 import RatingSummaryComponent from "@/components/shared/details/RatingSummaryComponent";
 import Stay from "@/types/Stay";
@@ -15,6 +14,7 @@ interface PriceDetailsProps {
   seats: Seat[];
   stay: Stay | null;
   flight: FlightDetails | null;
+  returnFlight?: FlightDetails | null;
   price: Price;
 }
 
@@ -42,29 +42,77 @@ const PriceDetailsComponent: React.FC<PriceDetailsProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-4 rounded-lg p-6 shadow-xl">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <img className="rounded size-[120px] object-contain"
-             src={props.room?.image_url ?? props.flight?.airline.image ?? ''}
-             alt="Stay"/>
-        <div className="flex flex-grow flex-col gap-1">
-          <span className="w-full overflow-ellipsis">
-            {props.room?.name ?? seatDisplay}
-          </span>
-          <span className="overflow-ellipsis text-xl font-semibold">
-            {props.room?.type ?? props.flight?.airline.name ?? ''}
-          </span>
-          <RatingSummaryComponent
-            rating={props.stay?.rating ?? props.flight?.airline.rating ?? 0}
-            numberOfReviews={props.stay?.review_count ?? props.flight?.airline.review_count ?? 0}
-          />
+      {/* Outbound Flight Details */}
+      {props.flight && (
+        <div className="flex flex-col gap-6 md:flex-row">
+          <img className="rounded size-[120px] object-contain"
+               src={props.flight.airline.image ?? ''}
+               alt="Airline"/>
+          <div className="flex flex-grow flex-col gap-1">
+            <span className="w-full overflow-ellipsis">
+              {seatDisplay}
+            </span>
+            <span className="overflow-ellipsis text-xl font-semibold">
+              {props.flight.airline.name} (Outbound)
+            </span>
+            <RatingSummaryComponent
+              rating={props.flight.airline.rating ?? 0}
+              numberOfReviews={props.flight.airline.review_count ?? 0}
+            />
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Return Flight Details */}
+      {props.returnFlight && (
+        <div className="flex flex-col gap-6 md:flex-row mt-4">
+          <img className="rounded size-[120px] object-contain"
+               src={props.returnFlight.airline.image ?? ''}
+               alt="Return Airline"/>
+          <div className="flex flex-grow flex-col gap-1">
+            <span className="w-full overflow-ellipsis">
+              {seatDisplay}
+            </span>
+            <span className="overflow-ellipsis text-xl font-semibold">
+              {props.returnFlight.airline.name} (Return)
+            </span>
+            <RatingSummaryComponent
+              rating={props.returnFlight.airline.rating ?? 0}
+              numberOfReviews={props.returnFlight.airline.review_count ?? 0}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Hotel Room Details */}
+      {props.room && (
+        <div className="flex flex-col gap-6 md:flex-row">
+          <img className="rounded size-[120px] object-contain"
+               src={props.room.image_url ?? ''}
+               alt="Stay"/>
+          <div className="flex flex-grow flex-col gap-1">
+            <span className="w-full overflow-ellipsis">
+              {props.room.name}
+            </span>
+            <span className="overflow-ellipsis text-xl font-semibold">
+              {props.room.type}
+            </span>
+            <RatingSummaryComponent
+              rating={props.stay?.rating ?? 0}
+              numberOfReviews={props.stay?.review_count ?? 0}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="border-y-2 py-4">
         Your booking is protected by <strong>gogo</strong>
       </div>
+
       <div className="font-semibold">
         Price Details
       </div>
+
       <div className="flex flex-row justify-between">
         <span>Base Price</span>
         <span className="font-semibold">${(price.base_fare ?? 0).toFixed(2)}</span>
@@ -92,6 +140,5 @@ const PriceDetailsComponent: React.FC<PriceDetailsProps> = (props) => {
     </div>
   );
 };
-
 
 export default PriceDetailsComponent;
