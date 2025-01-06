@@ -2,6 +2,31 @@
 
 import React, {useEffect, useState} from "react";
 import {usePDF} from "react-to-pdf";
+<<<<<<<< HEAD:app/(root)/booking/flight-booking/[bookingId]/page.tsx
+import FlightBooking from "@/types/FlightBooking";
+import React, {useEffect, useState} from "react";
+import {useParams} from "next/navigation";
+import {fetchFlightBooking} from "@/lib/actions/BookingActions";
+import {toast} from "@/hooks/use-toast";
+import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
+
+
+interface FlightBookingInfoPageParams {
+  bookingId: string;
+}
+
+const FlightBookingInfoPage = () => {
+  const {toPDF, targetRef} = usePDF({filename: "boarding-pass.pdf"});
+  const {bookingId} = useParams() as unknown as FlightBookingInfoPageParams;
+
+
+  const [flightBookingData, setFlightBookingData] = useState<FlightBooking | null>(null);
+
+  useEffect(() => {
+    fetchFlightBooking(bookingId).then((data) => {
+      setFlightBookingData(data);
+      console.log(flightBookingData)
+========
 import {useParams} from "next/navigation";
 import StayBooking from "@/types/StayBooking";
 import {fetchStay} from "@/lib/actions/StayActions";
@@ -27,6 +52,7 @@ const StayBookingInfoPage: React.FC = () => {
     fetchStayBooking(bookingId).then((data) => {
       setStayBookingData(data);
       console.log(stayBookingData)
+>>>>>>>> 2b865df629f2ef853baeb6984bff662a189193ee:app/(root)/booking/stay-booking/[bookingId]/page.tsx
     }).catch((error) => {
       console.error('Error fetching flight booking:', error);
       toast({
@@ -37,15 +63,30 @@ const StayBookingInfoPage: React.FC = () => {
     });
   }, []);
 
+<<<<<<<< HEAD:app/(root)/booking/flight-booking/[bookingId]/page.tsx
+  useEffect(() => {
+  }, [flightBookingData]);
+
+
+  if (!bookingId) return <div>Invalid Flight ID</div>;
+
+  if (!flightBookingData) return <BigLoadingSpinner/>;
+========
   if (!bookingId) return <div>Invalid Flight ID</div>;
 
   if (!stayBookingData) return <BigLoadingSpinner/>;
+>>>>>>>> 2b865df629f2ef853baeb6984bff662a189193ee:app/(root)/booking/stay-booking/[bookingId]/page.tsx
 
   return (
     <div className="flex flex-col my-4 gap-8">
       <div className="flex flex-col justify-between">
+<<<<<<<< HEAD:app/(root)/booking/flight-booking/[bookingId]/page.tsx
+        <span className="h2-bold">{flightBookingData.seats[0].seat.flight.name}</span>
+        <span>{flightBookingData.seats[0].seat.flight.airline.name}</span>
+========
         <span className="h2-bold">{stayBookingData.stay.name}</span>
         <span>{stayBookingData.stay.location.city}</span>
+>>>>>>>> 2b865df629f2ef853baeb6984bff662a189193ee:app/(root)/booking/stay-booking/[bookingId]/page.tsx
       </div>
 
       <div className="flex flex-col justify-between md:flex-row">
@@ -54,7 +95,11 @@ const StayBookingInfoPage: React.FC = () => {
         </div>
       </div>
       <div ref={targetRef}>
+<<<<<<<< HEAD:app/(root)/booking/flight-booking/[bookingId]/page.tsx
+        {flightBookingData && <FlightTicket booking={flightBookingData}/>}
+========
         {stayBookingData && <StayTicket booking={stayBookingData}/>}
+>>>>>>>> 2b865df629f2ef853baeb6984bff662a189193ee:app/(root)/booking/stay-booking/[bookingId]/page.tsx
       </div>
 
       <div className="h2-bold">Terms and Conditions</div>
@@ -98,4 +143,9 @@ const StayBookingInfoPage: React.FC = () => {
 
   )
 };
+<<<<<<<< HEAD:app/(root)/booking/flight-booking/[bookingId]/page.tsx
+
+export default FlightBookingInfoPage;
+========
 export default StayBookingInfoPage
+>>>>>>>> 2b865df629f2ef853baeb6984bff662a189193ee:app/(root)/booking/stay-booking/[bookingId]/page.tsx

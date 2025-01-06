@@ -9,7 +9,7 @@ import {useParams, useRouter, useSearchParams} from "next/navigation";
 import Price from "@/types/Price";
 import Card from "@/types/Card";
 import {fetchUserCards} from "@/lib/actions/CardActions";
-import {convertDataReceive, getCurrentUser} from "@/utils/util";
+import {getCurrentUser} from "@/utils/util";
 import FlightDetails from "@/types/FlightDetails";
 import {fetchFlightDetails} from "@/lib/actions/FlightActions";
 import Seat from "@/types/Seat";
@@ -35,35 +35,37 @@ const FlightBookingPage: React.FC = () => {
   const {flightId} = useParams() as unknown as PageParams;
   const searchParams = useSearchParams();
   const seatIds = searchParams.get("seat_ids")?.split(",") || [];
+  const return_id = searchParams.get("return_id");
 
-
-  // const [targetTimeLeft, setTargetTimeLeft] = useState<Date>(new Date());
   const [price, setPrice] = useState<Price | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [bookingId, setBookingId] = useState<string>("");
   const [seats, setSeats] = useState<Seat[]>([]);
-
   const [flightDetails, setFlightDetails] = useState<FlightDetails | null>(null);
+  const [returnFlightDetails, setReturnFlightDetails] = useState<FlightDetails | null>(null);
 
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<Record<string, PassengerDetail>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const currentUser = getCurrentUser();
 
   const fetchCards = () => {
-    fetchUserCards(getCurrentUser().id).then((data) => {
-      setCards(data);
-      if (data.length > 0) {
-        setSelectedCard(data[0]);
-      }
-    }).catch((error) => {
-      console.error('Error fetching user cards:', error);
-      toast({
-        title: `Error fetching user cards: ${error}`,
-        variant: "error",
-        duration: 3000,
+    fetchUserCards(getCurrentUser().id)
+      .then((data) => {
+        setCards(data);
+        if (data.length > 0) {
+          setSelectedCard(data[0]);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching user cards:', error);
+        toast({
+          title: `Error fetching user cards: ${error}`,
+          variant: "error",
+          duration: 3000,
+        });
       });
-    });
   };
 
   const fetchAllSeats = async (seatIds: string[]) => {
@@ -82,8 +84,8 @@ const FlightBookingPage: React.FC = () => {
     setSeats(fetchedSeats);
   };
 
-  const handleBooking = async () => {
-
+  const handleBooking = async (event: any) => {
+    event.preventDefault();
     if (!cards || cards.length === 0) {
       toast({
         title: `Please add a card!`,
@@ -102,7 +104,10 @@ const FlightBookingPage: React.FC = () => {
       return;
     }
 
-    if(Object.values(passengerDetails).some((passenger) => !passenger.name || !passenger) || !passengerDetails) {
+    if (
+      Object.values(passengerDetails).some((passenger) => !passenger.name || !passenger) ||
+      !passengerDetails
+    ) {
       toast({
         title: `Please fill in all passenger details!`,
         variant: "error",
@@ -118,81 +123,89 @@ const FlightBookingPage: React.FC = () => {
       citizen_name: passenger.name,
       seat_id: seatId,
     }));
-    confirmFlightBooking(passengerInfo, selectedCard, bookingId).then((data) => {
-      setBookingId(data.id);
-      console.log('Flight booking confirmed:', data);
-      toast({
-        title: `Flight booking confirmed!`,
-        variant: "success",
-        duration: 3000,
+
+    confirmFlightBooking(passengerInfo, selectedCard, bookingId)
+      .then((data) => {
+        setBookingId(data.id);
+        console.log('Flight booking confirmed:', data);
+        toast({
+          title: `Flight booking confirmed!`,
+          variant: "success",
+          duration: 3000,
+        });
+        router.push(`/booking/flight-booking/${data.id}`);
+      })
+      .catch((error) => {
+        console.error('Error confirming flight booking:', error);
+        toast({
+          title: `Error confirming flight booking: ${error}`,
+          variant: "error",
+          duration: 3000,
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-      router.push(`/booking/flight-booking/${data.id}`);
-
-    }).catch((error) => {
-      console.error('Error confirming flight booking:', error)
-      toast({
-        title: `Error confirming flight booking: ${error}`,
-        variant: "error",
-        duration: 3000,
-      });
-    }).finally(() => {
-      setIsLoading(false);
-    });
-
-  }
-
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const currentUser = getCurrentUser();
+  };
 
   useEffect(() => {
-    //? Middleware
     if (!currentUser) {
-      setIsAuthenticated(false);
-
-      const params = convertDataReceive(searchParams);
-      const queryString = new URLSearchParams(params).toString();
-
       setTimeout(() => {
-        router.push(`/login?${queryString}`);
+        router.push(
+          `/login?ref=find-flights/flight-booking/${flightId}&seats=${seatIds.join(",")}`
+        );
       }, 2300);
       return;
-    } else {
-      setIsAuthenticated(true);
+    }
 
-    fetchFlightDetails(flightId).then((data) => {
-      setFlightDetails(data);
-    }).catch((error) => {
-      console.error('Error fetching flight details:', error);
-    });
+    // Fetch main flight details
+    fetchFlightDetails(flightId)
+      .then((data) => {
+        setFlightDetails(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching flight details:', error);
+      });
+
+    // Fetch return flight details if return_id exists
+    if (return_id) {
+      fetchFlightDetails(return_id)
+        .then((data) => {
+          setReturnFlightDetails(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching return flight details:', error);
+        });
+    }
 
     if (seatIds.length > 0) {
       fetchAllSeats(seatIds);
     }
 
-    fetchCards();}
+    fetchCards();
   }, []);
 
   useEffect(() => {
     if (seats.length > 0) {
-      const totalPrice: Price = seats.reduce((acc, seat) => ({
-        base_fare: (acc.base_fare || 0) + (seat.base_fare || 0),
-        discount: (acc.discount || 0) + (seat.discount || 0),
-        tax: (acc.tax || 0) + (seat.tax || 0),
-        service_fee: (acc.service_fee || 0) + (seat.service_fee || 0),
-        total: 0, // Will be calculated below
-      }), {
-        base_fare: 0,
-        discount: 0,
-        tax: 0,
-        service_fee: 0,
-        total: 0
-      });
+      const totalPrice: Price = seats.reduce(
+        (acc, seat) => ({
+          base_fare: (acc.base_fare || 0) + (seat.base_fare || 0),
+          discount: (acc.discount || 0) + (seat.discount || 0),
+          tax: (acc.tax || 0) + (seat.tax || 0),
+          service_fee: (acc.service_fee || 0) + (seat.service_fee || 0),
+          total: 0,
+        }),
+        {
+          base_fare: 0,
+          discount: 0,
+          tax: 0,
+          service_fee: 0,
+          total: 0,
+        }
+      );
 
       totalPrice.total =
-        totalPrice.base_fare -
-        totalPrice.discount +
-        totalPrice.tax +
-        totalPrice.service_fee;
+        totalPrice.base_fare - totalPrice.discount + totalPrice.tax + totalPrice.service_fee;
 
       setPrice(totalPrice);
     }
@@ -201,41 +214,17 @@ const FlightBookingPage: React.FC = () => {
       initialPassengers[seat.id] = {
         name: "",
         gender: "male",
-        nationalID: ""
+        nationalID: "",
       };
     });
     setPassengerDetails(initialPassengers);
   }, [seats]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const now = new Date().getTime();
-  //     const distance = targetTimeLeft.getTime() - now;
-  //
-  //     if (distance < 0) {
-  //       clearInterval(interval);
-  //       setTimeLeft("Time's up!");
-  //       router.back();
-  //     } else {
-  //       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  //       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-  //       setTimeLeft(`${minutes}m ${seconds}s`);
-  //     }
-  //   }, 1000);
-  //
-  //   return () => clearInterval(interval);
-  // }, [targetTimeLeft]);
-  //
-  // if (!flightId || seatIds.length === 0) {
-  //   return <div>Missing required parameters</div>;
-  // }
-  //
-
   if (!flightDetails || seats.length === 0 || !price || isLoading) {
     return <BigLoadingSpinner/>;
   }
 
-  if (isAuthenticated === null) {
+  if (currentUser === null) {
     return (
       <NoResult
         title="Checking..."
@@ -244,7 +233,7 @@ const FlightBookingPage: React.FC = () => {
     );
   }
 
-  if (isAuthenticated === false) {
+  if (!currentUser) {
     return (
       <NoResult
         title="Wait a sec..."
@@ -255,16 +244,23 @@ const FlightBookingPage: React.FC = () => {
 
   return (
     <main className="flex w-full flex-col gap-4">
-      {/*<div*/}
-      {/*  className="sticky top-0 flex w-screen mb-8 flex-row self-center items-center justify-center gap-4 bg-red-100 text-xl font-semibold">*/}
-      {/*  <span>We are holding the seats ...</span>*/}
-      {/*  <img src="/assets/icons/IC_CLOCK.svg" alt="clock"/>*/}
-      {/*  <span>{timeLeft}</span>*/}
-      {/*</div>*/}
-
       <div className="grid w-full grid-cols-5 gap-8 mt-">
         <div className="col-span-3 flex flex-col gap-8">
-          <FlightInformation flightDetails={flightDetails}/>
+          {/* Outbound Flight Information */}
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-semibold">Outbound Flight</h2>
+            <FlightInformation flightDetails={flightDetails}/>
+          </div>
+
+          {/* Return Flight Information (if exists) */}
+          {returnFlightDetails && (
+            <div className="flex flex-col gap-4">
+              <h2 className="text-lg font-semibold">Return Flight</h2>
+              <FlightInformation flightDetails={returnFlightDetails}/>
+            </div>
+          )}
+
+          {/* Passenger Information */}
           {seats.map((seat) => (
             <div key={seat.id} className="rounded-lg p-4 shadow bg-white w-full flex flex-col gap-4">
               <h3 className="mb-4">Passenger Information for Seat {seat.number}</h3>
@@ -328,11 +324,14 @@ const FlightBookingPage: React.FC = () => {
             onSelectCard={setSelectedCard}
             selectedCard={selectedCard}
           />
-          <button onClick={() => handleBooking()} className="w-full rounded-lg p-4 bg-primary-100">Book</button>
+          <button onClick={handleBooking} className="w-full rounded-lg p-4 bg-primary-100">
+            Book
+          </button>
         </div>
         <div className="col-span-2">
           <PriceDetailsComponent
             flight={flightDetails}
+            returnFlight={returnFlightDetails}
             stay={null}
             seats={seats}
             room={null}

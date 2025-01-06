@@ -1,7 +1,7 @@
 import CustomButton from "@/components/CustomButton";
 import { useToast } from "@/hooks/use-toast";
 import { fetchLocations } from "@/lib/actions/FetchLocationsActions";
-import Location from "@/types/Location";
+import LocationType from "@/types/LocationType";
 import {
   convertDataNavigate,
   formatDayFromInputToNormalDateApi,
@@ -52,7 +52,7 @@ const StaysInput = ({
 
   ///
 
-  const [locations, setLocations] = useState<{ data: Location[] }>({
+  const [locations, setLocations] = useState<{ data: LocationType[] }>({
     data: [],
   });
   const [isLoading, setIsLoading] = useState(true);

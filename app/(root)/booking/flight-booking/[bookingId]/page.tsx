@@ -1,7 +1,6 @@
 "use client";
 
 import "@/app/globals.css";
-
 import FlightTicket from "@/components/FlightTicket";
 import {usePDF} from "react-to-pdf";
 import FlightBooking from "@/types/FlightBooking";
@@ -11,22 +10,18 @@ import {fetchFlightBooking} from "@/lib/actions/BookingActions";
 import {toast} from "@/hooks/use-toast";
 import BigLoadingSpinner from "@/components/shared/BigLoadingSpinner";
 
-
 interface FlightBookingInfoPageParams {
   bookingId: string;
 }
 
 const FlightBookingInfoPage = () => {
-  const {toPDF, targetRef} = usePDF({filename: "boarding-pass.pdf"});
+  const {toPDF, targetRef} = usePDF({filename: "boarding-passes.pdf"});
   const {bookingId} = useParams() as unknown as FlightBookingInfoPageParams;
-
-
   const [flightBookingData, setFlightBookingData] = useState<FlightBooking | null>(null);
 
   useEffect(() => {
     fetchFlightBooking(bookingId).then((data) => {
       setFlightBookingData(data);
-      console.log(flightBookingData)
     }).catch((error) => {
       console.error('Error fetching flight booking:', error);
       toast({
@@ -35,31 +30,32 @@ const FlightBookingInfoPage = () => {
         duration: 3000,
       });
     });
-  }, []);
-
-  useEffect(() => {
-  }, [flightBookingData]);
-
+  }, [bookingId]);
 
   if (!bookingId) return <div>Invalid Flight ID</div>;
-
   if (!flightBookingData) return <BigLoadingSpinner/>;
+
+  const flight = flightBookingData.seats[0].seat.flight;
 
   return (
     <div className="flex flex-col my-4 gap-8">
       <div className="flex flex-col justify-between">
-        <span className="h2-bold">{flightBookingData.seats[0].seat.flight.name}</span>
-        <span>{flightBookingData.seats[0].seat.flight.airline.name}</span>
+        <span className="h2-bold">{flight.name}</span>
+        <span>{flight.airline.name}</span>
       </div>
 
       <div className="flex flex-col justify-between md:flex-row">
         <div className="flex flex-row gap-4">
-          <button className="rounded-md px-9 py-4 bg-primary-100" onClick={() => toPDF()}>Download</button>
+          <button className="rounded-md px-9 py-4 bg-primary-100" onClick={() => toPDF()}>
+            Download All Boarding Passes
+          </button>
         </div>
       </div>
 
-      <div ref={targetRef}>
-        {flightBookingData && <FlightTicket booking={flightBookingData}/>}
+      <div ref={targetRef} className="flex flex-col gap-4">
+        {flightBookingData.seats.map((seat, index) => (
+          <FlightTicket key={seat.id} bookingSeat={seat} />
+        ))}
       </div>
 
       <div className="h2-bold">Terms and Conditions</div>
@@ -100,8 +96,7 @@ const FlightBookingInfoPage = () => {
         <div>Further contact details can be found at <a href="" className="underline">gogo.com/help</a></div>
       </div>
     </div>
-
-  )
+  );
 };
 
 export default FlightBookingInfoPage;

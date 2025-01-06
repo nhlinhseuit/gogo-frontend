@@ -1,6 +1,6 @@
 import "@/app/globals.css";
 import React from "react";
-import Location from "@/types/Location"
+import LocationType from "@/types/LocationType"
 
 interface LocationProps {
   location: string;

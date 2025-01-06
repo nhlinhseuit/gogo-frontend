@@ -11,16 +11,13 @@ import { toast } from "@/hooks/use-toast";
 import FlightTicket from "@/components/FlightTicket";
 
 const FlightsItem = ({ item }: { item: FlightBooking }) => {
-  const { toPDF, targetRef } = usePDF({ filename: "flight-ticket.pdf" });
-
-  const [flightBookingData, setFlightBookingData] =
-    useState<FlightBooking | null>(null);
+  const { toPDF, targetRef } = usePDF({ filename: "flight-tickets.pdf" });
+  const [flightBookingData, setFlightBookingData] = useState<FlightBooking | null>(null);
 
   useEffect(() => {
     fetchFlightBooking(item.id)
       .then((data) => {
         setFlightBookingData(data);
-        console.log(flightBookingData);
       })
       .catch((error) => {
         console.error("Error fetching flight booking:", error);
@@ -30,7 +27,9 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
           duration: 3000,
         });
       });
-  }, []);
+  }, [item.id]);
+
+  const flight = item.seats[0].seat.flight;
 
   return (
     <>
@@ -39,7 +38,7 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
         <div className="flex p-4 mt-4 w-[100%] rounded-lg shadow-full shadow-primary-400">
           <div className="w-[10%] my-4 p-2 flex mr-1 px-3 border border-primary-100 rounded-md justify-center items-center">
             <Image
-              src={item.seats[0].seat.flight.airline.image}
+              src={flight.airline.image}
               alt="places"
               width={200}
               height={200}
@@ -52,10 +51,10 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
               <>
                 <div>
                   <p className="title-medium text-[#112211]">
-                    {item.seats[0].seat.flight.timezone}
+                    {flight.timezone}
                   </p>
                   <p className="paragraph-semibold">
-                    {item.seats[0].seat.flight.departure_time}
+                    {flight.departure_time}
                   </p>
                 </div>
 
@@ -63,10 +62,10 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
 
                 <div>
                   <p className="title-medium text-[#112211]">
-                    {item.seats[0].seat.flight.timezone}
+                    {flight.timezone}
                   </p>
                   <p className="paragraph-semibold">
-                    {item.seats[0].seat.flight.arrival_time}
+                    {flight.arrival_time}
                   </p>
                 </div>
               </>
@@ -83,14 +82,14 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
                   <MyIcon
                     icon="/assets/icons/time_profile.svg"
                     title="Flight time"
-                    desc={[item.seats[0].seat.flight.timezone]}
+                    desc={[flight.timezone]}
                   />
                 </div>
                 <div className="flex flex-col gap-4">
                   <MyIcon
                     icon="/assets/icons/door_profile.svg"
                     title="Gate"
-                    desc={[item.seats[0].seat.flight.gate]}
+                    desc={[flight.gate]}
                   />
                   <MyIcon
                     icon="/assets/icons/seat_profile.svg"
@@ -108,12 +107,14 @@ const FlightsItem = ({ item }: { item: FlightBooking }) => {
           onClick={() => toPDF()}
           className="absolute top-4 right-4 h-[50px] px-4 py-3 rounded-md bg-primary-100 font-medium shadow-lg"
         >
-          Download Ticket
+          Download Tickets
         </button>
       </div>
 
-      <div ref={targetRef}>
-        {flightBookingData && <FlightTicket booking={flightBookingData} />}
+      <div ref={targetRef} className="flex flex-col gap-4">
+        {flightBookingData && flightBookingData.seats.map((seat) => (
+          <FlightTicket key={seat.id} bookingSeat={seat} />
+        ))}
       </div>
     </>
   );

@@ -267,7 +267,7 @@ const StayBookingPage: React.FC = () => {
 
               <div className="flex flex-col col-span-2">
                 <label htmlFor="country">Country</label>
-                <CountriesDropdown onSelectCountry={() => onSelectCountry(guestCountry)}
+                <CountriesDropdown onSelectCountry={onSelectCountry}
                                    selectedCountry={guestCountry}/>
               </div>
             </form>

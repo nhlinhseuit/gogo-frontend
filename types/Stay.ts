@@ -1,4 +1,4 @@
-import Location  from "./Location";
+import LocationType  from "./LocationType";
 import Image from "@/types/Image";
 import Amenity from "@/types/Amenity";
 interface Stay  {
@@ -6,12 +6,11 @@ interface Stay  {
   name: string;
   amenities: Amenity[];
   address: string;
-  location: Location
+  location: LocationType
   rating: number;
   overview: string;
   latitude: number;
   longitude: number;
-  advantages: StayAdvantage[];
   star_rating: number;
   stay_type: "HOTEL" | "MOTEL" | "RESORT" | string;
   featured_images: Image[];
@@ -22,8 +21,3 @@ interface Stay  {
 }
 export default Stay;
 
-interface StayAdvantage {
-  id: string,
-  stay: Stay,
-  name: string
-}

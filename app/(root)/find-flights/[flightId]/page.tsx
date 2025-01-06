@@ -32,8 +32,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
   const [lowestPrice, setLowestPrice] = useState<number | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const [selectedOutboundSeats, setSelectedOutboundSeats] = useState<string[]>([]);
-  const [selectedReturnSeats, setSelectedReturnSeats] = useState<string[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -43,44 +42,61 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
     total_page: 1,
   });
   const [activeTab, setActiveTab] = useState<'outbound' | 'return'>('outbound');
-
   const handleBooking = () => {
-    const outboundSeats = selectedOutboundSeats.join(",");
-    const returnSeats = selectedReturnSeats.join(",");
+    const outboundSeats = selectedSeats.filter(seat => seat.startsWith('outbound'));
+    const returnSeats = selectedSeats.filter(seat => seat.startsWith('return'));
 
-    if (activeTab === 'outbound' && selectedOutboundSeats.length === 0) {
+    // Check if seats are selected for outbound flight
+    if (outboundSeats.length === 0) {
       toast({
-        title: "Please select a seat to book for the outbound flight",
+        title: "Please select seats for your outbound flight",
         variant: "error",
         duration: 3000,
       });
       return;
     }
 
-    if (activeTab === 'return' && selectedReturnSeats.length === 0) {
+    // If there's a return flight, check if return seats are selected
+    if (returnFlightId && returnSeats.length === 0) {
       toast({
-        title: "Please select a seat to book for the return flight",
+        title: "Please select seats for your return flight",
         variant: "error",
         duration: 3000,
       });
       return;
     }
 
-    const bookingUrl = `/find-flights/flight-booking/${params.flightId}?seat_ids=${outboundSeats}`;
-    const returnBookingUrl = returnFlightId ? `/find-flights/flight-booking/${returnFlightId}?seat_ids=${returnSeats}` : null;
-
-    if (activeTab === 'outbound') {
-      router.push(bookingUrl);
-    } else if (returnBookingUrl) {
-      router.push(returnBookingUrl);
+    // Check if correct number of seats are selected for both flights
+    if (outboundSeats.length !== passengerCount) {
+      toast({
+        title: `Please select ${passengerCount} seats for your outbound flight`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
     }
+
+    if (returnFlightId && returnSeats.length !== passengerCount) {
+      toast({
+        title: `Please select ${passengerCount} seats for your return flight`,
+        variant: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Combine all seat IDs into a single parameter
+    const seatsParam = selectedSeats.map(seat => seat.split('-')[1]).join(",");
+
+    const bookingUrl = `/find-flights/flight-booking/${params.flightId}?seat_ids=${seatsParam}&return_id=${returnFlightId}`;
+
+    router.push(bookingUrl);
   };
-
   useEffect(() => {
     fetchFlightDetails(params.flightId)
       .then((data) => {
         setOutboundFlightDetails(data);
-        setMainImage(data.featured_images[0]?.url || "");
+        setMainImage(data.featured_images[0]?.url || "/assets/images/bg-flights-rs.jpg");
         setLowestPrice(
           Math.min(...data.seats.map((seat) => seat.base_fare))
         );
@@ -103,7 +119,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
   useEffect(() => {
     const currentFlightDetails = activeTab === 'outbound' ? outboundFlightDetails : returnFlightDetails;
     if (currentFlightDetails) {
-      setMainImage(currentFlightDetails.featured_images[0]?.url || "");
+      setMainImage(currentFlightDetails.featured_images[0]?.url || "/assets/images/bg-flights-rs.jpg");
       fetchReviews(currentFlightDetails.airline.id);
     }
   }, [activeTab, outboundFlightDetails, returnFlightDetails]);
@@ -120,11 +136,12 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
         });
       })
       .catch((error) => {
-        toast({
-          title: `Error fetching reviews: ${error}`,
-          variant: "error",
-          duration: 3000,
-        });
+        // toast({
+        //   title: `Error fetching reviews: ${error}`,
+        //   variant: "error",
+        //   duration: 3000,
+        // });
+        console.log(`Error fetching reviews: ${error}`);
       });
   };
 
@@ -136,35 +153,20 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
 
   const handleClassSelection = (seatClass: string) => {
     setSelectedClass(seatClass === selectedClass ? null : seatClass);
-    if (activeTab === 'outbound') {
-      setSelectedOutboundSeats([]); // Reset seat selection when class changes
-    } else {
-      setSelectedReturnSeats([]); // Reset seat selection when class changes
-    }
+    setSelectedSeats((prevSeats) => prevSeats.filter(seat => !seat.startsWith(activeTab)));
   };
 
   const handleSeatSelection = (seatId: string) => {
-    if (activeTab === 'outbound') {
-      setSelectedOutboundSeats((prevSeats) => {
-        if (prevSeats.includes(seatId)) {
-          return prevSeats.filter((id) => id !== seatId); // Deselect seat
-        }
-        if (prevSeats.length < passengerCount) {
-          return [...prevSeats, seatId]; // Select seat
-        }
-        return prevSeats; // Do nothing if limit reached
-      });
-    } else {
-      setSelectedReturnSeats((prevSeats) => {
-        if (prevSeats.includes(seatId)) {
-          return prevSeats.filter((id) => id !== seatId); // Deselect seat
-        }
-        if (prevSeats.length < passengerCount) {
-          return [...prevSeats, seatId]; // Select seat
-        }
-        return prevSeats; // Do nothing if limit reached
-      });
-    }
+    const seatKey = `${activeTab}-${seatId}`;
+    setSelectedSeats((prevSeats) => {
+      if (prevSeats.includes(seatKey)) {
+        return prevSeats.filter((id) => id !== seatKey); // Deselect seat
+      }
+      if (prevSeats.filter(seat => seat.startsWith(activeTab)).length < passengerCount) {
+        return [...prevSeats, seatKey]; // Select seat
+      }
+      return prevSeats; // Do nothing if limit reached
+    });
   };
 
   const onPostReview = (description: string, rating: number) => {
@@ -227,41 +229,31 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
           numberOfReviews={currentFlightDetails.airline.review_count}
         />
         <div className="flex flex-row gap-4">
-          <button>
-            <img
-              className="rounded-md p-4 border-primary-100 border-[1px]"
-              src="/assets/icons/favorite-outlined.svg"
-              alt="Favorite"
-            />
-          </button>
-          <button>
-            <img
-              className="rounded-md p-4 border-primary-100 border-[1px]"
-              src="/assets/icons/share.svg"
-              alt="Share"
-            />
-          </button>
-          <a
-            href={
-              activeTab === 'outbound' && selectedOutboundSeats.length > 0
-                ? `/find-flights/flight-booking/${currentFlightDetails.id}?seat_ids=${selectedOutboundSeats.join(",")}`
-                : activeTab === 'return' && selectedReturnSeats.length > 0
-                  ? `/find-flights/flight-booking/${currentFlightDetails.id}?seat_ids=${selectedReturnSeats.join(",")}`
-                  : "#"
-            }
-            className={`rounded-md px-9 py-4 bg-primary-100 ${
-              (activeTab === 'outbound' && selectedOutboundSeats.length === 0) ||
-              (activeTab === 'return' && selectedReturnSeats.length === 0)
-                ? "cursor-not-allowed opacity-50"
-                : ""
-            }`}
+          {/*<button>*/}
+          {/*  <img*/}
+          {/*    className="rounded-md p-4 border-primary-100 border-[1px]"*/}
+          {/*    src="/assets/icons/favorite-outlined.svg"*/}
+          {/*    alt="Favorite"*/}
+          {/*  />*/}
+
+          {/*</button>*/}
+          {/*<button>*/}
+          {/*  <img*/}
+          {/*    className="rounded-md p-4 border-primary-100 border-[1px]"*/}
+          {/*    src="/assets/icons/share.svg"*/}
+          {/*    alt="Share"*/}
+          {/*  />*/}
+          {/*</button>*/}
+          <button
+            className="p-4 px-8 rounded-md bg-primary-100"
+            onClick={handleBooking}
           >
             Book Now
-          </a>
+          </button>
         </div>
       </div>
       <img
-        src={mainImage ?? ""}
+        src={mainImage ?? "/assets/images/bg-flights-rs.jpg"}
         className="w-full h-[650px] object-cover"
         alt="Flight"
       />
@@ -299,7 +291,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
       <div className="flex flex-row justify-between">
         <span className="h2-bold">Seat Selection</span>
         <span>
-          {activeTab === 'outbound' ? selectedOutboundSeats.length : selectedReturnSeats.length}/{passengerCount} seats selected
+          {selectedSeats.filter(seat => seat.startsWith(activeTab)).length}/{passengerCount} seats selected
         </span>
       </div>
 
@@ -309,7 +301,7 @@ const FlightDetail: React.FC<FlightDetailProps> = ({params}) => {
             key={seat.id}
             className={`p-4 rounded-md text-center ${
               seat.available
-                ? (activeTab === 'outbound' ? selectedOutboundSeats.includes(seat.id) : selectedReturnSeats.includes(seat.id))
+                ? selectedSeats.includes(`${activeTab}-${seat.id}`)
                   ? "bg-accent-blue text-white"
                   : "bg-primary-100"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
